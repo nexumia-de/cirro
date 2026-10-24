@@ -3,7 +3,7 @@ type: Concept
 title: Radar architecture
 description: How Wetterblick fetches, decodes, caches, projects and animates RV nowcast frames on a libshumate map.
 tags: [radar, architecture, nowcast, map, animation]
-generated: { by: claude-code/2.1.310, at: 2026-10-24T20:45:00Z }
+generated: { by: claude-code/2.1.310, at: 2026-10-24T21:40:00Z }
 ---
 
 # Goal
@@ -27,13 +27,17 @@ RadarSource ──► FrameStore ──► Colorizer ──► RadarLayer (Shuma
      +0 … +120 min.
    - Past frames: the `_000` member of the older
      `composite_rv_<time>.tar` files (−5 … −60 min), fetched once and
-     kept. To be confirmed in M0 ([data sources](data-sources.md)).
+     kept. It is the first tar entry, so two range requests (512-byte
+     header, then the member) fetch it without the rest of the tar;
+     tars stay available for 48 h ([data sources](data-sources.md)).
    - Stale guard: if *t0* is older than 30 min, show "radar data
      outdated" instead of silently showing old frames (this is exactly
      how other clients broke on 2026-10-20).
-2. **Decoder**: read HDF5 `data` + `gain`/`offset`/`nodata`/`undetect`
-   into a `float32` array in mm/h (mm per 5 min × 12). Pure function,
-   unit-tested with a recorded file.
+2. **Decoder**: read HDF5 `/dataset1/data1/data` (`uint32`) +
+   `gain`/`offset`/`nodata`/`undetect` into mm/h (mm per 5 min × 12).
+   Valid time from `/dataset1/what/enddate`+`endtime`, forecast flag
+   from `/how/simulated`. Pure function, unit-tested with the recorded
+   file in `tests/data/`.
 3. **FrameStore**: ordered timeline `{valid_time: Frame}`, one source of
    truth for the UI; drops frames older than 3 h; persists the last
    download in `$XDG_CACHE_HOME` so the app opens instantly.
@@ -67,12 +71,15 @@ expected in the next 2 hours". No extra download.
 
 - 37 frames (−60 … +120 min) × 1200×1100 cells: as `float32` or as
   RGBA textures ≈ 195 MB each way, too much for a phone. Keep frames as
-  the raw `uint16` values + gain/offset (≈ 98 MB, less if cropped to the
-  visible area) and colourise lazily around the current time position
+  the raw values narrowed to `uint16` (the file has `uint32`, but the
+  largest value seen is 2333; keep `nodata` as 65535) + gain/offset
+  (≈ 98 MB, less if cropped to the visible area) and colourise lazily around the current time position
   with a small LRU of textures (e.g. 8). Measure in M2.
-- Bandwidth: size of `composite_rv_LATEST.tar` every 5 min while the
-  app is visible; poll only while the window is visible and on demand
-  after resume. Measure in M0.
+- Bandwidth: `composite_rv_LATEST.tar` is 1.9–11 MB (measured in M0),
+  so polling every 5 min costs up to ~130 MB per hour in wide rain. Poll
+  only while the window is visible and on demand after resume, use
+  `If-None-Match`, and consider range requests for individual members.
+  Measure on the phone in M2.
 
 # Fallback
 

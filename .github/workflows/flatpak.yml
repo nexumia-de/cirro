@@ -1,0 +1,18 @@
+name: Flatpak
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+jobs:
+  flatpak:
+    permissions:
+      contents: write
+    uses: suitably/phosh-toolkit/.github/workflows/flatpak.yml@main
+    with:
+      manifest: io.github.suitably.Wetterblick.yml
+      # Pushes to main publish to suitably/phosh-apps (GNOME Software).
+      release: true
+      publish-repo: suitably/phosh-apps
+    secrets:
+      PUBLISH_TOKEN: ${{ secrets.PUBLISH_TOKEN }}

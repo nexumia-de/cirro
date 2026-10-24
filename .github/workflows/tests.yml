@@ -1,0 +1,30 @@
+name: Tests
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install dependencies
+        run: |
+          apt=(sudo env DEBIAN_FRONTEND=noninteractive apt-get -o DPkg::Lock::Timeout=120)
+          "${apt[@]}" update -q
+          "${apt[@]}" install -y -q --no-install-recommends \
+            python3-pytest python3-h5py python3-numpy \
+            appstream desktop-file-utils
+      - name: Validate metadata
+        run: |
+          desktop-file-validate data/*.desktop
+          appstreamcli validate --no-net data/*.metainfo.xml
+          grep -Eiq '^X-Purism-FormFactor=.*mobile;' data/*.desktop
+      - name: Run tests
+        run: /usr/bin/python3 -m pytest -v

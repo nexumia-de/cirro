@@ -5,11 +5,18 @@ phones, modelled on the feature set of DWD's WarnWetter app. Focus: the
 **rain radar with a 2-hour forecast** (DWD RADVOR nowcast) on a map,
 animated from the past hour to +2 h.
 
-Status: planning. See [docs/roadmap.md](docs/roadmap.md).
+Status: scaffold (milestone M0), no radar yet. See
+[docs/roadmap.md](docs/roadmap.md).
 
 Wetterblick is an independent project and not affiliated with the
 Deutscher Wetterdienst (DWD). Weather data: DWD open data. Map data:
 © OpenStreetMap contributors.
+
+## Install
+
+On the phone, open <https://suitably.github.io/phosh-apps/> and tap
+Wetterblick; GNOME Software installs it and keeps it updated. Every
+push to `main` is published there.
 
 ## Development
 
@@ -27,6 +34,10 @@ workspace/
 [ -d phosh-toolkit ] || git clone https://github.com/suitably/phosh-toolkit.git
 bash phosh-toolkit/setup.sh
 ```
+
+Run from the source tree with `python3 -m wetterblick`, test with
+`python3 -m pytest`. Details, including the Flatpak build:
+[docs/dev-environment.md](docs/dev-environment.md).
 
 Agent rules: [AGENTS.md](AGENTS.md). Knowledge bundle:
 [docs/index.md](docs/index.md).
