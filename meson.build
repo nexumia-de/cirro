@@ -12,7 +12,13 @@ pythondir = python.get_install_dir()
 python.install_sources(
   'wetterblick/__init__.py',
   'wetterblick/__main__.py',
+  'wetterblick/colors.py',
+  'wetterblick/legend.py',
   'wetterblick/main.py',
+  'wetterblick/projection.py',
+  'wetterblick/radar.py',
+  'wetterblick/radar_layer.py',
+  'wetterblick/source.py',
   'wetterblick/window.py',
   subdir: 'wetterblick',
 )

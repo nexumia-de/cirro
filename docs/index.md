@@ -25,4 +25,4 @@ Change history is in [log.md](log.md).
 
 # Decision records
 
-* [Decisions](decisions/index.md) - Language, map widget, radar data source, no own backend.
+* [Decisions](decisions/index.md) - Language, map widget, radar data source, colour scale, no own backend.

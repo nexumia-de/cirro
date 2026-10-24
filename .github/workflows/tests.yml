@@ -19,7 +19,7 @@ jobs:
           apt=(sudo env DEBIAN_FRONTEND=noninteractive apt-get -o DPkg::Lock::Timeout=120)
           "${apt[@]}" update -q
           "${apt[@]}" install -y -q --no-install-recommends \
-            python3-pytest python3-h5py python3-numpy \
+            python3-pytest python3-h5py python3-numpy python3-pyproj \
             appstream desktop-file-utils
       - name: Validate metadata
         run: |

@@ -75,7 +75,8 @@ over Germany, analysis plus forecast up to +2 h, refreshed every
 ## Tar contents *(live)*
 
 - 25 members `composite_rv_<YYYYMMDD_HHMM>_<lead>-hd5`, lead
-  `000` … `120` in 5-min steps, each 80–460 KB.
+  `000` … `120` in 5-min steps, each 80–460 KB (561 KB seen for the
+  23:40 UTC analysis on 2026-10-24 in wide rain).
 - `/what`: `object=COMP`, `date`/`time` = analysis time (same in all 25
   members), `version=H5rad 2.3`; `/@Conventions=ODIM_H5/V2_3`.
 - `/dataset1/what`: `startdate`/`starttime` … `enddate`/`endtime` is
@@ -131,6 +132,9 @@ over Germany, analysis plus forecast up to +2 h, refreshed every
   (`200`, RGBA, ~45 KB). The image is **not** transparent where it is
   dry: "no echo" is painted white and the area outside coverage grey, so
   as a map overlay it needs a different style or post-processing.
+- Its rendering of the RV layer lines up pixel-exactly with our own
+  reprojection of the same frame; its yellow class starts at about
+  3 mm/h (M1 alignment check in [radar architecture](radar-architecture.md)).
 
 This is the fallback radar source and the source for extra map layers
 (warnings, lightning) in M6.

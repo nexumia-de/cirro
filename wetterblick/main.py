@@ -4,9 +4,10 @@ import gi
 
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
-from gi.repository import Adw, Gdk, Gio, Gtk  # noqa: E402
+gi.require_version("Shumate", "1.0")
+from gi.repository import Adw, Gdk, Gio, Gtk, Shumate  # noqa: E402
 
-from wetterblick import APP_ID, REPO_URL, VERSION  # noqa: E402
+from wetterblick import APP_ID, REPO_URL, USER_AGENT, VERSION  # noqa: E402
 from wetterblick.window import Window  # noqa: E402
 
 
@@ -24,6 +25,8 @@ class Application(Adw.Application):
 
     def do_startup(self):
         Adw.Application.do_startup(self)
+        # Map tile requests (OSM tile policy: identify the application).
+        Shumate.set_user_agent(USER_AGENT)
         # Running from the source tree: the app icon is not installed.
         icons = Path(__file__).resolve().parent.parent / "data" / "icons"
         if icons.is_dir():

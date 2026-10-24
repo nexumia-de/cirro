@@ -19,8 +19,11 @@ The app and its development need outbound HTTPS to:
 | `tile.openstreetmap.org` | Base map tiles |
 | `nominatim.openstreetmap.org` | Place search (M3) |
 
-Plus the toolkit's needs (Flathub, apt, GitHub). In a cloud agent
-environment these go under the environment's network access settings
+Plus the toolkit's needs (Flathub, apt, GitHub). In a fresh container,
+`flatpak-builder --user` needs a user remote first:
+`flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo`.
+In a cloud agent
+environment the hosts above go under the environment's network access settings
 (allowed domains). On 2026-10-24 the default policy first blocked all
 DWD, Bright Sky and OSM hosts (proxy answered `403` to `CONNECT`); after
 they were allowed, `opendata.dwd.de`, `maps.dwd.de`, `api.brightsky.dev`
@@ -46,8 +49,9 @@ sudo apt-get install --no-install-recommends \
   hdf5-tools python3-pyproj
 ```
 
-`hdf5-tools` (`h5dump`) and `python3-pyproj` are only needed to inspect
-radar files. `python3-gi` is built for `/usr/bin/python3.12`; if
+`hdf5-tools` (`h5dump`) is only needed to inspect radar files;
+`python3-pyproj` also lets a test compare the projection with PROJ.
+`python3-gi` is built for `/usr/bin/python3.12`; if
 `python3` is another version, call `python3.12` explicitly.
 
 # Run, test, screenshot
@@ -85,6 +89,20 @@ display through:
   --env=GDK_BACKEND=broadway --env=BROADWAY_DISPLAY="$BROADWAY_DISPLAY" \
   build-dir wetterblick'
 ```
+
+Two things fail only in the cloud dev container, not on a device:
+
+- **HTTPS from Python**: the agent proxy's CA is not in the runtime's
+  trust store (`/etc/pki/tls/cert.pem`), so downloads fail with
+  `CERTIFICATE_VERIFY_FAILED`. Add
+  `--filesystem=/root/.ccr:ro --env=SSL_CERT_FILE=/root/.ccr/ca-bundle.crt`
+  to `flatpak build`. With that, fetch → decode → reproject → colour
+  takes 2.5 s in the sandbox (2026-10-24).
+- **Map tiles**: GTK decodes the PNG tiles with glycin, which starts its
+  loaders through `flatpak-spawn --sandbox`; under `flatpak build` in the
+  container there is no Flatpak portal, so every tile fails with "Loader
+  process exited early" and the map stays blank. Check tiles with the
+  host run (`python3.12 -m wetterblick`) instead.
 
 `--share=network` in the manifest is needed for radar data and map
 tiles; no other permission beyond the toolkit defaults is used yet.
