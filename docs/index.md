@@ -21,7 +21,7 @@ Change history is in [log.md](log.md).
 
 # Development
 
-* [Development environment](dev-environment.md) - Hosts the cloud environment must allow and how to test without the network.
+* [Development environment](dev-environment.md) - Required hosts and host packages; how to run, test, screenshot and Flatpak-build the app.
 
 # Decision records
 

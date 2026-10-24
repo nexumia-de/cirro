@@ -3,7 +3,7 @@ type: Reference
 title: Data sources
 description: DWD open data products and other services Wetterblick uses, what is known about each and what still has to be verified.
 tags: [data, dwd, radar, radvor, wms, warnings, mosmix, osm]
-generated: { by: claude-code/2.1.310, at: 2026-10-24T20:45:00Z }
+generated: { by: claude-code/2.1.310, at: 2026-10-24T21:40:00Z }
 sources:
   - id: dwd-radar-products
     resource: https://www.dwd.de/EN/ourservices/radar_products/radar_products.html
@@ -33,15 +33,14 @@ sources:
 
 # Status of this file
 
-Collected on 2026-10-24 from web research only: the cloud environment
-blocked `opendata.dwd.de`, `maps.dwd.de` and `api.brightsky.dev` (see
-[dev environment](dev-environment.md)). Everything marked **unverified**
-must be checked against the live service in milestone M0 of the
-[roadmap](roadmap.md), and this file updated with the result.
+Sections 1 and 2 were checked against the live services on 2026-10-24
+around 21:15 UTC (milestone M0 of the [roadmap](roadmap.md)); facts
+marked *(live)* come from that check, footnoted facts from web research.
+Sections 3–6 are still from web research only.
 
 # 1. RADVOR RV nowcast composite (primary radar data)
 
-DWD's radar nowcast: precipitation amount per 5 minutes on a ~1 km grid
+DWD's radar nowcast: precipitation amount per 5 minutes on a 1 km grid
 over Germany, analysis plus forecast up to +2 h, refreshed every
 5 minutes.[^dwd-radar-products][^ha-dwd-precip]
 
@@ -52,38 +51,89 @@ over Germany, analysis plus forecast up to +2 h, refreshed every
   by `composite_rv_YYYYMMDD_HHMM.tar` and `composite_rv_LATEST.tar`
   (plain, uncompressed tar).[^sdwf-40][^rain-warner-9] Libraries and
   blog posts older than that describe the dead format.
-- Each tar holds 25 ODIM HDF5 files, suffixes `_000-hd5` … `_120-hd5`,
-  i.e. lead times 0–120 min in 5-min steps.[^sdwf-40][^wetterdienst-3285]
-- ODIM_H5/V2_3, `object=COMP`, quantity `ACRR` (accumulated
-  precipitation), grid 1200×1100.[^wetterdienst-3285]
 - A sibling product WN (reflectivity `DBZH`, same layout,
   `composite_wn__LATEST.tar` with two underscores) exists.[^wetterdienst-3285]
 
-**Unverified, to determine in M0** (download one tar, inspect with
-`h5dump -H`):
+## Files and update cadence *(live)*
 
-- HDF5 group paths (`/dataset1/data1/data`?), `gain`, `offset`,
-  `nodata`, `undetect`, data type, compression filter.
-- Projection (`/where/projdef`, presumably the DWD polar stereographic
-  RADOLAN grid) and corner coordinates (`LL_lon` … `UR_lat`).
-- Unit of `ACRR` (mm per 5 min expected) and size of one tar (bandwidth
-  every 5 min on mobile data).
-- Whether past frames (observations of the last hour) are only available
-  as older `composite_rv_<time>.tar` files, i.e. the `_000` member of
-  each, and how long they are kept.
+- `composite_rv_LATEST.tar` is a copy of the newest timestamped tar
+  (same size and `Last-Modified`). Files appear about 3–4 min after
+  their nominal time (`…_2110.tar` at 21:13:21 UTC).
+- The directory keeps **48 hours** of timestamped tars (576 files,
+  oldest `composite_rv_20261022_2115.tar` on 2026-10-24 21:15), so past
+  frames for the time bar are available.
+- Tar size depends on the weather: **1.9 MB** (dry) to **11 MB** (wide
+  rain) seen within 48 h. Polling LATEST every 5 min therefore costs up
+  to ~130 MB per hour on a rainy day.
+- The server sends `ETag`, `Last-Modified` and `Accept-Ranges: bytes`;
+  `If-Modified-Since` and `If-None-Match` both return `304`.
+- **Range requests work** (`206`): the `_000` member is the first entry
+  of every tar, so a past frame needs only the 512-byte tar header
+  (`Range: bytes=0-511`, gives the member size) and then
+  `bytes=512-(511+size)`, about 0.1–0.5 MB instead of the whole tar.
+
+## Tar contents *(live)*
+
+- 25 members `composite_rv_<YYYYMMDD_HHMM>_<lead>-hd5`, lead
+  `000` … `120` in 5-min steps, each 80–460 KB.
+- `/what`: `object=COMP`, `date`/`time` = analysis time (same in all 25
+  members), `version=H5rad 2.3`; `/@Conventions=ODIM_H5/V2_3`.
+- `/dataset1/what`: `startdate`/`starttime` … `enddate`/`endtime` is
+  the 5-min accumulation interval; `endtime` is the valid time
+  (analysis + lead). `prodname=RV_top_view`, `product=MAX`.
+- `/how/simulated`: `"False"` for lead 000, `"True"` for forecasts.
+  `/how/nodes` lists the 17 radar sites; `incomplete_nodes` and
+  `missing_nodes` are empty strings when all sites deliver.
+- Data: `/dataset1/data1/data`, **`uint32`**, shape **(1200, 1100)**
+  (rows × columns), one gzip-6 chunk.
+- `/dataset1/data1/what`: `quantity=ACRR`, `gain=0.001`,
+  `offset=-0.001`, `nodata=4294967295` (2³²−1, outside the radar
+  coverage, about 47 % of the grid), `undetect=0` (no precipitation).
+  Value in mm per 5 min = raw × gain + offset. Maximum seen: raw 2333
+  (2.3 mm per 5 min), so values fit in `uint16`.
+
+## Grid and projection *(live)*
+
+- `/where/projdef`: `+proj=stere +lat_ts=60 +lat_0=90 +lon_0=10
+  +x_0=543196.83521776402 +y_0=3622588.8619310022 +units=m +a=6378137
+  +b=6356752.3142451802 +no_defs` (polar stereographic on WGS84, the
+  catalog path is `DWD/DE1200_WGS84/RV`).
+- `xsize=1100`, `ysize=1200`, `xscale=yscale=1000` m.
+- Corners (degrees): UL 55.8621 N 1.4633 E, UR 55.8454 N 18.7316 E,
+  LL 45.6964 N 3.5670 E, LR 45.6846 N 16.5809 E.
+- Projecting the corners with pyproj gives x/y = (−500, 500),
+  (1099500, 500), (−500, −1199500), (1099500, −1199500): the grid spans
+  x ∈ [−500, 1099500] m and y ∈ [−1199500, 500] m, i.e. the corner
+  coordinates are the **outer edges**, offset half a cell from the
+  origin. Row 0 is the northern edge (all `nodata`, as is the last row).
+- A recorded member is in `tests/data/composite_rv_20261024_2110_000-hd5`;
+  `tests/test_rv_sample.py` pins this layout.
 
 # 2. DWD GeoServer WMS (pre-rendered radar images)
 
-`https://maps.dwd.de/geoserver/dwd/wms` serves rendered radar maps with
-a WMS `TIME` dimension. A third-party client reports 5-min frames, about
-3 days of history and +2 h forecast via `Radar_*-product_*` layers, a
-default layer `Niederschlagsradar` (mm/h) and
-`Radar_wn-product_1x1km_ger` (dBZ) with nowcast frames.[^radar-card]
+`https://maps.dwd.de/geoserver/dwd/wms` *(live, `GetCapabilities` 1.3.0,
+988 KB)*:
 
-**Unverified**: layer names, `TIME` values for forecast frames,
-`EPSG:3857` support, styles, terms of use. Check with `GetCapabilities`
-in M0. This is the fallback radar source and the source for extra map
-layers (warnings, lightning) in M6.
+- Service `AccessConstraints`: `https://www.dwd.de/copyright`, `Fees`:
+  none.
+- CRS list includes `EPSG:3857` (and `EPSG:4326`, `EPSG:25832`, …).
+- Radar layers (all with style of the same name in lower case):
+  - `Radar_rv_product_1x1km_ger` "Deutsches Radarkomposit Analyse und
+    Vorhersage (RV)": dimension `time`
+    `2026-10-21T00:00Z/2026-10-24T23:10Z/PT5M` (≈ 3.5 days back to +2 h),
+    default `current`, plus `REFERENCE_TIME` (default = latest analysis).
+  - `Niederschlagsradar`: same dimensions as the RV layer.
+  - `Radar_wn-product_1x1km_ger` (reflectivity, analysis + forecast) and
+    `Radar_wn-analysis_1x1km_ger` (analysis only, no forecast).
+  - `Radar_eucom_zeros`: no-data/no-echo mask.
+- `GetMap` with `layers=dwd:Radar_rv_product_1x1km_ger`,
+  `crs=EPSG:3857`, `TIME=<analysis + 120 min>`, 512×512 PNG works
+  (`200`, RGBA, ~45 KB). The image is **not** transparent where it is
+  dry: "no echo" is painted white and the area outside coverage grey, so
+  as a map overlay it needs a different style or post-processing.
+
+This is the fallback radar source and the source for extra map layers
+(warnings, lightning) in M6.
 
 # 3. Bright Sky API (point values, JSON)
 

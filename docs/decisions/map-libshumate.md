@@ -3,12 +3,12 @@ type: Decision Record
 title: libshumate as map widget
 description: The map is a libshumate view with OSM raster tiles and a custom layer that draws the radar texture.
 tags: [decision, map, libshumate, osm]
-generated: { by: claude-code/2.1.310, at: 2026-10-24T20:45:00Z }
+generated: { by: claude-code/2.1.310, at: 2026-10-24T21:40:00Z }
 ---
 
 # Status
 
-Proposed (2026-10-24).
+Accepted (2026-10-24); M0 confirmed it builds in the Flatpak.
 
 # Context
 
@@ -27,6 +27,9 @@ subclass (see [radar architecture](../radar-architecture.md)).
 # Consequences
 
 - Native touch handling and theming.
-- It is unverified whether libshumate ships in `org.gnome.Platform`; if
-  not, it is built as a manifest module (meson). Check in M0.
+- `org.gnome.Platform//51` does not ship libshumate (checked in M0).
+  The manifest builds libshumate 1.7.0 (meson, `--libdir=lib` so the
+  typelib lands on the default path) and its dependency protobuf-c
+  1.5.2 (`--disable-protoc`); json-glib, sqlite and libsoup 3 come from
+  the runtime.
 - The radar texture must be projected to Web Mercator by the app.

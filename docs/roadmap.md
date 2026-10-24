@@ -3,7 +3,7 @@ type: Plan
 title: Roadmap
 description: Milestones from the empty repository to a usable radar app (M0–M3) and the secondary features (M4–M6).
 tags: [plan, roadmap, milestones]
-generated: { by: claude-code/2.1.310, at: 2026-10-24T20:45:00Z }
+generated: { by: claude-code/2.1.310, at: 2026-10-24T21:40:00Z }
 ---
 
 # Principle
@@ -15,26 +15,27 @@ phone. Feature priorities: [feature inventory](features.md).
 
 # M0 – Verify data and scaffold
 
-- [ ] Allow the hosts from [dev environment](dev-environment.md).
-- [ ] Download `composite_rv_LATEST.tar`, inspect with `h5dump -H`,
+- [x] Allow the hosts from [dev environment](dev-environment.md).
+- [x] Download `composite_rv_LATEST.tar`, inspect with `h5dump -H`,
       record group paths, encoding, projection, corner coordinates, tar
       size and update cadence in [data sources](data-sources.md).
-- [ ] Check how far back older `composite_rv_<time>.tar` files exist
+- [x] Check how far back older `composite_rv_<time>.tar` files exist
       (past frames for the time bar).
-- [ ] `GetCapabilities` of the DWD GeoServer WMS: radar layer names,
+- [x] `GetCapabilities` of the DWD GeoServer WMS: radar layer names,
       forecast `TIME` values, `EPSG:3857`. Record the results.
-- [ ] Check whether libshumate and h5py/numpy are in
+- [x] Check whether libshumate and h5py/numpy are in
       `org.gnome.Platform//51`; otherwise add them as manifest modules
       (see [map decision](decisions/map-libshumate.md)).
-- [ ] Confirm or revise the [radar source decision](decisions/radar-source.md).
-- [ ] Scaffold: Python package `wetterblick/`, meson build, `.desktop`
+- [x] Confirm or revise the [radar source decision](decisions/radar-source.md).
+- [x] Scaffold: Python package `wetterblick/`, meson build, `.desktop`
       (`X-Purism-FormFactor=Workstation;Mobile;`), metainfo with
       `display_length ≥ 360` and touch, icon, Flatpak manifest
       `io.github.suitably.Wetterblick.yml`, Flatpak CI calling the
       toolkit workflow, `tests/` with pytest.
-- [ ] Empty adaptive window passes the 360×720 screenshot check;
-      `appstreamcli validate`, `desktop-file-validate` clean; CI green on
-      x86_64 and aarch64.
+- [x] Empty adaptive window passes the 360×720 screenshot check;
+      `appstreamcli validate`, `desktop-file-validate` clean.
+- [ ] CI green on x86_64 and aarch64 (local x86_64 Flatpak build works;
+      needs the toolkit's `elfutils` fix on `main`).
 
 # M1 – Map with a static radar frame
 

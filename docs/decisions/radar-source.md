@@ -3,12 +3,16 @@ type: Decision Record
 title: RV nowcast composite as radar source
 description: Radar frames come from DWD's RV open-data composite (HDF5); the DWD GeoServer WMS is the fallback.
 tags: [decision, radar, dwd, data]
-generated: { by: claude-code/2.1.310, at: 2026-10-24T20:45:00Z }
+generated: { by: claude-code/2.1.310, at: 2026-10-24T21:40:00Z }
 ---
 
 # Status
 
-Proposed (2026-10-24). Confirm or revise after the M0 data checks.
+Accepted (2026-10-24) after the M0 data checks against the live
+services ([data sources](../data-sources.md)): the HDF5 layout is
+simple (one `uint32` dataset, documented gain/offset/nodata), h5py
+reads it inside the Flatpak, and past frames cost only a ranged request
+for the `_000` member.
 
 # Context
 
@@ -37,4 +41,8 @@ proves too heavy on the phone. (3) is only a debugging aid.
 - Dependency on h5py/numpy and the exact HDF5 layout, which DWD changed
   on 2026-10-20; the decoder must be isolated and tested with recorded
   files.
-- Bandwidth: one tar every 5 min while visible (size measured in M0).
+- Bandwidth: one tar every 5 min while visible, 1.9–11 MB depending on
+  the weather (measured in M0), i.e. up to ~130 MB per hour on a rainy
+  day. M2 must poll only while visible and may fetch just the members it
+  needs with range requests; the WMS (~45 KB per 512×512 frame) remains
+  the fallback if that is still too much on mobile data.
