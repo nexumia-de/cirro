@@ -12,6 +12,12 @@ Wetterblick is an independent project and not affiliated with the
 Deutscher Wetterdienst (DWD). Weather data: DWD open data. Map data:
 © OpenStreetMap contributors.
 
+## Install
+
+On the phone, open <https://suitably.github.io/phosh-apps/> and tap
+Wetterblick; GNOME Software installs it and keeps it updated. Every
+push to `main` is published there.
+
 ## Development
 
 This repository uses
