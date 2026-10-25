@@ -4,7 +4,10 @@ project('cirro',
   license: 'AGPL-3.0-or-later',
 )
 
-app_id = 'de.nexumia.Cirro'
+base_id = 'de.nexumia.Cirro'
+# Nightly app next to the stable one (docs/release-channels.md).
+nightly = get_option('profile') == 'development'
+app_id = nightly ? base_id + '.Devel' : base_id
 
 python = import('python').find_installation('python3')
 pythondir = python.get_install_dir()
@@ -40,21 +43,39 @@ configure_file(
   install_mode: 'rwxr-xr-x',
 )
 
-install_data('data' / app_id + '.desktop',
-  install_dir: get_option('datadir') / 'applications')
-install_data('data' / app_id + '.metainfo.xml',
-  install_dir: get_option('datadir') / 'metainfo')
-install_data('data/icons' / app_id + '.svg',
-  install_dir: get_option('datadir') / 'icons/hicolor/scalable/apps')
+config = configuration_data()
+config.set('APP_ID', app_id)
+config.set('BUILD_LABEL', get_option('build_label'))
+configure_file(
+  input: 'cirro/config.py.in',
+  output: 'config.py',
+  configuration: config,
+  install: true,
+  install_dir: pythondir / 'cirro',
+)
+
+if nightly
+  variant = [python, files('build-aux/nightly.py'), '@INPUT@', '@OUTPUT@', app_id]
+  desktop = configure_file(input: 'data' / base_id + '.desktop',
+    output: app_id + '.desktop', command: variant)
+  metainfo = configure_file(input: 'data' / base_id + '.metainfo.xml',
+    output: app_id + '.metainfo.xml', command: variant)
+else
+  desktop = files('data' / base_id + '.desktop')
+  metainfo = files('data' / base_id + '.metainfo.xml')
+endif
+install_data(desktop, install_dir: get_option('datadir') / 'applications')
+install_data(metainfo, install_dir: get_option('datadir') / 'metainfo')
+install_data('data/icons' / base_id + '.svg',
+  install_dir: get_option('datadir') / 'icons/hicolor/scalable/apps',
+  rename: app_id + '.svg')
 
 desktop_file_validate = find_program('desktop-file-validate', required: false)
 if desktop_file_validate.found()
-  test('validate-desktop', desktop_file_validate,
-    args: [meson.project_source_root() / 'data' / app_id + '.desktop'])
+  test('validate-desktop', desktop_file_validate, args: [desktop])
 endif
 appstreamcli = find_program('appstreamcli', required: false)
 if appstreamcli.found()
   test('validate-metainfo', appstreamcli,
-    args: ['validate', '--no-net',
-           meson.project_source_root() / 'data' / app_id + '.metainfo.xml'])
+    args: ['validate', '--no-net', metainfo])
 endif

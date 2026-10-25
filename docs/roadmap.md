@@ -61,7 +61,8 @@ phone. Feature priorities: [feature inventory](features.md).
       [radar architecture](radar-architecture.md). Dev-container numbers
       and the `CIRRO_DEBUG=1` logging are in place; phone numbers are
       missing.
-- [ ] **First release**: Flatpak bundle installed on the phone.
+- [ ] **First release**: tag `v<version>` (see
+      [release channels](release-channels.md)), installed on the phone.
 
 # M3 – Point nowcast and places
 
