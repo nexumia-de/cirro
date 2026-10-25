@@ -22,6 +22,7 @@
   <url type="homepage">https://github.com/suitably/cirro</url>
   <url type="bugtracker">https://github.com/suitably/cirro/issues</url>
   <url type="vcs-browser">https://github.com/suitably/cirro</url>
+  <url type="donation">https://liberapay.com/suitably</url>
   <replaces>
     <id>io.github.suitably.Wetterblick</id>
   </replaces>

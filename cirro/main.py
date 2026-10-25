@@ -9,8 +9,8 @@ gi.require_version("Adw", "1")
 gi.require_version("Shumate", "1.0")
 from gi.repository import Adw, Gdk, Gio, GLib, Gtk, Shumate  # noqa: E402
 
-from cirro import (APP_ID, NAME, NIGHTLY, REPO_URL, USER_AGENT,  # noqa: E402
-                   VERSION_LABEL, metainfo)
+from cirro import (APP_ID, NAME, NIGHTLY, REPO_URL, SUPPORT_URL,  # noqa: E402
+                   USER_AGENT, VERSION_LABEL, metainfo)
 from cirro.window import Window  # noqa: E402
 
 
@@ -74,6 +74,7 @@ class Application(Adw.Application):
         if notes:
             dialog.set_release_notes_version(notes[0])
             dialog.set_release_notes(notes[1])
+        dialog.add_link("Support Development", SUPPORT_URL)
         dialog.add_legal_section(
             "Weather Data",
             "Based on data from Deutscher Wetterdienst, "

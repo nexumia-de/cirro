@@ -24,6 +24,14 @@ updated with every release (tag `v<version>`); *Cirro (Nightly)*, which
 installs next to it, with every push to `main`. See
 [docs/release-channels.md](docs/release-channels.md).
 
+## Support
+
+Cirro is free for everyone. If you want to support its development
+and more free apps, you can do so on
+[Liberapay](https://liberapay.com/suitably). What the money pays for
+and which fees each platform takes:
+[support](https://github.com/nexumia-de/phosh-toolkit/blob/main/docs/support.md).
+
 ## Development
 
 This repository uses
