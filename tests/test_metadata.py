@@ -41,7 +41,7 @@ def test_metainfo_donation_url_matches_about_dialog():
 
 def test_user_agent():
     assert cirro.USER_AGENT == (
-        f"Cirro/{cirro.VERSION} (+https://github.com/suitably/cirro)")
+        f"Cirro/{cirro.VERSION} (+https://github.com/nexumia-de/cirro)")
 
 
 def test_nightly_variant_of_desktop_file_and_metainfo():
