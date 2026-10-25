@@ -30,7 +30,7 @@ phone. Feature priorities: [feature inventory](features.md).
 - [x] Scaffold: Python package `wetterblick/`, meson build, `.desktop`
       (`X-Purism-FormFactor=Workstation;Mobile;`), metainfo with
       `display_length ≥ 360` and touch, icon, Flatpak manifest
-      `io.github.suitably.Wetterblick.yml`, Flatpak CI calling the
+      `de.nexumia.Wetterblick.yml`, Flatpak CI calling the
       toolkit workflow, `tests/` with pytest.
 - [x] Empty adaptive window passes the 360×720 screenshot check;
       `appstreamcli validate`, `desktop-file-validate` clean.

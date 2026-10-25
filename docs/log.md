@@ -1,5 +1,8 @@
 # Directory Update Log
 
+## 2026-10-25
+* **Update**: App id renamed from `io.github.suitably.Wetterblick` to `de.nexumia.Wetterblick` (files, meson, manifest, metadata, tests, docs) and the install URL is now `https://flatpak.nexumia.de/`, following the toolkit decision [domain-based names](../../phosh-toolkit/docs/decisions/domain-names.md). No release existed, so no migration is needed.
+
 ## 2026-10-24
 * **Update**: The Flatpak CI publishes every push to `main` to the shared repository `suitably/phosh-apps` (see the toolkit's [shared app repository](../../phosh-toolkit/docs/app-repository.md)); README explains installing via GNOME Software.
 * **Update**: M0 of the [roadmap](roadmap.md). Verified the RV composite and the WMS against the live services and recorded layout, projection, sizes, cadence, 48 h history and range-request support in [data sources](data-sources.md); recorded one RV member in `tests/data/`. Accepted the [radar source](decisions/radar-source.md), [libshumate](decisions/map-libshumate.md) and [Python](decisions/python-pygobject.md) decisions (runtime lacks libshumate, numpy, h5py; built as manifest modules). Updated [radar architecture](radar-architecture.md) (decoder paths, `uint32` data, bandwidth). Scaffolded the app (meson, Python package, metadata, icon, Flatpak manifest, CI, pytest) and documented build, test and screenshot steps in [dev environment](dev-environment.md).

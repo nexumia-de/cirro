@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
-  <id>io.github.suitably.Wetterblick</id>
+  <id>de.nexumia.Wetterblick</id>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>AGPL-3.0-or-later</project_license>
   <name>Wetterblick</name>
@@ -16,13 +16,13 @@
       Deutscher Wetterdienst. Map data © OpenStreetMap contributors.
     </p>
   </description>
-  <developer id="io.github.suitably">
+  <developer id="de.nexumia">
     <name>suitably</name>
   </developer>
   <url type="homepage">https://github.com/suitably/wetterblick</url>
   <url type="bugtracker">https://github.com/suitably/wetterblick/issues</url>
   <url type="vcs-browser">https://github.com/suitably/wetterblick</url>
-  <launchable type="desktop-id">io.github.suitably.Wetterblick.desktop</launchable>
+  <launchable type="desktop-id">de.nexumia.Wetterblick.desktop</launchable>
   <content_rating type="oars-1.1"/>
   <categories>
     <category>Utility</category>
