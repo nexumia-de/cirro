@@ -26,6 +26,12 @@ sources:
   - id: radar-card
     resource: https://github.com/jpettitt/weather-radar-card/releases/tag/v3.4.0
     title: weather-radar-card v3.4.0 release notes (DWD WMS layers)
+  - id: dwd-legal
+    resource: https://www.dwd.de/DE/service/rechtliche_hinweise/rechtliche_hinweise_node.html
+    title: DWD legal notice (Rechtliche Hinweise)
+  - id: dwd-source
+    resource: https://www.dwd.de/EN/service/legal_notice/templates_dwd_as_source.html
+    title: DWD rules for acknowledging the DWD as source
   - id: osm-tile-policy
     resource: https://operations.osmfoundation.org/policies/tiles/
     title: OSMF tile usage policy
@@ -36,7 +42,8 @@ sources:
 Sections 1 and 2 were checked against the live services on 2026-10-24
 around 21:15 UTC (milestone M0 of the [roadmap](roadmap.md)); facts
 marked *(live)* come from that check, footnoted facts from web research.
-Sections 3–6 are still from web research only.
+Sections 3–6 are still from web research only. Section 7 was checked
+against the live DWD pages on 2026-10-25.
 
 # 1. RADVOR RV nowcast composite (primary radar data)
 
@@ -170,6 +177,31 @@ requires a valid `User-Agent`, attribution, client-side caching and no
 bulk or offline prefetching.[^osm-tile-policy] If that becomes a
 problem, switch to another tile provider; the tile URL is a setting.
 
+# 7. Licences and attribution *(live, 2026-10-25)*
+
+- DWD: all freely accessible geodata and geodata services may be reused
+  under **CC BY 4.0** with a source note.[^dwd-legal] Geodata includes
+  all meteorological weather and climate information with a location.
+- The source note goes **immediately next to the information used**:
+  "Source: Deutscher Wetterdienst" for unchanged data. For processed
+  data DWD expects an alteration note such as "Based on data from
+  Deutscher Wetterdienst, gridded data reproduced graphically", and at
+  least a mention in a central list of references.[^dwd-source] Changed
+  official warnings must not carry the DWD source note (relevant for
+  M4).
+- Cirro reprojects and colours the RV grid. The map shows "Based on
+  data from Deutscher Wetterdienst" next to the radar (`cirro/window.py`);
+  the full alteration note "…, gridded data reproduced graphically" did
+  not fit next to the scale bar at 360 px, so it is in the About dialog
+  (the central list of references DWD expects for processed data) with
+  the CC BY 4.0 link (`cirro/main.py`). Text form only: no DWD logo (see
+  `AGENTS.md`).
+- OSM: "© OpenStreetMap contributors" on the map (libshumate's licence
+  widget) and in the About dialog, with a link to the ODbL copyright
+  page.
+- Recorded DWD sample data in `tests/data/` is marked `CC-BY-4.0`,
+  copyright Deutscher Wetterdienst, in `REUSE.toml`.
+
 [^dwd-radar-products]: DWD, Radar products
 [^sdwf-40]: simple_dwd_weatherforecast #40
 [^rain-warner-9]: ha-rain-warner #9
@@ -178,3 +210,5 @@ problem, switch to another tile provider; the tile URL is a setting.
 [^breezy-3010]: breezy-weather #3010
 [^radar-card]: weather-radar-card v3.4.0 release notes
 [^osm-tile-policy]: OSMF tile usage policy
+[^dwd-legal]: DWD legal notice (Rechtliche Hinweise)
+[^dwd-source]: DWD rules for acknowledging the DWD as source

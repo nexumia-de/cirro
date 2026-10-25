@@ -49,11 +49,35 @@ class Application(Adw.Application):
                      "with the Deutscher Wetterdienst.",
         )
         dialog.add_legal_section(
-            "Weather data", "Deutscher Wetterdienst (DWD), open data",
-            Gtk.License.CUSTOM, None)
+            "Weather Data",
+            "Based on data from Deutscher Wetterdienst, "
+            "gridded data reproduced graphically",
+            Gtk.License.CUSTOM,
+            "Radar composites reprojected and coloured by Cirro. Licensed "
+            "under <a href='https://creativecommons.org/licenses/by/4.0/'>"
+            "CC BY 4.0</a>.")
         dialog.add_legal_section(
-            "Map data", "© OpenStreetMap contributors",
-            Gtk.License.CUSTOM, None)
+            "Map Data", "© OpenStreetMap contributors",
+            Gtk.License.CUSTOM,
+            "Available under the <a href='https://www.openstreetmap.org/"
+            "copyright'>Open Database License</a>.")
+        # Bundled libraries (docs/dependencies.md); full licence texts are
+        # in /app/share/licenses/de.nexumia.Cirro/.
+        for name, holder, license_type, text in (
+                ("libshumate", "© The libshumate authors",
+                 Gtk.License.LGPL_2_1, None),
+                ("protobuf-c", "© Dave Benson and the protobuf-c authors",
+                 Gtk.License.CUSTOM, "BSD-2-Clause"),
+                ("NumPy", "© NumPy Developers",
+                 Gtk.License.CUSTOM,
+                 "BSD-3-Clause; bundles OpenBLAS (BSD-3-Clause), "
+                 "libgfortran (GPL-3.0-or-later with GCC runtime exception) "
+                 "and libquadmath (LGPL-2.1-or-later)."),
+                ("h5py", "© Andrew Collette and contributors",
+                 Gtk.License.CUSTOM,
+                 "BSD-3-Clause; bundles HDF5 (BSD-3-Clause) and libaec "
+                 "(BSD-2-Clause).")):
+            dialog.add_legal_section(name, holder, license_type, text)
         dialog.present(self.props.active_window)
 
 

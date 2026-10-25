@@ -21,6 +21,7 @@ Change history is in [log.md](log.md).
 
 # Development
 
+* [Bundled dependencies](dependencies.md) - Every module in the Flatpak with version, licence, bundled libraries and update check.
 * [Development environment](dev-environment.md) - Required hosts and host packages; how to run, test, screenshot and Flatpak-build the app.
 
 # Decision records

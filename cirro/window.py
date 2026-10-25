@@ -36,7 +36,10 @@ class Window(Adw.ApplicationWindow):
         self.map = Shumate.SimpleMap()
         registry = Shumate.MapSourceRegistry.new_with_defaults()
         self.map.set_map_source(registry.get_by_id(Shumate.MAP_SOURCE_OSM_MAPNIK))
-        self.map.get_license().set_extra_text("Radar data: Deutscher Wetterdienst")
+        # DWD source note at the data; the full alteration note is in the
+        # About dialog (docs/data-sources.md, licences and attribution).
+        self.map.get_license().set_extra_text(
+            "Based on data from Deutscher Wetterdienst")
         viewport = self.map.get_viewport()
         viewport.set_min_zoom_level(4)
         viewport.set_max_zoom_level(12)

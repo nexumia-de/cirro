@@ -28,8 +28,18 @@ environment the hosts above go under the environment's network access settings
 DWD, Bright Sky and OSM hosts (proxy answered `403` to `CONNECT`); after
 they were allowed, `opendata.dwd.de`, `maps.dwd.de`, `api.brightsky.dev`
 and `tile.openstreetmap.org` answered normally (21:15 UTC). Building the
-Flatpak also needs `download.gnome.org`, `github.com` (protobuf-c) and
-`files.pythonhosted.org` (wheels).
+Flatpak also needs `download.gnome.org`, `github.com` (protobuf-c),
+`files.pythonhosted.org` (wheels) and `raw.githubusercontent.com`
+(libaec licence text, see [dependencies](dependencies.md)).
+
+Checking for updates locally with flatpak-external-data-checker (see
+[dependencies](dependencies.md)) also needs `pypi.org`,
+`api.github.com` and, to pull the checker's container image,
+`pkg-containers.githubusercontent.com`. On 2026-10-25 the cloud proxy
+refused `pkg-containers.githubusercontent.com` (`403`), and
+`api.github.com` answered `403` for repositories outside the session,
+so the protobuf-c check only runs in CI; the checker ran from a source
+checkout instead of the image.
 
 # Working without the network
 
