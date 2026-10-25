@@ -6,7 +6,7 @@ Weather app for Phosh, modelled on DWD's WarnWetter app. The rain radar
 with its 2-hour forecast is the core feature; everything else is
 secondary. The shared rules in ../phosh-toolkit/AGENTS.md apply as well.
 
-- App id: `io.github.suitably.Wetterblick`.
+- App id: `de.nexumia.Wetterblick`.
 - Plan and milestones: [docs/roadmap.md](docs/roadmap.md). Work on the
   current milestone first; do not start later milestones without asking.
 - Data sources and their open questions:

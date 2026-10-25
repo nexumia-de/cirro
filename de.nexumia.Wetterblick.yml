@@ -1,4 +1,4 @@
-id: io.github.suitably.Wetterblick
+id: de.nexumia.Wetterblick
 runtime: org.gnome.Platform
 runtime-version: '51'
 sdk: org.gnome.Sdk

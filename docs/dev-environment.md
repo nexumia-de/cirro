@@ -66,7 +66,7 @@ search path, because the icon is not installed.
 
 ```sh
 flatpak-builder --user --install-deps-from=flathub --disable-rofiles-fuse \
-  --force-clean --repo=repo build-dir io.github.suitably.Wetterblick.yml
+  --force-clean --repo=repo build-dir de.nexumia.Wetterblick.yml
 ```
 
 Inside the build directory without installing:

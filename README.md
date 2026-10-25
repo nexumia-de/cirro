@@ -14,7 +14,7 @@ Deutscher Wetterdienst (DWD). Weather data: DWD open data. Map data:
 
 ## Install
 
-On the phone, open <https://suitably.github.io/phosh-apps/> and tap
+On the phone, open <https://flatpak.nexumia.de/> and tap
 Wetterblick; GNOME Software installs it and keeps it updated. Every
 push to `main` is published there.
 

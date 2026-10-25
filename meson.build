@@ -4,7 +4,7 @@ project('wetterblick',
   license: 'AGPL-3.0-or-later',
 )
 
-app_id = 'io.github.suitably.Wetterblick'
+app_id = 'de.nexumia.Wetterblick'
 
 python = import('python').find_installation('python3')
 pythondir = python.get_install_dir()

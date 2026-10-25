@@ -5,7 +5,7 @@ from pathlib import Path
 import wetterblick
 
 ROOT = Path(__file__).resolve().parent.parent
-APP_ID = "io.github.suitably.Wetterblick"
+APP_ID = "de.nexumia.Wetterblick"
 
 
 def test_version_matches_meson_and_metainfo():
@@ -32,4 +32,4 @@ def test_metainfo_declares_phone_support():
 
 def test_user_agent():
     assert wetterblick.USER_AGENT == (
-        f"Wetterblick/{wetterblick.VERSION} (+https://github.com/suitably/wetterblick)")
+        f"Wetterblick/{wetterblick.VERSION} (+https://github.com/suitably/cirro)")

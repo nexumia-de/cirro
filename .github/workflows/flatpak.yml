@@ -10,7 +10,7 @@ jobs:
       contents: write
     uses: suitably/phosh-toolkit/.github/workflows/flatpak.yml@main
     with:
-      manifest: io.github.suitably.Wetterblick.yml
+      manifest: de.nexumia.Wetterblick.yml
       # Pushes to main publish to suitably/phosh-apps (GNOME Software).
       release: true
       publish-repo: suitably/phosh-apps
