@@ -27,7 +27,9 @@ def test_metainfo_declares_phone_support():
     root = ET.parse(ROOT / "data" / f"{APP_ID}.metainfo.xml").getroot()
     length = root.find("recommends/display_length")
     assert length.get("compare") == "ge" and length.text == "360"
-    assert root.find("supports/control").text == "touch"
+    # GNOME Software marks every control not listed as unsupported.
+    controls = {c.text for c in root.findall("supports/control")}
+    assert {"touch", "pointing", "keyboard"} <= controls
 
 
 def test_user_agent():
