@@ -1,21 +1,25 @@
-# Wetterblick
+# Cirro
+
+Named after cirrus clouds (*cirro-* as in cirrostratus), the high
+clouds that often announce rain a day ahead. Formerly *Wetterblick*.
 
 Adaptive GTK4/libadwaita weather app for [Phosh](https://phosh.mobi/)
 phones, modelled on the feature set of DWD's WarnWetter app. Focus: the
 **rain radar with a 2-hour forecast** (DWD RADVOR nowcast) on a map,
 animated from the past hour to +2 h.
 
-Status: scaffold (milestone M0), no radar yet. See
+Status: milestone M1, a map with the current radar frame; animation
+and forecast follow in M2. See
 [docs/roadmap.md](docs/roadmap.md).
 
-Wetterblick is an independent project and not affiliated with the
+Cirro is an independent project and not affiliated with the
 Deutscher Wetterdienst (DWD). Weather data: DWD open data. Map data:
 © OpenStreetMap contributors.
 
 ## Install
 
 On the phone, open <https://flatpak.nexumia.de/> and tap
-Wetterblick; GNOME Software installs it and keeps it updated. Every
+Cirro; GNOME Software installs it and keeps it updated. Every
 push to `main` is published there.
 
 ## Development
@@ -27,7 +31,7 @@ next to it:
 ```
 workspace/
   phosh-toolkit/
-  wetterblick/
+  cirro/
 ```
 
 ```sh
@@ -35,7 +39,7 @@ workspace/
 bash phosh-toolkit/setup.sh
 ```
 
-Run from the source tree with `python3 -m wetterblick`, test with
+Run from the source tree with `python3 -m cirro`, test with
 `python3 -m pytest`. Details, including the Flatpak build:
 [docs/dev-environment.md](docs/dev-environment.md).
 

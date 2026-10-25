@@ -1,9 +1,9 @@
 ---
 type: Concept
 title: Radar architecture
-description: How Wetterblick fetches, decodes, caches, projects and animates RV nowcast frames on a libshumate map.
+description: How Cirro fetches, decodes, caches, projects and animates RV nowcast frames on a libshumate map.
 tags: [radar, architecture, nowcast, map, animation]
-generated: { by: claude-code/2.1.310, at: 2026-10-24T21:40:00Z }
+generated: { by: claude-code/2.1.310, at: 2026-10-24T23:50:00Z }
 ---
 
 # Goal
@@ -41,10 +41,10 @@ RadarSource ──► FrameStore ──► Colorizer ──► RadarLayer (Shuma
 3. **FrameStore**: ordered timeline `{valid_time: Frame}`, one source of
    truth for the UI; drops frames older than 3 h; persists the last
    download in `$XDG_CACHE_HOME` so the app opens instantly.
-4. **Colorizer**: mm/h → RGBA lookup table (precomputed 256-entry LUT on
-   a quantised value, transparent below 0.1 mm/h). Produces one
-   `Gdk.MemoryTexture` per frame at native grid size (1200×1100), done
-   once per frame, not per draw.
+4. **Colorizer**: raw value → RGBA lookup table (65 536 entries,
+   transparent below 0.1 mm/h). Produces one `Gdk.MemoryTexture` per
+   frame in the reprojected grid (step 5), done once per frame, not per
+   draw.
 5. **Projection**: the RV grid is not Web Mercator. Instead of
    reprojecting per pixel on every draw, reproject **once per frame**
    into a Web-Mercator-aligned texture covering the composite's bounding
@@ -59,6 +59,35 @@ RadarSource ──► FrameStore ──► Colorizer ──► RadarLayer (Shuma
 7. **TimeBar**: `Gtk.Scale` with marks per 30 min, a "now" mark,
    play/pause button, label "Forecast +35 min" vs. "14:05"; playback via
    `GLib.timeout_add(400 ms)`, stops at the end and loops after a pause.
+
+# Implementation status (M1)
+
+M1 shows one static frame, the newest analysis (`_000`). Modules:
+
+| Module | Step |
+|---|---|
+| `cirro/source.py` | Download: `Range: bytes=0-511` on `composite_rv_LATEST.tar` gives the first member's name and size; the member itself is then fetched from the timestamped tar named in it (immutable, so LATEST being replaced between the two requests does no harm). Falls back to slicing if a server ignores ranges. |
+| `cirro/radar.py` | Decoder → `Frame` (`uint16` raw, gain/offset, times, forecast flag) and `Grid` (projdef, size, outer edges from the `UL` corner). |
+| `cirro/projection.py` | Polar stereographic forward/inverse and Web Mercator in numpy (pyproj is not in the Flatpak); agrees with pyproj to < 1 mm. `reproject_grid()` builds the index table for a 1400-px-wide Mercator image (1400×1364, ≈ 1.2 km per pixel), cached per `Grid`. |
+| `cirro/colors.py` | 65 536-entry RGBA lookup table on the raw value ([colour scale](decisions/colour-scale.md)). |
+| `cirro/radar_layer.py` | `RadarLayer` computes the texture rectangle with `MapSource.get_x/get_y` like `shumate_viewport_location_to_widget_coords()` and applies the map rotation to the snapshot. Linear filtering below zoom 9, nearest from zoom 9. |
+| `cirro/window.py` | Map, legend, reload button; loading runs in a thread, errors show a toast with "Retry". |
+
+Timings on the x86_64 dev container: index table 0.5 s (once), colouring
+40 ms per frame, member download 0.1–0.6 MB. Phone numbers follow in M2.
+
+`Shumate.set_user_agent()` makes libshumate send the app's User-Agent
+for tiles; libshumate's tile downloader keeps its own 100 MB file cache.
+
+## Alignment check
+
+On 2026-10-24 the 23:40 UTC analysis was compared with DWD's WMS
+(`Radar_rv_product_1x1km_ger`, `EPSG:3857`, 512×512 px over
+5.5–11.0 °E, 49.0–53.5 °N, ≈ 2 km per pixel): the WMS's yellow-and-above
+area and our ≥ 3.0 mm/h area (threshold picked to match the area
+fraction) agreed in **100 %** of pixels at zero offset and 98 % at
+±1 px, so there is no systematic shift. A screenshot at zoom 9.5 over
+the Jade Bight shows the cells following the coast.
 
 # Point nowcast (M3)
 

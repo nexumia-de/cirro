@@ -1,8 +1,8 @@
-id: de.nexumia.Wetterblick
+id: de.nexumia.Cirro
 runtime: org.gnome.Platform
 runtime-version: '51'
 sdk: org.gnome.Sdk
-command: wetterblick
+command: cirro
 finish-args:
   - --share=ipc
   - --socket=fallback-x11
@@ -71,7 +71,7 @@ modules:
         url: https://files.pythonhosted.org/packages/58/a5/4964bc0e91e86340c2bbda83420225b2f770dcf1eb8a39464871ad769436/h5py-3.16.0-cp314-cp314-manylinux_2_28_aarch64.whl
         sha256: e2c04d129f180019e216ee5f9c40b78a418634091c8782e1f723a6ca3658b965
 
-  - name: wetterblick
+  - name: cirro
     buildsystem: meson
     sources:
       - type: dir
