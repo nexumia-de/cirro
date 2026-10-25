@@ -37,7 +37,7 @@ and which fees each platform takes:
 ## Development
 
 This repository uses
-[phosh-toolkit](https://github.com/suitably/phosh-toolkit), checked out
+[phosh-toolkit](https://github.com/nexumia-de/phosh-toolkit), checked out
 next to it:
 
 ```
@@ -47,7 +47,7 @@ workspace/
 ```
 
 ```sh
-[ -d phosh-toolkit ] || git clone https://github.com/suitably/phosh-toolkit.git
+[ -d phosh-toolkit ] || git clone https://github.com/nexumia-de/phosh-toolkit.git
 bash phosh-toolkit/setup.sh
 ```
 
