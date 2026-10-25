@@ -62,13 +62,14 @@ modules:
 
   # numpy and h5py are built from their source archives, as Flathub
   # requires for every bundled dependency (phosh-toolkit docs/flathub.md).
-  # Their Python build tools are pure-Python wheels, removed after the
-  # build; only their licence texts stay.
+  # Their Python build tools not in the SDK (which has Cython and
+  # packaging) are pure-Python wheels, removed after the build; only
+  # their licence texts stay.
   - name: python3-build-tools
     buildsystem: simple
     build-commands:
       - pip3 install --no-index --find-links="file://${PWD}" --prefix=${FLATPAK_DEST} --no-deps
-        cython meson-python pyproject-metadata packaging pkgconfig
+        meson-python pyproject-metadata pkgconfig
       - |
         for d in ${FLATPAK_DEST}/lib/python3*/site-packages/*.dist-info; do
           dest=${FLATPAK_DEST}/share/licenses/${FLATPAK_ID}/python3-build-tools/$(basename "$d" | sed 's/-[0-9].*//')
@@ -84,13 +85,6 @@ modules:
       - /lib
     sources:
       - type: file
-        url: https://files.pythonhosted.org/packages/bf/77/67b0b24e45073a699610e50f00c18474ff9b09ea29ecc95083bdf5e60acd/cython-3.3.0-py3-none-any.whl
-        sha256: 9b24b5c8cd536946b62086fcafee6d5509d3f549f72d553d2336af87ffbe0da1
-        x-checker-data:
-          type: pypi
-          name: cython
-          packagetype: bdist_wheel
-      - type: file
         url: https://files.pythonhosted.org/packages/96/62/0c1cf20fe158b0e623e78acbf5fb6de5f1410a408f65f727e4090497627b/meson_python-0.22.1-py3-none-any.whl
         sha256: 258fde948cf45aab5df23fcc9e17a9050ee73d4e1002fe6cf86519f61c414778
         x-checker-data:
@@ -103,13 +97,6 @@ modules:
         x-checker-data:
           type: pypi
           name: pyproject-metadata
-          packagetype: bdist_wheel
-      - type: file
-        url: https://files.pythonhosted.org/packages/63/34/ba1c580383c9eada3711951fef0795c80b829a078d72188184bcab9dd527/packaging-26.3-py3-none-any.whl
-        sha256: d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c
-        x-checker-data:
-          type: pypi
-          name: packaging
           packagetype: bdist_wheel
       - type: file
         url: https://files.pythonhosted.org/packages/75/6f/f7ec07fba48f07c555cc4099481df644fbbc12067879072c17ac229f6556/pkgconfig-1.6.0-py3-none-any.whl
@@ -158,6 +145,8 @@ modules:
     sources:
       - type: archive
         url: https://github.com/HDFGroup/hdf5/releases/download/2.0.0/hdf5-2.0.0.tar.gz
+        # The paths start with ./hdf5-2.0.0/.
+        strip-components: 2
         sha256: f4c2edc5668fb846627182708dbe1e16c60c467e63177a75b0b9f12c19d7efed
         x-checker-data:
           type: json
