@@ -95,7 +95,7 @@ def decode(data):
         xscale, yscale = float(where["xscale"]), float(where["yscale"])
         # The corner coordinates are the outer cell edges; the upper-left
         # one fixes the grid's position (docs/data-sources.md).
-        from wetterblick.projection import Stereographic
+        from cirro.projection import Stereographic
         x_min, y_max = Stereographic(parse_projdef(projdef)).forward(
             float(where["UL_lon"]), float(where["UL_lat"]))
         grid = Grid(projdef, xsize, ysize, xscale, yscale,

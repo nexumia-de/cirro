@@ -1,7 +1,7 @@
 ---
 type: Playbook
 title: Development environment
-description: Network hosts, host packages, and how to run, test, screenshot and Flatpak-build Wetterblick.
+description: Network hosts, host packages, and how to run, test, screenshot and Flatpak-build Cirro.
 tags: [development, network, cloud, testing]
 generated: { by: claude-code/2.1.310, at: 2026-10-24T21:40:00Z }
 ---
@@ -57,10 +57,10 @@ sudo apt-get install --no-install-recommends \
 # Run, test, screenshot
 
 ```sh
-python3.12 -m wetterblick                 # from the source tree
+python3.12 -m cirro                 # from the source tree
 python3.12 -m pytest                      # tests/ (pyproject.toml)
-../phosh-toolkit/scripts/screenshot.sh -o shot.png -- python3.12 -m wetterblick
-../phosh-toolkit/scripts/screenshot.sh -W 1000 -H 700 -o wide.png -- python3.12 -m wetterblick
+../phosh-toolkit/scripts/screenshot.sh -o shot.png -- python3.12 -m cirro
+../phosh-toolkit/scripts/screenshot.sh -W 1000 -H 700 -o wide.png -- python3.12 -m cirro
 ```
 
 Run from the source tree, the app adds `data/icons` to the icon theme
@@ -70,7 +70,7 @@ search path, because the icon is not installed.
 
 ```sh
 flatpak-builder --user --install-deps-from=flathub --disable-rofiles-fuse \
-  --force-clean --repo=repo build-dir io.github.suitably.Wetterblick.yml
+  --force-clean --repo=repo build-dir io.github.suitably.Cirro.yml
 ```
 
 Inside the build directory without installing:
@@ -87,7 +87,7 @@ display through:
 ../phosh-toolkit/scripts/screenshot.sh -o fp.png -- sh -c 'exec flatpak build \
   --share=ipc --filesystem=/root/.cache --env=XDG_RUNTIME_DIR=/root/.cache \
   --env=GDK_BACKEND=broadway --env=BROADWAY_DISPLAY="$BROADWAY_DISPLAY" \
-  build-dir wetterblick'
+  build-dir cirro'
 ```
 
 Two things fail only in the cloud dev container, not on a device:
@@ -102,7 +102,7 @@ Two things fail only in the cloud dev container, not on a device:
   loaders through `flatpak-spawn --sandbox`; under `flatpak build` in the
   container there is no Flatpak portal, so every tile fails with "Loader
   process exited early" and the map stays blank. Check tiles with the
-  host run (`python3.12 -m wetterblick`) instead.
+  host run (`python3.12 -m cirro`) instead.
 
 `--share=network` in the manifest is needed for radar data and map
 tiles; no other permission beyond the toolkit defaults is used yet.

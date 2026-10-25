@@ -1,5 +1,8 @@
 # Directory Update Log
 
+## 2026-10-25
+* **Update**: Renamed the app from Wetterblick to Cirro and moved it to `suitably/cirro` ([app name decision](decisions/app-name.md)): app id `io.github.suitably.Cirro`, package and command `cirro`; all concept files updated. Entries below keep the old name.
+
 ## 2026-10-24
 * **Update**: M1 of the [roadmap](roadmap.md): OSM map with the current RV analysis frame, decoded, reprojected to Web Mercator in numpy and coloured; legend below the map. Implementation, timings and the WMS alignment check are in [radar architecture](radar-architecture.md); new [colour scale decision](decisions/colour-scale.md); member size note and WMS findings added to [data sources](data-sources.md). M0's CI item is done: the app installs on the phone from the shared repository. Sandbox-only dev-container pitfalls (proxy CA, glycin tiles) recorded in [dev environment](dev-environment.md).
 * **Update**: The Flatpak CI publishes every push to `main` to the shared repository `suitably/phosh-apps` (see the toolkit's [shared app repository](../../phosh-toolkit/docs/app-repository.md)); README explains installing via GNOME Software.

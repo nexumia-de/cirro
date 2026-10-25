@@ -1,7 +1,7 @@
 ---
 type: Concept
 title: Radar architecture
-description: How Wetterblick fetches, decodes, caches, projects and animates RV nowcast frames on a libshumate map.
+description: How Cirro fetches, decodes, caches, projects and animates RV nowcast frames on a libshumate map.
 tags: [radar, architecture, nowcast, map, animation]
 generated: { by: claude-code/2.1.310, at: 2026-10-24T23:50:00Z }
 ---
@@ -66,12 +66,12 @@ M1 shows one static frame, the newest analysis (`_000`). Modules:
 
 | Module | Step |
 |---|---|
-| `wetterblick/source.py` | Download: `Range: bytes=0-511` on `composite_rv_LATEST.tar` gives the first member's name and size; the member itself is then fetched from the timestamped tar named in it (immutable, so LATEST being replaced between the two requests does no harm). Falls back to slicing if a server ignores ranges. |
-| `wetterblick/radar.py` | Decoder → `Frame` (`uint16` raw, gain/offset, times, forecast flag) and `Grid` (projdef, size, outer edges from the `UL` corner). |
-| `wetterblick/projection.py` | Polar stereographic forward/inverse and Web Mercator in numpy (pyproj is not in the Flatpak); agrees with pyproj to < 1 mm. `reproject_grid()` builds the index table for a 1400-px-wide Mercator image (1400×1364, ≈ 1.2 km per pixel), cached per `Grid`. |
-| `wetterblick/colors.py` | 65 536-entry RGBA lookup table on the raw value ([colour scale](decisions/colour-scale.md)). |
-| `wetterblick/radar_layer.py` | `RadarLayer` computes the texture rectangle with `MapSource.get_x/get_y` like `shumate_viewport_location_to_widget_coords()` and applies the map rotation to the snapshot. Linear filtering below zoom 9, nearest from zoom 9. |
-| `wetterblick/window.py` | Map, legend, reload button; loading runs in a thread, errors show a toast with "Retry". |
+| `cirro/source.py` | Download: `Range: bytes=0-511` on `composite_rv_LATEST.tar` gives the first member's name and size; the member itself is then fetched from the timestamped tar named in it (immutable, so LATEST being replaced between the two requests does no harm). Falls back to slicing if a server ignores ranges. |
+| `cirro/radar.py` | Decoder → `Frame` (`uint16` raw, gain/offset, times, forecast flag) and `Grid` (projdef, size, outer edges from the `UL` corner). |
+| `cirro/projection.py` | Polar stereographic forward/inverse and Web Mercator in numpy (pyproj is not in the Flatpak); agrees with pyproj to < 1 mm. `reproject_grid()` builds the index table for a 1400-px-wide Mercator image (1400×1364, ≈ 1.2 km per pixel), cached per `Grid`. |
+| `cirro/colors.py` | 65 536-entry RGBA lookup table on the raw value ([colour scale](decisions/colour-scale.md)). |
+| `cirro/radar_layer.py` | `RadarLayer` computes the texture rectangle with `MapSource.get_x/get_y` like `shumate_viewport_location_to_widget_coords()` and applies the map rotation to the snapshot. Linear filtering below zoom 9, nearest from zoom 9. |
+| `cirro/window.py` | Map, legend, reload button; loading runs in a thread, errors show a toast with "Retry". |
 
 Timings on the x86_64 dev container: index table 0.5 s (once), colouring
 40 ms per frame, member download 0.1–0.6 MB. Phone numbers follow in M2.

@@ -1,7 +1,7 @@
 ---
 type: Decision Record
 title: No own backend
-description: Wetterblick calls DWD open data and other public services directly from the phone.
+description: Cirro calls DWD open data and other public services directly from the phone.
 tags: [decision, architecture, backend]
 generated: { by: claude-code/2.1.310, at: 2026-10-24T20:45:00Z }
 ---

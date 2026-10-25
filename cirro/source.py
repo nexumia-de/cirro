@@ -8,7 +8,7 @@ import re
 import tarfile
 import urllib.request
 
-from wetterblick import USER_AGENT
+from cirro import USER_AGENT
 
 BASE_URL = "https://opendata.dwd.de/weather/radar/composite/rv/"
 LATEST = "composite_rv_LATEST.tar"

@@ -5,9 +5,9 @@ import gi
 gi.require_version("Shumate", "1.0")
 from gi.repository import Adw, Gio, GLib, Gtk, Shumate  # noqa: E402
 
-from wetterblick import colors, projection, radar, source  # noqa: E402
-from wetterblick.legend import Legend  # noqa: E402
-from wetterblick.radar_layer import RadarLayer, rgba_texture  # noqa: E402
+from cirro import colors, projection, radar, source  # noqa: E402
+from cirro.legend import Legend  # noqa: E402
+from cirro.radar_layer import RadarLayer, rgba_texture  # noqa: E402
 
 # Initial view: all of Germany on a 360 px wide phone screen.
 GERMANY = (51.2, 10.4, 5.8)
@@ -15,15 +15,15 @@ GERMANY = (51.2, 10.4, 5.8)
 
 class Window(Adw.ApplicationWindow):
     def __init__(self, app):
-        super().__init__(application=app, title="Wetterblick")
+        super().__init__(application=app, title="Cirro")
         self.set_default_size(800, 600)
         self.set_size_request(360, 294)
         self._reprojections = {}
         self._loading = False
 
         menu = Gio.Menu()
-        menu.append("_About Wetterblick", "app.about")
-        self._title = Adw.WindowTitle(title="Wetterblick")
+        menu.append("_About Cirro", "app.about")
+        self._title = Adw.WindowTitle(title="Cirro")
         header = Adw.HeaderBar(title_widget=self._title)
         header.pack_end(Gtk.MenuButton(
             icon_name="open-menu-symbolic", menu_model=menu,
@@ -90,7 +90,7 @@ class Window(Adw.ApplicationWindow):
     def _on_failed(self, error):
         self._loading = False
         self._refresh.set_sensitive(True)
-        print(f"wetterblick: radar download failed: {error}")
+        print(f"cirro: radar download failed: {error}")
         toast = Adw.Toast(title="Radar data could not be loaded",
                           button_label="Retry", timeout=0)
         toast.connect("button-clicked", lambda *_: self.load_radar())

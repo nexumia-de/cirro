@@ -23,7 +23,7 @@ are part of its branding, which the app must not copy (see
 - Show rain rate in mm/h (mm per 5 min × 12).
 - Eight classes with lower bounds 0.1, 0.5, 1, 2, 5, 10, 20, 50 mm/h,
   coloured light blue → blue → green → yellow → orange → red → magenta
-  (`wetterblick/colors.py`). Below 0.1 mm/h and outside the radar
+  (`cirro/colors.py`). Below 0.1 mm/h and outside the radar
   coverage the overlay is transparent.
 - One alpha value (`0xb8`) for all classes, so the base map stays
   visible underneath.

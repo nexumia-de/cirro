@@ -79,7 +79,7 @@ class Reprojection:
 
 def reproject_grid(grid, width=1400):
     """Build the Reprojection for a radar Grid at `width` target pixels."""
-    from wetterblick.radar import parse_projdef
+    from cirro.radar import parse_projdef
 
     stere = Stereographic(parse_projdef(grid.projdef))
     xs = grid.x_min + np.arange(grid.xsize + 1) * grid.xscale

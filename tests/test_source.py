@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytest
 
-from wetterblick import USER_AGENT, source
+from cirro import USER_AGENT, source
 
 SAMPLE = Path(__file__).parent / "data" / "composite_rv_20261024_2110_000-hd5"
 TAR_NAME = "composite_rv_20261024_2110.tar"

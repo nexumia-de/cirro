@@ -1,5 +1,6 @@
 # Decision records
 
+* [App name Cirro](app-name.md) - Renamed from Wetterblick; new app id and repository suitably/cirro.
 * [Python and PyGObject](python-pygobject.md) - The app is written in Python with PyGObject, numpy for raster work.
 * [libshumate as map widget](map-libshumate.md) - The map is a libshumate view with OSM raster tiles and an own radar layer.
 * [RV nowcast composite as radar source](radar-source.md) - Radar frames come from DWD's RV open-data composite, WMS is the fallback.

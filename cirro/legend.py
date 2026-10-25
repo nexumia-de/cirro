@@ -1,6 +1,6 @@
 from gi.repository import Gtk
 
-from wetterblick.colors import ALPHA, SCALE
+from cirro.colors import ALPHA, SCALE
 
 _CSS = "\n".join(
     f".radar-swatch-{i} {{ background-color: rgba({r}, {g}, {b}, {ALPHA / 255:.2f}); "

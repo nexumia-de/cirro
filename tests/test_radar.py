@@ -7,7 +7,7 @@ import pytest
 
 pytest.importorskip("h5py")
 
-from wetterblick import colors, projection, radar  # noqa: E402
+from cirro import colors, projection, radar  # noqa: E402
 
 SAMPLE = Path(__file__).parent / "data" / "composite_rv_20261024_2110_000-hd5"
 

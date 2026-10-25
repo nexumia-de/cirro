@@ -7,8 +7,8 @@ gi.require_version("Adw", "1")
 gi.require_version("Shumate", "1.0")
 from gi.repository import Adw, Gdk, Gio, Gtk, Shumate  # noqa: E402
 
-from wetterblick import APP_ID, REPO_URL, USER_AGENT, VERSION  # noqa: E402
-from wetterblick.window import Window  # noqa: E402
+from cirro import APP_ID, REPO_URL, USER_AGENT, VERSION  # noqa: E402
+from cirro.window import Window  # noqa: E402
 
 
 class Application(Adw.Application):
@@ -38,7 +38,7 @@ class Application(Adw.Application):
 
     def _on_about(self, *_):
         dialog = Adw.AboutDialog(
-            application_name="Wetterblick",
+            application_name="Cirro",
             application_icon=APP_ID,
             version=VERSION,
             developer_name="suitably",

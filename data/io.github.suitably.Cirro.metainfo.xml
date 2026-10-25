@@ -1,28 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
-  <id>io.github.suitably.Wetterblick</id>
+  <id>io.github.suitably.Cirro</id>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>AGPL-3.0-or-later</project_license>
-  <name>Wetterblick</name>
+  <name>Cirro</name>
   <summary>Rain radar with a 2-hour forecast</summary>
   <description>
     <p>
-      Wetterblick shows the rain radar for Germany on a map, animated from
+      Cirro shows the rain radar for Germany on a map, animated from
       the past hour to two hours ahead, based on the radar nowcast that
       the Deutscher Wetterdienst publishes as open data.
     </p>
     <p>
-      Wetterblick is an independent project and not affiliated with the
+      Cirro is an independent project and not affiliated with the
       Deutscher Wetterdienst. Map data © OpenStreetMap contributors.
     </p>
   </description>
   <developer id="io.github.suitably">
     <name>suitably</name>
   </developer>
-  <url type="homepage">https://github.com/suitably/wetterblick</url>
-  <url type="bugtracker">https://github.com/suitably/wetterblick/issues</url>
-  <url type="vcs-browser">https://github.com/suitably/wetterblick</url>
-  <launchable type="desktop-id">io.github.suitably.Wetterblick.desktop</launchable>
+  <url type="homepage">https://github.com/suitably/cirro</url>
+  <url type="bugtracker">https://github.com/suitably/cirro/issues</url>
+  <url type="vcs-browser">https://github.com/suitably/cirro</url>
+  <replaces>
+    <id>io.github.suitably.Wetterblick</id>
+  </replaces>
+  <launchable type="desktop-id">io.github.suitably.Cirro.desktop</launchable>
   <content_rating type="oars-1.1"/>
   <categories>
     <category>Utility</category>

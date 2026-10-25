@@ -1,7 +1,7 @@
 ---
 type: Reference
 title: Data sources
-description: DWD open data products and other services Wetterblick uses, what is known about each and what still has to be verified.
+description: DWD open data products and other services Cirro uses, what is known about each and what still has to be verified.
 tags: [data, dwd, radar, radvor, wms, warnings, mosmix, osm]
 generated: { by: claude-code/2.1.310, at: 2026-10-24T21:40:00Z }
 sources:

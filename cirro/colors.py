@@ -1,7 +1,7 @@
 """Rain rate (mm/h) → RGBA colour scale for the radar overlay and legend."""
 import numpy as np
 
-from wetterblick.radar import NODATA
+from cirro.radar import NODATA
 
 # Lower bound in mm/h and colour of each class; below the first bound the
 # overlay is transparent. Blue → green → yellow → red → magenta, the usual

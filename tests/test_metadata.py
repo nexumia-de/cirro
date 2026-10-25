@@ -2,18 +2,18 @@ import re
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
-import wetterblick
+import cirro
 
 ROOT = Path(__file__).resolve().parent.parent
-APP_ID = "io.github.suitably.Wetterblick"
+APP_ID = "io.github.suitably.Cirro"
 
 
 def test_version_matches_meson_and_metainfo():
     meson = (ROOT / "meson.build").read_text()
-    assert re.search(r"version: '([^']+)'", meson).group(1) == wetterblick.VERSION
+    assert re.search(r"version: '([^']+)'", meson).group(1) == cirro.VERSION
     metainfo = ET.parse(ROOT / "data" / f"{APP_ID}.metainfo.xml")
     latest = metainfo.find("releases/release").get("version")
-    assert latest == wetterblick.VERSION
+    assert latest == cirro.VERSION
 
 
 def test_desktop_file_is_shown_in_phosh_mobile_mode():
@@ -31,5 +31,5 @@ def test_metainfo_declares_phone_support():
 
 
 def test_user_agent():
-    assert wetterblick.USER_AGENT == (
-        f"Wetterblick/{wetterblick.VERSION} (+https://github.com/suitably/wetterblick)")
+    assert cirro.USER_AGENT == (
+        f"Cirro/{cirro.VERSION} (+https://github.com/suitably/cirro)")
