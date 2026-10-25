@@ -1,3 +1,5 @@
+import logging
+import os
 from pathlib import Path
 
 import gi
@@ -82,5 +84,10 @@ class Application(Adw.Application):
 
 
 def main(argv):
+    # CIRRO_DEBUG=1 logs downloads, render timings, memory and CPU time
+    # (docs/radar-architecture.md, measuring on the phone).
+    logging.basicConfig(format="cirro: %(name)s: %(message)s")
+    if os.environ.get("CIRRO_DEBUG"):
+        logging.getLogger("cirro").setLevel(logging.DEBUG)
     return Application().run(argv)
 

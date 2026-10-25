@@ -69,12 +69,32 @@ def parse_projdef(projdef):
     return params
 
 
-def decode(data):
-    """Decode one `composite_rv_<time>_<lead>-hd5` member (bytes or path)."""
+def _open(data):
     import h5py
 
     source = io.BytesIO(data) if isinstance(data, (bytes, bytearray)) else data
-    with h5py.File(source, "r") as f:
+    return h5py.File(source, "r")
+
+
+def _times(f):
+    """(analysis time, valid time, forecast flag) from the attributes."""
+    dataset = f["dataset1/what"].attrs
+    top = f["what"].attrs
+    return (_time(top["date"], top["time"]),
+            _time(dataset["enddate"], dataset["endtime"]),
+            _str(f["how"].attrs.get("simulated", b"False")) == "True")
+
+
+def peek(data):
+    """(analysis time, valid time, forecast flag) of a member without
+    decompressing its data, for the frame timeline."""
+    with _open(data) as f:
+        return _times(f)
+
+
+def decode(data):
+    """Decode one `composite_rv_<time>_<lead>-hd5` member (bytes or path)."""
+    with _open(data) as f:
         what = f["dataset1/data1/what"].attrs
         quantity = _str(what["quantity"])
         if quantity != "ACRR":
@@ -101,15 +121,14 @@ def decode(data):
         grid = Grid(projdef, xsize, ysize, xscale, yscale,
                     round(float(x_min), 1), round(float(y_max), 1))
 
-        dataset = f["dataset1/what"].attrs
-        top = f["what"].attrs
+        analysis_time, valid_time, forecast = _times(f)
         return Frame(
             raw=raw,
             gain=float(what["gain"]),
             offset=float(what["offset"]),
             undetect=undetect,
-            analysis_time=_time(top["date"], top["time"]),
-            valid_time=_time(dataset["enddate"], dataset["endtime"]),
-            forecast=_str(f["how"].attrs.get("simulated", b"False")) == "True",
+            analysis_time=analysis_time,
+            valid_time=valid_time,
+            forecast=forecast,
             grid=grid,
         )

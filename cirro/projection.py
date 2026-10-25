@@ -77,7 +77,7 @@ class Reprojection:
         return flat[self.index].reshape(self.height, self.width)
 
 
-def reproject_grid(grid, width=1400):
+def reproject_grid(grid, width=1400, block_rows=128):
     """Build the Reprojection for a radar Grid at `width` target pixels."""
     from cirro.radar import parse_projdef
 
@@ -93,20 +93,25 @@ def reproject_grid(grid, width=1400):
     x0, x1, y0, y1 = mx.min(), mx.max(), my.min(), my.max()
     height = max(1, round(width * (y1 - y0) / (x1 - x0)))
 
-    # Pixel centres of the target image → source cell.
+    # Pixel centres of the target image → source cell, in blocks of rows
+    # so the float64 temporaries stay small (a phone has little memory).
     tx = x0 + (np.arange(width) + 0.5) * (x1 - x0) / width
     ty = y0 + (np.arange(height) + 0.5) * (y1 - y0) / height
-    tlon, tlat = mercator_lonlat(*np.meshgrid(tx, ty))
-    sx, sy = stere.forward(tlon, tlat)
-    col = np.floor((sx - grid.x_min) / grid.xscale).astype(np.int64)
-    row = np.floor((grid.y_max - sy) / grid.yscale).astype(np.int64)
-    inside = (col >= 0) & (col < grid.xsize) & (row >= 0) & (row < grid.ysize)
-    index = np.where(inside, row * grid.xsize + col, grid.xsize * grid.ysize)
+    index = np.empty((height, width), dtype=np.int32)
+    for start in range(0, height, block_rows):
+        rows = slice(start, start + block_rows)
+        tlon, tlat = mercator_lonlat(*np.meshgrid(tx, ty[rows]))
+        sx, sy = stere.forward(tlon, tlat)
+        col = np.floor((sx - grid.x_min) / grid.xscale).astype(np.int64)
+        row = np.floor((grid.y_max - sy) / grid.yscale).astype(np.int64)
+        inside = (col >= 0) & (col < grid.xsize) & (row >= 0) & (row < grid.ysize)
+        index[rows] = np.where(inside, row * grid.xsize + col,
+                               grid.xsize * grid.ysize)
 
     west, north = mercator_lonlat(x0, y0)
     east, south = mercator_lonlat(x1, y1)
     return Reprojection(width, height, float(north), float(west), float(south),
-                        float(east), index.ravel().astype(np.int32))
+                        float(east), index.ravel())
 
 
 def stere_inverse(stere, x, y, iterations=8):

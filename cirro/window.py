@@ -1,16 +1,25 @@
-import threading
+import logging
+from pathlib import Path
 
 import gi
 
 gi.require_version("Shumate", "1.0")
-from gi.repository import Adw, Gio, GLib, Gtk, Shumate  # noqa: E402
+from gi.repository import Adw, Gio, GLib, GObject, Gtk, Shumate  # noqa: E402
 
-from cirro import colors, projection, radar, source  # noqa: E402
+from cirro.frames import FrameStore  # noqa: E402
 from cirro.legend import Legend  # noqa: E402
-from cirro.radar_layer import RadarLayer, rgba_texture  # noqa: E402
+from cirro.location import Location  # noqa: E402
+from cirro.radar_layer import RadarLayer  # noqa: E402
+from cirro.radar_source import RadarSource  # noqa: E402
+from cirro.renderer import CAPACITY, FrameRenderer  # noqa: E402
+from cirro.timebar import TimeBar, clock  # noqa: E402
+
+log = logging.getLogger(__name__)
 
 # Initial view: all of Germany on a 360 px wide phone screen.
 GERMANY = (51.2, 10.4, 5.8)
+# Zoom for "Show My Location": the region around the user.
+LOCATION_ZOOM = 8.5
 
 
 class Window(Adw.ApplicationWindow):
@@ -18,8 +27,8 @@ class Window(Adw.ApplicationWindow):
         super().__init__(application=app, title="Cirro")
         self.set_default_size(800, 600)
         self.set_size_request(360, 294)
-        self._reprojections = {}
-        self._loading = False
+        self._entries = []
+        self._centre_on_fix = False
 
         menu = Gio.Menu()
         menu.append("_About Cirro", "app.about")
@@ -30,8 +39,15 @@ class Window(Adw.ApplicationWindow):
             primary=True, tooltip_text="Main Menu"))
         self._refresh = Gtk.Button(icon_name="view-refresh-symbolic",
                                    tooltip_text="Reload Radar")
-        self._refresh.connect("clicked", lambda *_: self.load_radar())
-        header.pack_start(self._refresh)
+        self._refresh.connect("clicked", lambda *_: self.source.refresh())
+        header.pack_end(self._refresh)
+        locate = Gtk.Button(icon_name="find-location-symbolic",
+                            tooltip_text="Show My Location")
+        locate.connect("clicked", self._on_locate)
+        header.pack_start(locate)
+
+        self._banner = Adw.Banner(button_label="Reload")
+        self._banner.connect("button-clicked", lambda *_: self.source.refresh())
 
         self.map = Shumate.SimpleMap()
         registry = Shumate.MapSourceRegistry.new_with_defaults()
@@ -48,53 +64,121 @@ class Window(Adw.ApplicationWindow):
         viewport.set_zoom_level(zoom)
         self.radar_layer = RadarLayer(viewport)
         self.map.add_overlay_layer(self.radar_layer)
+        self._markers = Shumate.MarkerLayer(viewport=viewport)
+        self._me = Shumate.Point(visible=False)
+        self._me.update_property([Gtk.AccessibleProperty.LABEL], ["My location"])
+        self._markers.add_marker(self._me)
+        self.map.add_overlay_layer(self._markers)
+
+        self.timebar = TimeBar(ready=self._is_rendered)
+        self.timebar.connect("selected", self._on_selected)
+        bottom = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        bottom.append(self.timebar)
+        bottom.append(Legend())
 
         self._toasts = Adw.ToastOverlay(child=self.map)
         view = Adw.ToolbarView(content=self._toasts)
         view.add_top_bar(header)
-        view.add_bottom_bar(Adw.Clamp(maximum_size=560, child=Legend()))
+        view.add_top_bar(self._banner)
+        view.add_bottom_bar(Adw.Clamp(maximum_size=560, child=bottom))
         self.set_content(view)
 
-        self.load_radar()
+        cache = Path(GLib.get_user_cache_dir()) / "cirro" / "frames"
+        self.source = RadarSource(FrameStore(cache))
+        self.source.connect("changed", self._on_frames_changed)
+        self.source.connect("failed", self._on_failed)
+        self.source.connect("notify::stale", self._update_banner)
+        self.source.bind_property(
+            "loading", self._refresh, "sensitive",
+            GObject.BindingFlags.SYNC_CREATE | GObject.BindingFlags.INVERT_BOOLEAN)
+        self.renderer = FrameRenderer(self._on_rendered)
 
-    def load_radar(self):
-        """Fetch, decode and colour the current analysis frame off the main
-        thread, then hand the texture to the radar layer."""
-        if self._loading:
+        self.location = Location()
+        self.location.connect("changed", self._on_location)
+        self.location.connect("failed", self._on_location_failed)
+        self._location_wanted = False
+
+        # Poll and animate only while the window can be seen.
+        self.connect("notify::suspended", self._update_active)
+        self.connect("map", self._update_active)
+        self.connect("unmap", self._update_active)
+        self.source.start()
+
+    def _update_active(self, *_):
+        active = self.get_mapped() and not self.get_property("suspended")
+        self.source.set_active(active)
+        if not active:
+            self.timebar.set_playing(False)
+            self.location.stop()
+        elif self._location_wanted:
+            self.location.start(self)
+
+    # Radar frames
+
+    def _on_frames_changed(self, source):
+        self._entries = source.store.timeline()
+        t0 = source.store.analysis_time
+        self._title.set_subtitle(f"Updated {clock(t0)}" if t0 else "")
+        self.timebar.set_frames(self._entries, t0)
+        self._update_banner()
+
+    def _is_rendered(self, index):
+        return self.renderer.get(self._entries[index]) is not None
+
+    def _on_selected(self, timebar, index):
+        rendered = self.renderer.get(self._entries[index])
+        if rendered:
+            self.radar_layer.set_frame(rendered.texture, rendered.bounds)
+        # Render the selected frame first, then the ones playback needs next.
+        n = len(self._entries)
+        ahead = [(index + k) % n for k in range(CAPACITY - 1)]
+        behind = [(index - 1) % n]
+        self.renderer.request([self._entries[i] for i in ahead + behind])
+
+    def _on_rendered(self, name):
+        if self._entries and self._entries[self.timebar.index].name == name:
+            rendered = self.renderer.get(self._entries[self.timebar.index])
+            self.radar_layer.set_frame(rendered.texture, rendered.bounds)
+        return GLib.SOURCE_REMOVE
+
+    def _update_banner(self, *_):
+        t0 = self.source.store.analysis_time
+        # Without any data the failure toast explains the empty map.
+        self._banner.set_revealed(self.source.stale and t0 is not None)
+        if t0:
+            self._banner.set_title(f"Radar data from {clock(t0)} is out of date")
+
+    def _on_failed(self, source, message, show):
+        if not show:
             return
-        self._loading = True
-        self._refresh.set_sensitive(False)
-        threading.Thread(target=self._load_worker, daemon=True).start()
-
-    def _load_worker(self):
-        try:
-            _, data = source.fetch_analysis()
-            frame = radar.decode(data)
-            reprojection = self._reprojections.get(frame.grid)
-            if reprojection is None:
-                reprojection = projection.reproject_grid(frame.grid)
-                self._reprojections[frame.grid] = reprojection
-            image = colors.colorize(frame, reprojection)
-        except Exception as error:  # network, HTTP or format errors
-            GLib.idle_add(self._on_failed, error)
-            return
-        GLib.idle_add(self._on_loaded, frame, reprojection, image)
-
-    def _on_loaded(self, frame, reprojection, image):
-        self._loading = False
-        self._refresh.set_sensitive(True)
-        r = reprojection
-        self.radar_layer.set_frame(rgba_texture(image),
-                                   (r.north, r.west, r.south, r.east))
-        local = GLib.DateTime.new_from_unix_utc(
-            int(frame.valid_time.timestamp())).to_local()
-        self._title.set_subtitle(f"Radar {local.format('%H:%M')}")
-
-    def _on_failed(self, error):
-        self._loading = False
-        self._refresh.set_sensitive(True)
-        print(f"cirro: radar download failed: {error}")
         toast = Adw.Toast(title="Radar data could not be loaded",
                           button_label="Retry", timeout=0)
-        toast.connect("button-clicked", lambda *_: self.load_radar())
+        toast.connect("button-clicked", lambda *_: self.source.refresh())
         self._toasts.add_toast(toast)
+
+    # Own location
+
+    def _on_locate(self, button):
+        self._location_wanted = True
+        if self.location.fix:
+            self._go_to(*self.location.fix[:2])
+        else:
+            self._centre_on_fix = True
+        self.location.start(self)
+
+    def _go_to(self, latitude, longitude):
+        zoom = max(self.map.get_viewport().get_zoom_level(), LOCATION_ZOOM)
+        self.map.get_map().go_to_full(latitude, longitude, zoom)
+
+    def _on_location(self, location, latitude, longitude, accuracy):
+        self._me.set_location(latitude, longitude)
+        self._me.set_visible(True)
+        if self._centre_on_fix:
+            self._centre_on_fix = False
+            self._go_to(latitude, longitude)
+
+    def _on_location_failed(self, location, message):
+        self._location_wanted = False
+        if self._centre_on_fix:
+            self._centre_on_fix = False
+            self._toasts.add_toast(Adw.Toast(title="Location unavailable"))

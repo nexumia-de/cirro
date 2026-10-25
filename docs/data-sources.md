@@ -70,10 +70,13 @@ over Germany, analysis plus forecast up to +2 h, refreshed every
   oldest `composite_rv_20261022_2115.tar` on 2026-10-24 21:15), so past
   frames for the time bar are available.
 - Tar size depends on the weather: **1.9 MB** (dry) to **11 MB** (wide
-  rain) seen within 48 h. Polling LATEST every 5 min therefore costs up
+  rain) seen within 48 h; 11.6 MB on 2026-10-25 at 11:55 UTC. Polling LATEST every 5 min therefore costs up
   to ~130 MB per hour on a rainy day.
 - The server sends `ETag`, `Last-Modified` and `Accept-Ranges: bytes`;
-  `If-Modified-Since` and `If-None-Match` both return `304`.
+  `If-Modified-Since` and `If-None-Match` both return `304`. Combined
+  with `Range: bytes=0-511`, a matching `If-None-Match` also returns
+  `304` and a different one `206` (checked 2026-10-25), which is how
+  Cirro polls.
 - **Range requests work** (`206`): the `_000` member is the first entry
   of every tar, so a past frame needs only the 512-byte tar header
   (`Range: bytes=0-511`, gives the member size) and then

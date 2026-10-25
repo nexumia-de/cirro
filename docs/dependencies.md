@@ -33,7 +33,7 @@ installs no licence files.
 
 Cirro is `AGPL-3.0-or-later`. Every licence below allows redistribution
 in a bundle with it. The GNOME runtime (GTK, libadwaita, libsoup,
-json-glib, Python) is not bundled; Flathub distributes it under its own
+json-glib, libportal, Python) is not bundled; Flathub distributes it under its own
 terms.
 
 # Modules

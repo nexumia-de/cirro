@@ -8,9 +8,9 @@ phones, modelled on the feature set of DWD's WarnWetter app. Focus: the
 **rain radar with a 2-hour forecast** (DWD RADVOR nowcast) on a map,
 animated from the past hour to +2 h.
 
-Status: milestone M1, a map with the current radar frame; animation
-and forecast follow in M2. See
-[docs/roadmap.md](docs/roadmap.md).
+Status: milestone M2, the animated radar from −60 min to +2 h with a
+time bar and the own location; phone measurements and the first
+release are still open. See [docs/roadmap.md](docs/roadmap.md).
 
 Cirro is an independent project and not affiliated with the
 Deutscher Wetterdienst (DWD). Weather data: DWD open data. Map data:
