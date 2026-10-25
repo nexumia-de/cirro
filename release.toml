@@ -1,0 +1,22 @@
+# Release automation: changelog fragments, release pull request and
+# screenshots (phosh-toolkit docs/releases.md, docs/release-channels.md).
+metainfo = "data/de.nexumia.Cirro.metainfo.xml"
+version-files = ["meson.build", "cirro/__init__.py"]
+
+# Taken by CI from the built Flatpak at 360×720 and 1000×700, light and
+# dark, with the recorded radar data in tests/data/demo (no network for
+# the radar; map tiles are fetched). Add a shot by naming it, giving a
+# caption and listing the actions that open the state to show.
+[screenshots]
+env = { CIRRO_DEMO_DATA = "{root}/tests/data/demo", TZ = "Europe/Berlin" }
+expose = ["{root}/tests/data/demo"]
+delay = 4
+
+[[screenshots.shot]]
+name = "radar"
+caption = "Rain radar for Germany with the past hour"
+
+[[screenshots.shot]]
+name = "forecast"
+caption = "Rain forecast one hour ahead"
+actions = ["app.step-time(12)"]

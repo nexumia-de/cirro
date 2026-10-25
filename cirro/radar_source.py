@@ -6,11 +6,13 @@ import os
 import threading
 import time
 import urllib.error
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
+from pathlib import Path
 
 from gi.repository import GLib, GObject
 
 from cirro import source
+from cirro.frames import FrameStore
 
 log = logging.getLogger(__name__)
 
@@ -161,3 +163,16 @@ class RadarSource(GObject.Object):
             # Background failures only show up through the stale guard.
             self.emit("failed", error, manual or self.store.analysis_time is None)
         return GLib.SOURCE_REMOVE
+
+
+def demo(directory):
+    """RadarSource for recorded data instead of DWD (CIRRO_DEMO_DATA, used
+    for screenshots): reads a directory laid out like DWD's through
+    file:// URLs, keeps no disk cache, and runs its clock 5 min after the
+    recorded analysis so the data is current."""
+    store = FrameStore()
+
+    def now():
+        return (store.analysis_time or _now()) + timedelta(minutes=5)
+
+    return RadarSource(store, Path(directory).resolve().as_uri() + "/", now)

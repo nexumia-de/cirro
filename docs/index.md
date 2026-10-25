@@ -22,7 +22,7 @@ Change history is in [log.md](log.md).
 # Development
 
 * [Bundled dependencies](dependencies.md) - Every module in the Flatpak with version, licence, bundled libraries and update check.
-* [Release channels](release-channels.md) - Cirro from tags, Cirro (Nightly) from every push to main; the nightly build options and how to release.
+* [Release channels](release-channels.md) - Cirro from tags, Cirro (Nightly) from every push to main; the nightly build options, automated releases with changelog fragments, and the store screenshots.
 * [Development environment](dev-environment.md) - Required hosts and host packages; how to run, test, screenshot and Flatpak-build the app.
 
 # Decision records

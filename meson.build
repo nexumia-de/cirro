@@ -20,6 +20,7 @@ python.install_sources(
   'cirro/legend.py',
   'cirro/location.py',
   'cirro/main.py',
+  'cirro/metainfo.py',
   'cirro/projection.py',
   'cirro/radar.py',
   'cirro/radar_layer.py',
