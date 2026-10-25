@@ -1,0 +1,24 @@
+# Licence of every file, for "reuse lint" (https://reuse.software).
+# Licence texts are in LICENSES/; bundled libraries are listed in
+# docs/dependencies.md.
+version = 1
+
+[[annotations]]
+path = "**"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 suitably"
+SPDX-License-Identifier = "AGPL-3.0-or-later"
+
+# AppStream metadata is CC0 so stores and distributions can reuse it.
+[[annotations]]
+path = "data/*.metainfo.xml"
+precedence = "override"
+SPDX-FileCopyrightText = "2026 suitably"
+SPDX-License-Identifier = "CC0-1.0"
+
+# Radar composite from DWD open data (CC BY 4.0), unchanged.
+[[annotations]]
+path = "tests/data/composite_rv_*"
+precedence = "override"
+SPDX-FileCopyrightText = "Deutscher Wetterdienst"
+SPDX-License-Identifier = "CC-BY-4.0"

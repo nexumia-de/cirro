@@ -16,6 +16,11 @@ cleanup:
   - /share/gir-1.0
   - '*.a'
   - '*.la'
+# Every module pins exact versions and checksums. x-checker-data lets
+# flatpak-external-data-checker propose updates (weekly, see
+# .github/workflows/update-check.yml); every module installs its licence
+# texts into /app/share/licenses/<app id>/<module>/, which CI checks.
+# Inventory with licences: docs/dependencies.md.
 modules:
   # Runtime check (docs/data-sources.md): org.gnome.Platform//51 ships
   # libsoup 3 and json-glib, but not libshumate, protobuf-c, numpy or h5py.
@@ -23,10 +28,17 @@ modules:
     buildsystem: autotools
     config-opts:
       - --disable-protoc
+    post-install:
+      - install -Dm644 LICENSE -t ${FLATPAK_DEST}/share/licenses/${FLATPAK_ID}/protobuf-c
     sources:
       - type: archive
         url: https://github.com/protobuf-c/protobuf-c/releases/download/v1.5.2/protobuf-c-1.5.2.tar.gz
         sha256: e2c86271873a79c92b58fef7ebf8de1aa0df4738347a8bd5d4e65a80a16d0d24
+        x-checker-data:
+          type: json
+          url: https://api.github.com/repos/protobuf-c/protobuf-c/releases/latest
+          version-query: .tag_name | sub("^v"; "")
+          url-query: .assets[] | select(.name == "protobuf-c-" + $version + ".tar.gz") | .browser_download_url
 
   - name: libshumate
     buildsystem: meson
@@ -36,10 +48,17 @@ modules:
       - -Dvapi=false
       - -Ddemos=false
       - -Dsysprof=disabled
+    post-install:
+      # meson builds in _flatpak_build/, the licence is in the source root.
+      - install -Dm644 ../COPYING -t ${FLATPAK_DEST}/share/licenses/${FLATPAK_ID}/libshumate
     sources:
       - type: archive
         url: https://download.gnome.org/sources/libshumate/1.7/libshumate-1.7.0.tar.xz
         sha256: 3896cc4b6a7bf83141c27df23ce48cdd68467603bc6b764960307cdcbbef80e5
+        x-checker-data:
+          type: gnome
+          name: libshumate
+          stable-only: true
 
   # Prebuilt manylinux wheels for the runtime's Python 3.14; the h5py
   # wheel bundles libhdf5.
@@ -47,29 +66,62 @@ modules:
     buildsystem: simple
     build-commands:
       - pip3 install --no-index --find-links="file://${PWD}" --prefix=${FLATPAK_DEST} --no-deps numpy
+      # The wheel's licences, including those of the libraries it bundles.
+      - install -d ${FLATPAK_DEST}/share/licenses/${FLATPAK_ID}
+      - cp -r ${FLATPAK_DEST}/lib/python3*/site-packages/numpy-*.dist-info/licenses ${FLATPAK_DEST}/share/licenses/${FLATPAK_ID}/python3-numpy
     sources:
       - type: file
         only-arches: [x86_64]
         url: https://files.pythonhosted.org/packages/16/d5/928078d2b28f26829b138b4a6c3980045022fb409f570657a224ae60ef4e/numpy-2.5.4-cp314-cp314-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl
         sha256: d549420b8858885cea8838a727842249218b9c1da24dd517e25c9c7a948310a3
+        x-checker-data:
+          type: json
+          url: https://pypi.org/pypi/numpy/json
+          version-query: .info.version
+          url-query: '[.urls[] | select(.packagetype == "bdist_wheel" and (.filename | test("-cp314-cp314-manylinux[^-]*_x86_64\\.whl$")))] | first | .url'
       - type: file
         only-arches: [aarch64]
         url: https://files.pythonhosted.org/packages/63/d6/34b0a2b0741386a63025a65a2c09caaaaaad6d0ca95b66cd65c30dd7fcb5/numpy-2.5.4-cp314-cp314-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl
         sha256: 4054173604cd8658796053f1f3bc0befb68ec1c0762c57fdad61e199256a8617
+        x-checker-data:
+          type: json
+          url: https://pypi.org/pypi/numpy/json
+          version-query: .info.version
+          url-query: '[.urls[] | select(.packagetype == "bdist_wheel" and (.filename | test("-cp314-cp314-manylinux[^-]*_aarch64\\.whl$")))] | first | .url'
 
   - name: python3-h5py
     buildsystem: simple
     build-commands:
       - pip3 install --no-index --find-links="file://${PWD}" --prefix=${FLATPAK_DEST} --no-deps h5py
+      # The wheel's licences, including those of the libraries it bundles.
+      - install -d ${FLATPAK_DEST}/share/licenses/${FLATPAK_ID}
+      - cp -r ${FLATPAK_DEST}/lib/python3*/site-packages/h5py-*.dist-info/licenses ${FLATPAK_DEST}/share/licenses/${FLATPAK_ID}/python3-h5py
+      - install -Dm644 libaec-LICENSE.txt -t ${FLATPAK_DEST}/share/licenses/${FLATPAK_ID}/python3-h5py
     sources:
       - type: file
         only-arches: [x86_64]
         url: https://files.pythonhosted.org/packages/f1/16/d905e7f53e661ce2c24686c38048d8e2b750ffc4350009d41c4e6c6c9826/h5py-3.16.0-cp314-cp314-manylinux_2_28_x86_64.whl
         sha256: e4360f15875a532bc7b98196c7592ed4fc92672a57c0a621355961cafb17a6dd
+        x-checker-data:
+          type: json
+          url: https://pypi.org/pypi/h5py/json
+          version-query: .info.version
+          url-query: '[.urls[] | select(.packagetype == "bdist_wheel" and (.filename | test("-cp314-cp314-manylinux[^-]*_x86_64\\.whl$")))] | first | .url'
       - type: file
         only-arches: [aarch64]
         url: https://files.pythonhosted.org/packages/58/a5/4964bc0e91e86340c2bbda83420225b2f770dcf1eb8a39464871ad769436/h5py-3.16.0-cp314-cp314-manylinux_2_28_aarch64.whl
         sha256: e2c04d129f180019e216ee5f9c40b78a418634091c8782e1f723a6ca3658b965
+        x-checker-data:
+          type: json
+          url: https://pypi.org/pypi/h5py/json
+          version-query: .info.version
+          url-query: '[.urls[] | select(.packagetype == "bdist_wheel" and (.filename | test("-cp314-cp314-manylinux[^-]*_aarch64\\.whl$")))] | first | .url'
+      # The wheels bundle libaec 1.1.4 (libaec.so.0.1.4, libsz.so.2.0.1)
+      # without its licence text. Update together with h5py.
+      - type: file
+        url: https://raw.githubusercontent.com/MathisRosenhauer/libaec/v1.1.4/LICENSE.txt
+        sha256: 66924e663d6e156dc45fe5aba993f5dcb131a8a5400b5580d956877c2c77c717
+        dest-filename: libaec-LICENSE.txt
 
   - name: cirro
     buildsystem: meson
