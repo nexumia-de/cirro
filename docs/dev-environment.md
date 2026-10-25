@@ -29,9 +29,10 @@ environment the hosts above go under the environment's network access settings
 DWD, Bright Sky and OSM hosts (proxy answered `403` to `CONNECT`); after
 they were allowed, `opendata.dwd.de`, `maps.dwd.de`, `api.brightsky.dev`
 and `tile.openstreetmap.org` answered normally (21:15 UTC). Building the
-Flatpak also needs `download.gnome.org`, `github.com` (protobuf-c),
-`files.pythonhosted.org` (wheels) and `raw.githubusercontent.com`
-(libaec licence text, see [dependencies](dependencies.md)).
+Flatpak also needs `download.gnome.org`, `github.com` (protobuf-c,
+HDF5, and the git tag for the Flathub manifest) and
+`files.pythonhosted.org` (numpy and h5py source archives, build tool
+wheels; see [dependencies](dependencies.md)).
 
 Checking for updates locally with flatpak-external-data-checker (see
 [dependencies](dependencies.md)) also needs `pypi.org`,
