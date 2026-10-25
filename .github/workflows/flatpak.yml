@@ -10,7 +10,8 @@ jobs:
   flatpak:
     permissions:
       contents: write
-    uses: suitably/phosh-toolkit/.github/workflows/flatpak.yml@main
+    # Temporary until nexumia-de/phosh-toolkit#10 is merged; back to @main then.
+    uses: suitably/phosh-toolkit/.github/workflows/flatpak.yml@claude/zen-rubin-y1tlsu
     with:
       manifest: de.nexumia.Cirro.yml
       # Tags publish Cirro, every push to main publishes Cirro (Nightly);
