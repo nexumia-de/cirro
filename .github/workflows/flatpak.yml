@@ -2,6 +2,8 @@ name: Flatpak
 on:
   push:
     branches: [main]
+    # v<version> publishes the stable app (docs/release-channels.md).
+    tags: ['v*']
   pull_request:
   workflow_dispatch:
 jobs:
@@ -11,8 +13,10 @@ jobs:
     uses: suitably/phosh-toolkit/.github/workflows/flatpak.yml@main
     with:
       manifest: de.nexumia.Cirro.yml
-      # Pushes to main publish to suitably/phosh-apps (GNOME Software).
+      # Tags publish Cirro, every push to main publishes Cirro (Nightly);
+      # suitably/phosh-apps serves both (docs/release-channels.md).
       release: true
+      nightly: true
       publish-repo: suitably/phosh-apps
     secrets:
       PUBLISH_TOKEN: ${{ secrets.PUBLISH_TOKEN }}
