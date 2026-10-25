@@ -19,8 +19,10 @@ Deutscher Wetterdienst (DWD). Weather data: DWD open data. Map data:
 ## Install
 
 On the phone, open <https://flatpak.nexumia.de/> and tap
-Cirro; GNOME Software installs it and keeps it updated. Every
-push to `main` is published there.
+Cirro; GNOME Software installs it and keeps it updated. Cirro is
+updated with every release (tag `v<version>`); *Cirro (Nightly)*, which
+installs next to it, with every push to `main`. See
+[docs/release-channels.md](docs/release-channels.md).
 
 ## Development
 

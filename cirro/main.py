@@ -7,7 +7,8 @@ gi.require_version("Adw", "1")
 gi.require_version("Shumate", "1.0")
 from gi.repository import Adw, Gdk, Gio, Gtk, Shumate  # noqa: E402
 
-from cirro import APP_ID, REPO_URL, USER_AGENT, VERSION  # noqa: E402
+from cirro import (APP_ID, NAME, NIGHTLY, REPO_URL, USER_AGENT,  # noqa: E402
+                   VERSION_LABEL)
 from cirro.window import Window  # noqa: E402
 
 
@@ -34,13 +35,19 @@ class Application(Adw.Application):
                 .add_search_path(str(icons))
 
     def do_activate(self):
-        (self.props.active_window or Window(self)).present()
+        window = self.props.active_window
+        if window is None:
+            window = Window(self)
+            if NIGHTLY:
+                # libadwaita's striped header bar for development builds.
+                window.add_css_class("devel")
+        window.present()
 
     def _on_about(self, *_):
         dialog = Adw.AboutDialog(
-            application_name="Cirro",
+            application_name=NAME,
             application_icon=APP_ID,
-            version=VERSION,
+            version=VERSION_LABEL,
             developer_name="suitably",
             website=REPO_URL,
             issue_url=f"{REPO_URL}/issues",

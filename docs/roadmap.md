@@ -58,7 +58,8 @@ phone. Feature priorities: [feature inventory](features.md).
 - [ ] Measure memory, CPU and bandwidth on the phone; tune the texture
       LRU and polling. Record numbers in
       [radar architecture](radar-architecture.md).
-- [ ] **First release**: Flatpak bundle installed on the phone.
+- [ ] **First release**: tag `v<version>` (see
+      [release channels](release-channels.md)), installed on the phone.
 
 # M3 – Point nowcast and places
 
