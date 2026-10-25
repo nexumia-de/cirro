@@ -56,7 +56,7 @@ On top of `../phosh-toolkit/setup.sh` (Ubuntu 24.04):
 ```sh
 sudo apt-get install --no-install-recommends \
   python3-h5py python3-numpy python3-pytest gir1.2-shumate-1.0 \
-  hdf5-tools python3-pyproj
+  gir1.2-xdp-1.0 gir1.2-xdpgtk4-1.0 hdf5-tools python3-pyproj
 ```
 
 `hdf5-tools` (`h5dump`) is only needed to inspect radar files;
@@ -75,6 +75,19 @@ python3.12 -m pytest                      # tests/ (pyproject.toml)
 
 Run from the source tree, the app adds `data/icons` to the icon theme
 search path, because the icon is not installed.
+
+`CIRRO_DEBUG=1` logs downloads, render timings, memory and CPU time
+(see [radar architecture](radar-architecture.md), measurements). Frames
+are cached in `~/.cache/cirro/frames` (in the Flatpak:
+`~/.var/app/de.nexumia.Cirro/cache/cirro/frames`); delete it to test a
+cold start. The flatpak build command below shares `/root/.cache` with
+the sandbox, so host and sandbox runs share this cache in the dev
+container.
+
+The dev container has no location portal: "Show My Location" shows
+"Location unavailable" there. To check the marker and the map
+animation, call the `Location` object's `_on_updated()` with a fixed
+position from a small driver script.
 
 # Flatpak
 

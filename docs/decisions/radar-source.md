@@ -45,4 +45,7 @@ proves too heavy on the phone. (3) is only a debugging aid.
   the weather (measured in M0), i.e. up to ~130 MB per hour on a rainy
   day. M2 must poll only while visible and may fetch just the members it
   needs with range requests; the WMS (~45 KB per 512×512 frame) remains
-  the fallback if that is still too much on mobile data.
+  the fallback if that is still too much on mobile data. M2 does so:
+  polls cost 512 bytes or a `304`, past frames are single members, and
+  the whole tar is fetched once per analysis
+  ([radar architecture](../radar-architecture.md)).

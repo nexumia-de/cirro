@@ -20,6 +20,7 @@ jobs:
           "${apt[@]}" update -q
           "${apt[@]}" install -y -q --no-install-recommends \
             python3-pytest python3-h5py python3-numpy python3-pyproj \
+            python3-gi gir1.2-gtk-4.0 \
             appstream desktop-file-utils
       - name: Validate metadata
         run: |

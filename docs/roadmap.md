@@ -3,7 +3,7 @@ type: Plan
 title: Roadmap
 description: Milestones from the empty repository to a usable radar app (M0–M3) and the secondary features (M4–M6).
 tags: [plan, roadmap, milestones]
-generated: { by: claude-code/2.1.310, at: 2026-10-24T21:40:00Z }
+generated: { by: claude-code/2.1.310, at: 2026-10-25T12:30:00Z }
 ---
 
 # Principle
@@ -50,14 +50,17 @@ phone. Feature priorities: [feature inventory](features.md).
 
 # M2 – Animated radar with forecast (core feature)
 
-- [ ] RadarSource with 5-min refresh, conditional requests, stale guard.
-- [ ] FrameStore with past frames (−60 min) and forecast (+120 min),
+- [x] RadarSource with 5-min refresh, conditional requests, stale guard.
+- [x] FrameStore with past frames (−60 min) and forecast (+120 min),
       disk cache for instant start.
-- [ ] TimeBar: scrub, play/pause, "now" mark, forecast labelling.
-- [ ] Own location via the location portal (GeoClue), "centre on me".
+- [x] TimeBar: scrub, play/pause, "now" mark, forecast labelling.
+- [x] Own location via the location portal (GeoClue), "centre on me"
+      (still to be tried on the phone).
 - [ ] Measure memory, CPU and bandwidth on the phone; tune the texture
       LRU and polling. Record numbers in
-      [radar architecture](radar-architecture.md).
+      [radar architecture](radar-architecture.md). Dev-container numbers
+      and the `CIRRO_DEBUG=1` logging are in place; phone numbers are
+      missing.
 - [ ] **First release**: tag `v<version>` (see
       [release channels](release-channels.md)), installed on the phone.
 
