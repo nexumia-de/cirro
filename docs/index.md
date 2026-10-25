@@ -2,7 +2,7 @@
 okf_version: "0.2"
 ---
 
-# Wetterblick knowledge bundle
+# Cirro knowledge bundle
 
 [Open Knowledge Format](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md)
 (OKF v0.2) bundle of this app. Shared Phosh knowledge lives in
@@ -12,7 +12,7 @@ Change history is in [log.md](log.md).
 # Plan
 
 * [Roadmap](roadmap.md) - Milestones from the empty repository to a usable radar app and beyond.
-* [Feature inventory](features.md) - WarnWetter features, their priority and how they map to Wetterblick.
+* [Feature inventory](features.md) - WarnWetter features, their priority and how they map to Cirro.
 
 # Design
 
@@ -25,4 +25,4 @@ Change history is in [log.md](log.md).
 
 # Decision records
 
-* [Decisions](decisions/index.md) - Language, map widget, radar data source, no own backend.
+* [Decisions](decisions/index.md) - Name, language, map widget, radar data source, colour scale, no own backend.

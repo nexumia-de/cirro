@@ -1,14 +1,14 @@
 ---
 type: Concept
 title: Feature inventory
-description: The WarnWetter features Wetterblick replicates, ordered by priority, with the data each one needs.
+description: The WarnWetter features Cirro replicates, ordered by priority, with the data each one needs.
 tags: [features, scope, warnwetter]
 generated: { by: claude-code/2.1.310, at: 2026-10-24T20:45:00Z }
 ---
 
 # Scope
 
-WarnWetter is DWD's official weather and warning app. Wetterblick is a
+WarnWetter is DWD's official weather and warning app. Cirro is a
 lookalike in function, not in branding: its own name, icon and colours,
 built only on DWD open data (see the
 [data source decision](decisions/radar-source.md)).

@@ -1,7 +1,7 @@
 ---
 type: Decision Record
 title: Python and PyGObject
-description: Wetterblick is written in Python with PyGObject; numpy does the raster work.
+description: Cirro is written in Python with PyGObject; numpy does the raster work.
 tags: [decision, language, python]
 generated: { by: claude-code/2.1.310, at: 2026-10-24T21:40:00Z }
 ---

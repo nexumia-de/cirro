@@ -27,25 +27,26 @@ phone. Feature priorities: [feature inventory](features.md).
       `org.gnome.Platform//51`; otherwise add them as manifest modules
       (see [map decision](decisions/map-libshumate.md)).
 - [x] Confirm or revise the [radar source decision](decisions/radar-source.md).
-- [x] Scaffold: Python package `wetterblick/`, meson build, `.desktop`
+- [x] Scaffold: Python package `cirro/`, meson build, `.desktop`
       (`X-Purism-FormFactor=Workstation;Mobile;`), metainfo with
       `display_length ≥ 360` and touch, icon, Flatpak manifest
-      `de.nexumia.Wetterblick.yml`, Flatpak CI calling the
+      `de.nexumia.Cirro.yml`, Flatpak CI calling the
       toolkit workflow, `tests/` with pytest.
 - [x] Empty adaptive window passes the 360×720 screenshot check;
       `appstreamcli validate`, `desktop-file-validate` clean.
-- [ ] CI green on x86_64 and aarch64 (local x86_64 Flatpak build works;
-      needs the toolkit's `elfutils` fix on `main`).
+- [x] CI green on x86_64 and aarch64; the app installs on the phone
+      from the shared repository via GNOME Software.
 
 # M1 – Map with a static radar frame
 
-- [ ] `Shumate.SimpleMap` with OSM raster tiles, attribution, own
+- [x] `Shumate.SimpleMap` with OSM raster tiles, attribution, own
       User-Agent, tile cache; initial view Germany.
-- [ ] Decoder for one RV HDF5 member, unit-tested with a recorded file.
-- [ ] Colorizer (mm/h LUT) and one-time reprojection to Web Mercator.
-- [ ] `RadarLayer` draws the current frame correctly aligned (check
-      alignment against borders/coasts at high zoom).
-- [ ] Legend.
+- [x] Decoder for one RV HDF5 member, unit-tested with a recorded file.
+- [x] Colorizer (mm/h LUT) and one-time reprojection to Web Mercator.
+- [x] `RadarLayer` draws the current frame correctly aligned (checked
+      against DWD's WMS rendering and the coast at zoom 9.5, see
+      [radar architecture](radar-architecture.md)).
+- [x] Legend ([colour scale decision](decisions/colour-scale.md)).
 
 # M2 – Animated radar with forecast (core feature)
 

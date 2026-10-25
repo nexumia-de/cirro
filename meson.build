@@ -1,28 +1,34 @@
-project('wetterblick',
+project('cirro',
   version: '0.1.0',
   meson_version: '>= 1.0',
   license: 'AGPL-3.0-or-later',
 )
 
-app_id = 'de.nexumia.Wetterblick'
+app_id = 'de.nexumia.Cirro'
 
 python = import('python').find_installation('python3')
 pythondir = python.get_install_dir()
 
 python.install_sources(
-  'wetterblick/__init__.py',
-  'wetterblick/__main__.py',
-  'wetterblick/main.py',
-  'wetterblick/window.py',
-  subdir: 'wetterblick',
+  'cirro/__init__.py',
+  'cirro/__main__.py',
+  'cirro/colors.py',
+  'cirro/legend.py',
+  'cirro/main.py',
+  'cirro/projection.py',
+  'cirro/radar.py',
+  'cirro/radar_layer.py',
+  'cirro/source.py',
+  'cirro/window.py',
+  subdir: 'cirro',
 )
 
 conf = configuration_data()
 conf.set('PYTHON', python.full_path())
 conf.set('PYTHONDIR', get_option('prefix') / pythondir)
 configure_file(
-  input: 'data/wetterblick.in',
-  output: 'wetterblick',
+  input: 'data/cirro.in',
+  output: 'cirro',
   configuration: conf,
   install: true,
   install_dir: get_option('bindir'),

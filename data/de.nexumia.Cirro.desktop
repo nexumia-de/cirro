@@ -1,11 +1,11 @@
 [Desktop Entry]
 Type=Application
-Name=Wetterblick
+Name=Cirro
 Comment=Rain radar with a 2-hour forecast
-Exec=wetterblick
-Icon=de.nexumia.Wetterblick
+Exec=cirro
+Icon=de.nexumia.Cirro
 Terminal=false
 Categories=GTK;Utility;
-Keywords=weather;rain;radar;forecast;nowcast;
+Keywords=weather;rain;radar;forecast;nowcast;Wetterblick;
 StartupNotify=true
 X-Purism-FormFactor=Workstation;Mobile;

@@ -1,7 +1,7 @@
 ---
 type: Decision Record
 title: AGPL-3.0 license
-description: Wetterblick is licensed under AGPL-3.0-or-later; contributor terms keep the author free to relicense.
+description: Cirro is licensed under AGPL-3.0-or-later; contributor terms keep the author free to relicense.
 tags: [decision, license, legal]
 generated: { by: claude-code/2.1.310, at: 2026-10-24T21:10:00Z }
 sources:
