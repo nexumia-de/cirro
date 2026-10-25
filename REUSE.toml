@@ -18,7 +18,7 @@ SPDX-License-Identifier = "CC0-1.0"
 
 # Radar composite from DWD open data (CC BY 4.0), unchanged.
 [[annotations]]
-path = "tests/data/composite_rv_*"
+path = ["tests/data/composite_rv_*", "tests/data/demo/**"]
 precedence = "override"
 SPDX-FileCopyrightText = "Deutscher Wetterdienst"
 SPDX-License-Identifier = "CC-BY-4.0"

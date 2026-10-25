@@ -1,9 +1,9 @@
 ---
 type: Playbook
 title: Release channels
-description: Cirro (stable, from tags v<version>) and Cirro (Nightly) (de.nexumia.Cirro.Devel, from every push to main), how the nightly variant is built and how to release.
-tags: [release, nightly, flatpak, ci, meson]
-generated: { by: claude-code/2.1.310, at: 2026-10-25T16:00:00Z }
+description: Cirro (stable, from tags v<version>) and Cirro (Nightly) (de.nexumia.Cirro.Devel, from every push to main), how the nightly variant is built, how releases, release notes and screenshots are automated.
+tags: [release, nightly, flatpak, ci, meson, changelog, screenshots]
+generated: { by: claude-code/2.1.310, at: 2026-10-25T19:00:00Z }
 ---
 
 # Channels
@@ -55,20 +55,53 @@ CI passes both options by deriving a manifest from
 
 # Release (stable)
 
-1. Bump the version in `meson.build`, `cirro/__init__.py` and add a
-   `<release version="…" date="…">` with a description at the top of
-   `data/de.nexumia.Cirro.metainfo.xml` (`tests/test_metadata.py`
-   checks that all three agree).
-2. Merge that pull request.
-3. Tag the merge commit and push the tag:
+Releases are automated with the toolkit's
+[release workflow](../../phosh-toolkit/docs/releases.md); nobody edits
+versions or `<release>` elements by hand.
 
-   ```sh
-   git tag v0.2.0 && git push origin v0.2.0
-   ```
+1. Every pull request that users notice adds a fragment to
+   `changelog.d/` (see its `README.md`); others get the label
+   `no-changelog`. The required check `release / Changelog` enforces it.
+2. Every Monday (or by hand: *Actions → Release → Run workflow*) the
+   workflow opens the pull request "Release <version>": version bumped
+   in `meson.build`, `cirro/__init__.py` and the metainfo
+   (`tests/test_metadata.py` checks they agree), the fragments as the new
+   `<release>`, the screenshot list pointing at the release's assets.
+3. The owner checks the text and the `de.nexumia.Cirro-screenshots`
+   artifact of its Flatpak run, and merges.
+4. The merge tags `v<version>`; the tag build checks the tag against the
+   metainfo, takes the screenshots, creates the GitHub Release with the
+   metainfo text, bundles and screenshots, and notifies phosh-apps.
 
-CI fails the tag build if the tag does not match the newest metainfo
-release, attaches the bundles to the GitHub Release `v0.2.0` and
-notifies phosh-apps.
+The workflow uses the secret `PUBLISH_TOKEN` as its `RELEASE_TOKEN`, so
+it needs **Contents** and **Pull requests** read/write on this
+repository (besides dispatching to phosh-apps). A tag can still be
+pushed by hand (`git tag v0.2.0 && git push origin v0.2.0`) on a commit
+whose newest metainfo release is `0.2.0`.
+
+The release notes reach users in GNOME Software ("What's New"), in the
+About dialog ("What's New", read from the installed metainfo by
+`cirro/metainfo.py`) and on the GitHub Release. The nightly app gets a
+development release `<next>~dev.<date>.<commit>` with the pending
+fragments, so its About dialog shows what is new on `main`.
+
+# Screenshots
+
+`release.toml` lists the shots; CI takes each at 360×720 (scale 2) and
+1000×700, light and dark, from the built Flatpak:
+
+| Shot | State | Actions |
+|---|---|---|
+| `radar` | the current analysis ("Now") | – |
+| `forecast` | +60 min | `app.step-time(12)` |
+
+They use the recorded radar data in `tests/data/demo/`
+(`CIRRO_DEMO_DATA`, see [radar architecture](radar-architecture.md)),
+so they look the same in every run; only the OSM tiles come from the
+network. To add a state, give it an `app.*` action (GTK does not export
+`win.*` actions on D-Bus) that is a real feature, e.g. a keyboard
+shortcut, and add a `[[screenshots.shot]]`. Taking them locally:
+[dev environment](dev-environment.md).
 
 # Verified (2026-10-25, locally)
 

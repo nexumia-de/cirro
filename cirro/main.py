@@ -7,10 +7,10 @@ import gi
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
 gi.require_version("Shumate", "1.0")
-from gi.repository import Adw, Gdk, Gio, Gtk, Shumate  # noqa: E402
+from gi.repository import Adw, Gdk, Gio, GLib, Gtk, Shumate  # noqa: E402
 
 from cirro import (APP_ID, NAME, NIGHTLY, REPO_URL, SUPPORT_URL,  # noqa: E402
-                   USER_AGENT, VERSION_LABEL)
+                   USER_AGENT, VERSION_LABEL, metainfo)
 from cirro.window import Window  # noqa: E402
 
 
@@ -24,7 +24,15 @@ class Application(Adw.Application):
         quit_ = Gio.SimpleAction.new("quit", None)
         quit_.connect("activate", lambda *_: self.quit())
         self.add_action(quit_)
+        # app.step-time(n): show the radar n frames (of 5 min) later, or
+        # earlier if n < 0. An app action rather than win.: GTK exports
+        # only these on D-Bus, where screenshots activate them.
+        step = Gio.SimpleAction.new("step-time", GLib.VariantType("i"))
+        step.connect("activate", self._on_step_time)
+        self.add_action(step)
         self.set_accels_for_action("app.quit", ["<Control>q"])
+        self.set_accels_for_action("app.step-time(1)", ["<Control>Right"])
+        self.set_accels_for_action("app.step-time(-1)", ["<Control>Left"])
 
     def do_startup(self):
         Adw.Application.do_startup(self)
@@ -45,6 +53,10 @@ class Application(Adw.Application):
                 window.add_css_class("devel")
         window.present()
 
+    def _on_step_time(self, action, frames):
+        if self.props.active_window:
+            self.props.active_window.timebar.step(frames.unpack())
+
     def _on_about(self, *_):
         dialog = Adw.AboutDialog(
             application_name=NAME,
@@ -57,6 +69,11 @@ class Application(Adw.Application):
             comments="Rain radar with a 2-hour forecast. Not affiliated "
                      "with the Deutscher Wetterdienst.",
         )
+        # "What's New" from the metainfo, the same text GNOME Software shows.
+        notes = metainfo.release_notes(metainfo.find(APP_ID))
+        if notes:
+            dialog.set_release_notes_version(notes[0])
+            dialog.set_release_notes(notes[1])
         dialog.add_link("Support Development", SUPPORT_URL)
         dialog.add_legal_section(
             "Weather Data",
