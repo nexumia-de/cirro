@@ -14,9 +14,9 @@ jobs:
     with:
       manifest: de.nexumia.Cirro.yml
       # Tags publish Cirro, every push to main publishes Cirro (Nightly);
-      # suitably/phosh-apps serves both (docs/release-channels.md).
+      # nexumia-de/phosh-apps serves both (docs/release-channels.md).
       release: true
       nightly: true
-      publish-repo: suitably/phosh-apps
+      publish-repo: nexumia-de/phosh-apps
     secrets:
       PUBLISH_TOKEN: ${{ secrets.PUBLISH_TOKEN }}
