@@ -91,7 +91,7 @@ M2 animates the whole timeline:
 | `cirro/renderer.py` | `FrameRenderer`: worker thread that decodes, reprojects and colours the requested frames (selected one first) into an LRU of 8 textures. |
 | `cirro/timebar.py` | `TimeBar` widget (step 7). |
 | `cirro/location.py` | Own location through the location portal (below). |
-| `cirro/window.py` | Map, location button and marker, stale banner, time bar, legend. Polls, plays and tracks the location only while the window is mapped and not `suspended`. |
+| `cirro/window.py` | Map, location button and marker, stale banner, time bar, legend. Polls, plays and tracks the location only while the window is mapped and not `suspended`. The map scale shows kilometres only and is hidden below 600 sp (an `AdwBreakpoint`): at 360 px it overlapped the OSM and DWD attribution, which has to stay readable. |
 | `cirro/main.py` | `app.step-time(n)`: n frames later (earlier if negative), Ctrl+Right / Ctrl+Left; an app action so that screenshots can activate it over D-Bus. About dialog with "What's New" from `cirro/metainfo.py`. |
 
 ## Recorded demo data

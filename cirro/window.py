@@ -22,6 +22,8 @@ log = logging.getLogger(__name__)
 GERMANY = (51.2, 10.4, 5.8)
 # Zoom for "Show My Location": the region around the user.
 LOCATION_ZOOM = 8.5
+# Below this width the map scale would overlap the attribution.
+SCALE_MIN_WIDTH = 600
 
 
 class Window(Adw.ApplicationWindow):
@@ -58,6 +60,15 @@ class Window(Adw.ApplicationWindow):
         # About dialog (docs/data-sources.md, licences and attribution).
         self.map.get_license().set_extra_text(
             "Based on data from Deutscher Wetterdienst")
+        # Kilometres only (Germany). Narrow windows have no room for the
+        # scale next to the attribution, which has to stay readable, so
+        # it is hidden there.
+        scale = self.map.get_scale()
+        scale.set_unit(Shumate.Unit.METRIC)
+        narrow = Adw.Breakpoint.new(
+            Adw.BreakpointCondition.parse(f"max-width: {SCALE_MIN_WIDTH}sp"))
+        narrow.add_setter(scale, "visible", False)
+        self.add_breakpoint(narrow)
         viewport = self.map.get_viewport()
         viewport.set_min_zoom_level(4)
         viewport.set_max_zoom_level(12)
