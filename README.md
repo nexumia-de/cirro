@@ -10,7 +10,9 @@ animated from the past hour to +2 h.
 
 Status: milestone M2, the animated radar from −60 min to +2 h with a
 time bar and the own location; phone measurements and the first
-release are still open. See [docs/roadmap.md](docs/roadmap.md).
+release are still open. See the
+[milestones](https://github.com/nexumia-de/cirro/milestones) and
+[docs/roadmap.md](docs/roadmap.md).
 
 Cirro is an independent project and not affiliated with the
 Deutscher Wetterdienst (DWD). Weather data: DWD open data. Map data:
