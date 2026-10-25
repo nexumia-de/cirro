@@ -127,5 +127,30 @@ Two things fail only in the cloud dev container, not on a device:
   process exited early" and the map stays blank. Check tiles with the
   host run (`python3.12 -m cirro`) instead.
 
+# Store screenshots
+
+After installing the Flatpak (`flatpak-builder --user --install …`, or
+`--repo=repo` and `flatpak install --user` from it), take every shot
+`release.toml` declares, as CI does:
+
+```sh
+python3 ../phosh-toolkit/scripts/release.py screenshots --out shots -- flatpak run de.nexumia.Cirro
+```
+
+Single states: `CIRRO_DEMO_DATA=$PWD/tests/data/demo` selects the
+recorded radar data, `-a` activates an action:
+
+```sh
+../phosh-toolkit/scripts/screenshot.sh -s 2 -c dark -a 'app.step-time(12)' \
+  -e CIRRO_DEMO_DATA=$PWD/tests/data/demo -F tests/data/demo \
+  -o shot.png -- flatpak run de.nexumia.Cirro
+```
+
+In the cloud dev container `flatpak run` needs a system bus first
+(`mkdir -p /run/dbus && dbus-daemon --system --fork`) and
+`/run/user/$UID` (`mkdir -m 700 -p /run/user/$UID`). Map tiles load in
+`flatpak run` (unlike `flatpak build` above); the demo data needs no
+network (2026-10-25).
+
 `--share=network` in the manifest is needed for radar data and map
 tiles; no other permission beyond the toolkit defaults is used yet.

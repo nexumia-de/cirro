@@ -1,4 +1,5 @@
 import logging
+import os
 from pathlib import Path
 
 import gi
@@ -10,6 +11,7 @@ from cirro.frames import FrameStore  # noqa: E402
 from cirro.legend import Legend  # noqa: E402
 from cirro.location import Location  # noqa: E402
 from cirro.radar_layer import RadarLayer  # noqa: E402
+from cirro import radar_source  # noqa: E402
 from cirro.radar_source import RadarSource  # noqa: E402
 from cirro.renderer import CAPACITY, FrameRenderer  # noqa: E402
 from cirro.timebar import TimeBar, clock  # noqa: E402
@@ -83,8 +85,13 @@ class Window(Adw.ApplicationWindow):
         view.add_bottom_bar(Adw.Clamp(maximum_size=560, child=bottom))
         self.set_content(view)
 
-        cache = Path(GLib.get_user_cache_dir()) / "cirro" / "frames"
-        self.source = RadarSource(FrameStore(cache))
+        demo = os.environ.get("CIRRO_DEMO_DATA")
+        if demo:
+            # Recorded data, e.g. tests/data/demo for screenshots.
+            self.source = radar_source.demo(demo)
+        else:
+            cache = Path(GLib.get_user_cache_dir()) / "cirro" / "frames"
+            self.source = RadarSource(FrameStore(cache))
         self.source.connect("changed", self._on_frames_changed)
         self.source.connect("failed", self._on_failed)
         self.source.connect("notify::stale", self._update_banner)

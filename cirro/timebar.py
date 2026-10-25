@@ -109,6 +109,15 @@ class TimeBar(Gtk.Box):
             self._adjustment.set_value(index)
         self._update(emit=True)
 
+    def step(self, frames):
+        """Select the frame `frames` later (earlier if negative), stopping
+        at the ends, and pause playback."""
+        if not self._entries:
+            return
+        self.set_playing(False)
+        index = min(max(self.index + frames, 0), len(self._entries) - 1)
+        self._adjustment.set_value(index)
+
     def set_playing(self, playing):
         if playing == self.playing or (playing and len(self._entries) < 2):
             return

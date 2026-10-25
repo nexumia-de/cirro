@@ -92,6 +92,20 @@ M2 animates the whole timeline:
 | `cirro/timebar.py` | `TimeBar` widget (step 7). |
 | `cirro/location.py` | Own location through the location portal (below). |
 | `cirro/window.py` | Map, location button and marker, stale banner, time bar, legend. Polls, plays and tracks the location only while the window is mapped and not `suspended`. |
+| `cirro/main.py` | `app.step-time(n)`: n frames later (earlier if negative), Ctrl+Right / Ctrl+Left; an app action so that screenshots can activate it over D-Bus. About dialog with "What's New" from `cirro/metainfo.py`. |
+
+## Recorded demo data
+
+`CIRRO_DEMO_DATA=<directory>` replaces DWD by a directory laid out like
+`weather/radar/composite/rv/`, read through the same download code with
+`file://` URLs (`radar_source.demo()`); no disk cache, and the clock
+runs 5 min after the recorded analysis, so the data is current and the
+stale banner stays hidden. `tests/data/demo/` holds the analysis of
+2026-10-24 19:40 UTC (a rain band over western Germany) as DWD served
+it: the full tar (analysis and 24 forecasts, 8.2 MB), the 12 previous
+analyses as tars cut after their first member (as the range requests
+read them) and `composite_rv_LATEST.tar` as a symlink to the analysis.
+Screenshots and `tests/test_metainfo.py` use it.
 
 ## Refresh policy
 
