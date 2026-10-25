@@ -10,10 +10,9 @@ jobs:
   flatpak:
     permissions:
       contents: write
-    uses: nexumia-de/phosh-toolkit/.github/workflows/flatpak.yml@claude/beautiful-bardeen-9xja9a
+    uses: nexumia-de/phosh-toolkit/.github/workflows/flatpak.yml@main
     with:
       manifest: de.nexumia.Cirro.yml
-      toolkit-ref: claude/beautiful-bardeen-9xja9a
       # Tags publish Cirro, every push to main publishes Cirro (Nightly);
       # nexumia-de/phosh-apps serves both (docs/release-channels.md).
       release: true

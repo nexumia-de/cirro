@@ -19,10 +19,9 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
-    uses: nexumia-de/phosh-toolkit/.github/workflows/release.yml@claude/beautiful-bardeen-9xja9a
+    uses: nexumia-de/phosh-toolkit/.github/workflows/release.yml@main
     with:
       version: ${{ inputs.version }}
-      toolkit-ref: claude/beautiful-bardeen-9xja9a
     secrets:
       # Contents and pull requests write on this repository.
       RELEASE_TOKEN: ${{ secrets.PUBLISH_TOKEN }}
