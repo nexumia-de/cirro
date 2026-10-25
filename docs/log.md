@@ -1,6 +1,7 @@
 # Directory Update Log
 
 ## 2026-10-25
+* **Update**: Metainfo declares `pointing` and `keyboard` support next to `touch`; GNOME Software showed "Keyboard not supported" and "Mouse not supported" for the Flatpak because only `touch` was listed (see the toolkit's [adaptive libadwaita UI](../../phosh-toolkit/docs/adaptive-libadwaita.md)).
 * **Creation**: [Bundled dependencies](dependencies.md): licence inventory read from the pinned files (protobuf-c BSD-2-Clause, libshumate LGPL-2.1-or-later, numpy and h5py BSD-3-Clause with their bundled libraries). The h5py wheels bundle libaec 1.1.4 without its licence text; the manifest now adds it.
 * **Update**: Manifest: `x-checker-data` on every source (weekly update pull requests through the new `update-check.yml`), every module installs its licence texts into `/app/share/licenses/de.nexumia.Cirro/<module>/`. Dependabot for GitHub Actions. Repository is REUSE compliant; the recorded DWD sample is annotated CC-BY-4.0, Deutscher Wetterdienst.
 * **Update**: [Data sources](data-sources.md) section 7: DWD terms verified live (CC BY 4.0, source note at the data, alteration note for processed data). Map now shows "Based on data from Deutscher Wetterdienst" (the full note with "gridded data reproduced graphically" no longer fits next to the scale bar at 360 px); the About dialog carries the full note with the CC BY 4.0 link, the OSM ODbL link and the bundled libraries' licences. [Dev environment](dev-environment.md) lists the hosts the update checker needs.
