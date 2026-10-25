@@ -33,6 +33,12 @@ def test_metainfo_declares_phone_support():
     assert {"touch", "pointing", "keyboard"} <= controls
 
 
+def test_metainfo_donation_url_matches_about_dialog():
+    root = ET.parse(ROOT / "data" / f"{APP_ID}.metainfo.xml").getroot()
+    donation = root.find("url[@type='donation']")
+    assert donation is not None and donation.text == cirro.SUPPORT_URL
+
+
 def test_user_agent():
     assert cirro.USER_AGENT == (
         f"Cirro/{cirro.VERSION} (+https://github.com/suitably/cirro)")
