@@ -19,9 +19,9 @@
   <developer id="de.nexumia">
     <name>suitably</name>
   </developer>
-  <url type="homepage">https://github.com/suitably/wetterblick</url>
-  <url type="bugtracker">https://github.com/suitably/wetterblick/issues</url>
-  <url type="vcs-browser">https://github.com/suitably/wetterblick</url>
+  <url type="homepage">https://github.com/suitably/Cirro</url>
+  <url type="bugtracker">https://github.com/suitably/Cirro/issues</url>
+  <url type="vcs-browser">https://github.com/suitably/Cirro</url>
   <launchable type="desktop-id">de.nexumia.Wetterblick.desktop</launchable>
   <content_rating type="oars-1.1"/>
   <categories>

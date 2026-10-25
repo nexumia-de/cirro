@@ -1,6 +1,7 @@
 # Directory Update Log
 
 ## 2026-10-25
+* **Update**: The code moved to the repository `suitably/Cirro`; homepage, bugtracker and vcs-browser URLs, `REPO_URL` (and with it the `User-Agent`) point there. The app keeps its name and id `de.nexumia.Wetterblick`.
 * **Update**: App id renamed from `io.github.suitably.Wetterblick` to `de.nexumia.Wetterblick` (files, meson, manifest, metadata, tests, docs) and the install URL is now `https://flatpak.nexumia.de/`, following the toolkit decision [domain-based names](../../phosh-toolkit/docs/decisions/domain-names.md). No release existed, so no migration is needed.
 
 ## 2026-10-24
