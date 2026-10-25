@@ -32,4 +32,4 @@ def test_metainfo_declares_phone_support():
 
 def test_user_agent():
     assert wetterblick.USER_AGENT == (
-        f"Wetterblick/{wetterblick.VERSION} (+https://github.com/suitably/Cirro)")
+        f"Wetterblick/{wetterblick.VERSION} (+https://github.com/suitably/cirro)")
