@@ -1,6 +1,7 @@
 # Directory Update Log
 
 ## 2026-10-26
+* **Update**: Smooth radar playback (issue #12): a fractional playhead on the frame clock (widget tick callback) instead of a 400 ms GLib timeout, the radar layer crossfades the two frames around it in a GSK cross-fade node, at most 30 updates/s (10 with the cairo software renderer). "Playback Speed" Slow/Normal/Fast in the main menu, kept in `$XDG_CONFIG_HOME/cirro/settings.ini`. Timing logic in pure, tested functions. CPU before/after in the dev container (Xvfb cairo 0.17 → 0.44 core, Broadway 0.21 → 0.98 core, Python share ≤ 0.012 core) in [radar architecture](radar-architecture.md); new decision [smooth playback](decisions/smooth-playback.md). Checked with `scripts/screenshot.sh` at 360×720 and 1000×700, plus the menu and a 0/0.5/1 crossfade strip.
 * **Creation**: Three proposed decision records for the owner: [CAP open data as warning source](decisions/warning-product.md) (#20), [MOSMIX directly as forecast source](decisions/forecast-source.md) (#23) and [DMI as second radar source for Denmark](decisions/dmi-radar.md) (#11). [Data sources](data-sources.md) sections 3–5 now hold live facts (2026-10-25/26) on DWD CAP files, the GeoServer warning WMS/WFS, MOSMIX_L/S, DWD observation CSVs and Bright Sky `/weather`, `/current_weather`, `/alerts`; new section 8 on DMI radar from documentation only, because all DMI hosts were blocked (`403`); hosts added to the [dev environment](dev-environment.md).
 
 ## 2026-10-25

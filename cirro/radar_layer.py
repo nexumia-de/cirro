@@ -18,9 +18,12 @@ def rgba_texture(image):
 
 
 class RadarLayer(Shumate.Layer):
-    """Draws one Mercator-aligned radar texture at its geographic bounds.
+    """Draws one Mercator-aligned radar texture at its geographic bounds,
+    or a crossfade of two (smooth playback).
 
-    Switching frames only swaps the texture (docs/radar-architecture.md).
+    Switching frames only swaps texture references; the crossfade is a
+    GSK cross-fade node, so no pixels are touched in Python
+    (docs/radar-architecture.md).
     """
 
     def __init__(self, viewport):
@@ -28,13 +31,21 @@ class RadarLayer(Shumate.Layer):
         self.set_can_target(False)
         self._texture = None
         self._bounds = None
+        self._next = None
+        self._fraction = 0.0
         for prop in ("latitude", "longitude", "zoom-level", "rotation"):
             viewport.connect(f"notify::{prop}", lambda *_: self.queue_draw())
 
-    def set_frame(self, texture, bounds):
-        """`bounds` is (north, west, south, east) in degrees."""
-        self._texture = texture
-        self._bounds = bounds
+    def set_frame(self, texture, bounds, next_texture=None, fraction=0.0):
+        """`bounds` is (north, west, south, east) in degrees. With
+        `next_texture` (same bounds), draws `texture` faded into it by
+        `fraction` (0 … 1)."""
+        if not next_texture:
+            fraction = 0.0
+        state = (texture, bounds, next_texture if fraction else None, fraction)
+        if state == (self._texture, self._bounds, self._next, self._fraction):
+            return
+        self._texture, self._bounds, self._next, self._fraction = state
         self.queue_draw()
 
     def do_snapshot(self, snapshot):
@@ -63,6 +74,13 @@ class RadarLayer(Shumate.Layer):
             snapshot.translate(Graphene.Point().init(-width / 2, -height / 2))
         scaling = Gsk.ScalingFilter.NEAREST if zoom >= NEAREST_ZOOM \
             else Gsk.ScalingFilter.LINEAR
-        snapshot.append_scaled_texture(self._texture, scaling, rect)
+        if self._next is not None:
+            snapshot.push_cross_fade(self._fraction)
+            snapshot.append_scaled_texture(self._texture, scaling, rect)
+            snapshot.pop()
+            snapshot.append_scaled_texture(self._next, scaling, rect)
+            snapshot.pop()
+        else:
+            snapshot.append_scaled_texture(self._texture, scaling, rect)
         if rotation:
             snapshot.restore()
