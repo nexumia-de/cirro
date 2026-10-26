@@ -7,8 +7,11 @@ with its 2-hour forecast is the core feature; everything else is
 secondary. The shared rules in ../phosh-toolkit/AGENTS.md apply as well.
 
 - App id: `de.nexumia.Cirro`.
-- Plan and milestones: [docs/roadmap.md](docs/roadmap.md). Work on the
-  current milestone first; do not start later milestones without asking.
+- Plan: work items are [issues](https://github.com/nexumia-de/cirro/issues)
+  in [milestones](https://github.com/nexumia-de/cirro/milestones);
+  goals per milestone are in [docs/roadmap.md](docs/roadmap.md). Work on
+  the issues of the current milestone first; do not start later
+  milestones without asking.
 - Data sources and their open questions:
   [docs/data-sources.md](docs/data-sources.md). Verify every unverified
   fact there against the live service before building on it, and record
