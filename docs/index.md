@@ -17,6 +17,7 @@ Change history is in [log.md](log.md).
 # Design
 
 * [Radar architecture](radar-architecture.md) - How radar frames are fetched, cached, projected and animated on the map.
+* [Point nowcast](nowcast.md) - Rain rate at the own location or the map centre over 3 hours, the bar chart and the "Rain starts in N min" sentence.
 * [Data sources](data-sources.md) - DWD open data products and other services the app uses, with open questions.
 
 # Development

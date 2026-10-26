@@ -62,7 +62,8 @@ location through the location portal.
 **Goal**: answer "will it rain here in the next two hours?" for the
 current location, for saved places and for any point on the map.
 
-**Exit criteria**: 2-hour chart and a "rain starts in N min" sentence;
+**Exit criteria**: 2-hour chart and a "rain starts in N min" sentence
+([point nowcast](nowcast.md));
 place search (Nominatim, with its usage policy) and saved places in an
 `AdwNavigationSplitView` sidebar that collapses on the phone.
 

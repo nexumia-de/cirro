@@ -162,10 +162,10 @@ unavailable". Not yet tried on the phone.
 
 # Point nowcast (M3)
 
-The same FrameStore gives the value series at the user's cell (nearest
-grid cell of the location, inverse projection) → bar chart of 25 values
-and a sentence: "Rain from 14:20, heavy around 14:35" / "No rain
-expected in the next 2 hours". No extra download.
+The same FrameStore gives the value series at the grid cell of the own
+location (or the map centre) → bar chart of the 37 frames and a
+sentence: "Rain starts in 35 min" / "No rain expected in the next 2
+hours". No extra download. Details: [point nowcast](nowcast.md).
 
 # Memory and bandwidth budget
 

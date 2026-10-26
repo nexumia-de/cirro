@@ -85,6 +85,50 @@ def _times(f):
             _str(f["how"].attrs.get("simulated", b"False")) == "True")
 
 
+def _grid(f):
+    where = f["where"].attrs
+    projdef = _str(where["projdef"])
+    # The corner coordinates are the outer cell edges; the upper-left
+    # one fixes the grid's position (docs/data-sources.md).
+    from cirro.projection import Stereographic
+    x_min, y_max = Stereographic(parse_projdef(projdef)).forward(
+        float(where["UL_lon"]), float(where["UL_lat"]))
+    return Grid(projdef, int(where["xsize"]), int(where["ysize"]),
+                float(where["xscale"]), float(where["yscale"]),
+                round(float(x_min), 1), round(float(y_max), 1))
+
+
+def cell(grid, latitude, longitude):
+    """(row, column) of the grid cell containing the point, None outside."""
+    from cirro.projection import Stereographic
+
+    x, y = Stereographic(parse_projdef(grid.projdef)).forward(longitude, latitude)
+    col = int((float(x) - grid.x_min) // grid.xscale)
+    row = int((grid.y_max - float(y)) // grid.yscale)
+    if 0 <= row < grid.ysize and 0 <= col < grid.xsize:
+        return row, col
+    return None
+
+
+def sample(data, latitude, longitude):
+    """Rain rate in mm/h at one point of a member, NaN outside the
+    coverage. Reads one cell instead of decoding the whole frame, though
+    HDF5 still decompresses the member's single chunk."""
+    with _open(data) as f:
+        what = f["dataset1/data1/what"].attrs
+        if _str(what["quantity"]) != "ACRR":
+            raise ValueError(f"unexpected quantity {_str(what['quantity'])!r}")
+        where = cell(_grid(f), latitude, longitude)
+        if where is None:
+            return float("nan")
+        value = int(f["dataset1/data1/data"][where])
+        if value == int(what["nodata"]):
+            return float("nan")
+        if value == int(what["undetect"]):
+            return 0.0
+        return (value * float(what["gain"]) + float(what["offset"])) * 12
+
+
 def peek(data):
     """(analysis time, valid time, forecast flag) of a member without
     decompressing its data, for the frame timeline."""
@@ -106,20 +150,10 @@ def decode(data):
         raw = np.minimum(values, RAW_MAX).astype(np.uint16)
         raw[values == nodata] = NODATA
 
-        where = f["where"].attrs
-        projdef = _str(where["projdef"])
-        xsize, ysize = int(where["xsize"]), int(where["ysize"])
-        if values.shape != (ysize, xsize):
+        grid = _grid(f)
+        if values.shape != (grid.ysize, grid.xsize):
             raise ValueError(f"data shape {values.shape} does not match "
-                             f"grid {ysize}×{xsize}")
-        xscale, yscale = float(where["xscale"]), float(where["yscale"])
-        # The corner coordinates are the outer cell edges; the upper-left
-        # one fixes the grid's position (docs/data-sources.md).
-        from cirro.projection import Stereographic
-        x_min, y_max = Stereographic(parse_projdef(projdef)).forward(
-            float(where["UL_lon"]), float(where["UL_lat"]))
-        grid = Grid(projdef, xsize, ysize, xscale, yscale,
-                    round(float(x_min), 1), round(float(y_max), 1))
+                             f"grid {grid.ysize}×{grid.xsize}")
 
         analysis_time, valid_time, forecast = _times(f)
         return Frame(
