@@ -11,3 +11,4 @@
 * [CAP open data as warning source](warning-product.md) - Proposed: warnings per place from DWD's CAP status files; WMS layer only for the optional overlay.
 * [MOSMIX directly as forecast source](forecast-source.md) - Proposed: forecasts from MOSMIX_L single-station KMZ files, not Bright Sky.
 * [DMI as second radar source for Denmark](dmi-radar.md) - Proposed: DMI composite behind a radar provider interface after M3, past frames only; not verified live.
+* [Own-location pin can be moved by hand](own-location-pin.md) - The user may move it; it says "Set by hand" until the next real fix overwrites it.
