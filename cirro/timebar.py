@@ -6,8 +6,12 @@ map crossfades between the two frames on either side of it
 (docs/decisions/smooth-playback.md)."""
 import logging
 import math
+from pathlib import Path
 
-from gi.repository import GLib, GObject, Gsk, Gtk, Pango
+import gi
+
+gi.require_version("Gsk", "4.0")
+from gi.repository import GLib, GObject, Gsk, Gtk, Pango  # noqa: E402
 
 log = logging.getLogger(__name__)
 
@@ -64,6 +68,35 @@ def due(elapsed_us, fps=FPS):
 def step_frames(seconds, speed):
     """Frames the playhead moves in `seconds` of frame clock time."""
     return min(seconds, MAX_TICK_SECONDS) * speed / STEP_SECONDS
+
+
+# Small user preferences (playback speed), a key file in the config
+# directory (in the Flatpak: ~/.var/app/<app id>/config/cirro/).
+SETTINGS = Path(GLib.get_user_config_dir()) / "cirro" / "settings.ini"
+
+
+def load_speed(path=SETTINGS):
+    keyfile = GLib.KeyFile()
+    try:
+        keyfile.load_from_file(str(path), GLib.KeyFileFlags.NONE)
+        speed = keyfile.get_double("playback", "speed")
+    except GLib.Error:
+        return 1.0
+    return speed if speed in (factor for _, factor in SPEEDS) else 1.0
+
+
+def save_speed(speed, path=SETTINGS):
+    keyfile = GLib.KeyFile()
+    try:
+        keyfile.load_from_file(str(path), GLib.KeyFileFlags.KEEP_COMMENTS)
+    except GLib.Error:
+        pass
+    keyfile.set_double("playback", "speed", speed)
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        keyfile.save_to_file(str(path))
+    except (OSError, GLib.Error) as error:
+        log.warning("cannot save %s: %s", path, error)
 
 
 def _local(time_):

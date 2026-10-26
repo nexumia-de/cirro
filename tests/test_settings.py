@@ -4,9 +4,8 @@ import pytest
 pytest.importorskip("h5py")
 gi = pytest.importorskip("gi")
 gi.require_version("Gtk", "4.0")
-gi.require_version("Adw", "1")
 
-from cirro.main import load_speed, save_speed  # noqa: E402
+from cirro.timebar import load_speed, save_speed  # noqa: E402
 
 
 def test_speed_round_trip(tmp_path):

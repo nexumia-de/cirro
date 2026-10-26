@@ -11,36 +11,8 @@ from gi.repository import Adw, Gdk, Gio, GLib, Gtk, Shumate  # noqa: E402
 
 from cirro import (APP_ID, NAME, NIGHTLY, REPO_URL, SUPPORT_URL,  # noqa: E402
                    USER_AGENT, VERSION_LABEL, metainfo)
-from cirro.timebar import SPEEDS  # noqa: E402
+from cirro.timebar import load_speed, save_speed  # noqa: E402
 from cirro.window import Window  # noqa: E402
-
-# Small user preferences (playback speed), a key file in the config
-# directory (in the Flatpak: ~/.var/app/<app id>/config/cirro/).
-SETTINGS = Path(GLib.get_user_config_dir()) / "cirro" / "settings.ini"
-
-
-def load_speed(path=SETTINGS):
-    keyfile = GLib.KeyFile()
-    try:
-        keyfile.load_from_file(str(path), GLib.KeyFileFlags.NONE)
-        speed = keyfile.get_double("playback", "speed")
-    except GLib.Error:
-        return 1.0
-    return speed if speed in (factor for _, factor in SPEEDS) else 1.0
-
-
-def save_speed(speed, path=SETTINGS):
-    keyfile = GLib.KeyFile()
-    try:
-        keyfile.load_from_file(str(path), GLib.KeyFileFlags.KEEP_COMMENTS)
-    except GLib.Error:
-        pass
-    keyfile.set_double("playback", "speed", speed)
-    try:
-        path.parent.mkdir(parents=True, exist_ok=True)
-        keyfile.save_to_file(str(path))
-    except (OSError, GLib.Error) as error:
-        logging.getLogger(__name__).warning("cannot save %s: %s", path, error)
 
 
 class Application(Adw.Application):
