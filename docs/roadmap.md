@@ -61,11 +61,17 @@ location through the location portal.
 
 **Goal**: answer "will it rain here in the next two hours?" for the
 current location, for saved places and for any point on the map.
+Places are pins on the map; the selected pin is what the nowcast, and
+later warnings and forecasts, are about.
 
 **Exit criteria**: 2-hour chart and a "rain starts in N min" sentence
 ([point nowcast](nowcast.md));
-place search (Nominatim, with its usage policy) and saved places in an
-`AdwNavigationSplitView` sidebar that collapses on the phone.
+place search (Nominatim, with its usage policy) and saved places, kept
+on disk with the last own position, shown as pins on the map (own
+location with its own marker) and in an `AdwNavigationSplitView`
+sidebar that collapses on the phone; places can be added, renamed,
+moved and deleted, get a reverse-geocoded default name, and one of them
+is the default place at start.
 
 # M4 – Warnings
 
