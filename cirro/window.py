@@ -14,7 +14,7 @@ from cirro.radar_layer import RadarLayer  # noqa: E402
 from cirro import radar_source  # noqa: E402
 from cirro.radar_source import RadarSource  # noqa: E402
 from cirro.renderer import CAPACITY, FrameRenderer  # noqa: E402
-from cirro.timebar import TimeBar, clock  # noqa: E402
+from cirro.timebar import SPEEDS, TimeBar, clock  # noqa: E402
 
 log = logging.getLogger(__name__)
 
@@ -35,7 +35,13 @@ class Window(Adw.ApplicationWindow):
         self._centre_on_fix = False
 
         menu = Gio.Menu()
-        menu.append("_About Cirro", "app.about")
+        speeds = Gio.Menu()
+        for label, factor in SPEEDS:
+            speeds.append(label, f"app.playback-speed({factor})")
+        menu.append_section("Playback Speed", speeds)
+        about = Gio.Menu()
+        about.append("_About Cirro", "app.about")
+        menu.append_section(None, about)
         self._title = Adw.WindowTitle(title="Cirro")
         header = Adw.HeaderBar(title_widget=self._title)
         header.pack_end(Gtk.MenuButton(
@@ -85,6 +91,7 @@ class Window(Adw.ApplicationWindow):
 
         self.timebar = TimeBar(ready=self._is_rendered)
         self.timebar.connect("selected", self._on_selected)
+        self.timebar.connect("blend", self._on_blend)
         bottom = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         bottom.append(self.timebar)
         bottom.append(Legend())
@@ -152,6 +159,19 @@ class Window(Adw.ApplicationWindow):
         ahead = [(index + k) % n for k in range(CAPACITY - 1)]
         behind = [(index - 1) % n]
         self.renderer.request([self._entries[i] for i in ahead + behind])
+
+    def _on_blend(self, timebar, index, fraction):
+        # Playback between two frames: crossfade their textures.
+        rendered = self.renderer.get(self._entries[index])
+        if not rendered:
+            return
+        following = None
+        if fraction and index + 1 < len(self._entries):
+            following = self.renderer.get(self._entries[index + 1])
+        if following and following.bounds != rendered.bounds:
+            following = None
+        self.radar_layer.set_frame(rendered.texture, rendered.bounds,
+                                   following and following.texture, fraction)
 
     def _on_rendered(self, name):
         if self._entries and self._entries[self.timebar.index].name == name:

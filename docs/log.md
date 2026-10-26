@@ -1,5 +1,8 @@
 # Directory Update Log
 
+## 2026-10-26
+* **Update**: Smooth radar playback (issue #12): a fractional playhead on the frame clock (widget tick callback) instead of a 400 ms GLib timeout, the radar layer crossfades the two frames around it in a GSK cross-fade node, at most 30 updates/s (10 with the cairo software renderer). "Playback Speed" Slow/Normal/Fast in the main menu, kept in `$XDG_CONFIG_HOME/cirro/settings.ini`. Timing logic in pure, tested functions. CPU before/after in the dev container (Xvfb cairo 0.17 → 0.44 core, Broadway 0.21 → 0.98 core, Python share ≤ 0.012 core) in [radar architecture](radar-architecture.md); new decision [smooth playback](decisions/smooth-playback.md). Checked with `scripts/screenshot.sh` at 360×720 and 1000×700, plus the menu and a 0/0.5/1 crossfade strip.
+
 ## 2026-10-25
 * **Update**: The map scale shows kilometres only and is hidden below 600 sp, where it overlapped the attribution ([radar architecture](radar-architecture.md)); checked at 360, 600, 640 and 1000 px, also in the Flatpak screenshots. Repository URLs, User-Agent and workflow references name the current owner `nexumia-de` instead of `suitably`; actions pinned to commit SHAs. `nexumia.de` added to the [dev environment](dev-environment.md) hosts (Flathub linter only).
 * **Update**: Support link (toolkit [support for development](../../phosh-toolkit/docs/support.md)): metainfo `url type="donation"` and the About dialog's "Support Development" link (on its Details page) point to `https://liberapay.com/suitably` (`cirro.SUPPORT_URL`, a test keeps both equal); README "Support" section and `.github/FUNDING.yml`. Checked with `scripts/screenshot.sh` at 360×720 and 1000×700.

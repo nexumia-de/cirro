@@ -11,7 +11,36 @@ from gi.repository import Adw, Gdk, Gio, GLib, Gtk, Shumate  # noqa: E402
 
 from cirro import (APP_ID, NAME, NIGHTLY, REPO_URL, SUPPORT_URL,  # noqa: E402
                    USER_AGENT, VERSION_LABEL, metainfo)
+from cirro.timebar import SPEEDS  # noqa: E402
 from cirro.window import Window  # noqa: E402
+
+# Small user preferences (playback speed), a key file in the config
+# directory (in the Flatpak: ~/.var/app/<app id>/config/cirro/).
+SETTINGS = Path(GLib.get_user_config_dir()) / "cirro" / "settings.ini"
+
+
+def load_speed(path=SETTINGS):
+    keyfile = GLib.KeyFile()
+    try:
+        keyfile.load_from_file(str(path), GLib.KeyFileFlags.NONE)
+        speed = keyfile.get_double("playback", "speed")
+    except GLib.Error:
+        return 1.0
+    return speed if speed in (factor for _, factor in SPEEDS) else 1.0
+
+
+def save_speed(speed, path=SETTINGS):
+    keyfile = GLib.KeyFile()
+    try:
+        keyfile.load_from_file(str(path), GLib.KeyFileFlags.KEEP_COMMENTS)
+    except GLib.Error:
+        pass
+    keyfile.set_double("playback", "speed", speed)
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        keyfile.save_to_file(str(path))
+    except (OSError, GLib.Error) as error:
+        logging.getLogger(__name__).warning("cannot save %s: %s", path, error)
 
 
 class Application(Adw.Application):
@@ -30,6 +59,13 @@ class Application(Adw.Application):
         step = Gio.SimpleAction.new("step-time", GLib.VariantType("i"))
         step.connect("activate", self._on_step_time)
         self.add_action(step)
+        # app.playback-speed(f): radar playback speed factor (timebar.SPEEDS),
+        # radio items in the main menu, kept across starts.
+        speed = Gio.SimpleAction.new_stateful(
+            "playback-speed", GLib.VariantType("d"),
+            GLib.Variant("d", load_speed()))
+        speed.connect("change-state", self._on_playback_speed)
+        self.add_action(speed)
         self.set_accels_for_action("app.quit", ["<Control>q"])
         self.set_accels_for_action("app.step-time(1)", ["<Control>Right"])
         self.set_accels_for_action("app.step-time(-1)", ["<Control>Left"])
@@ -48,6 +84,8 @@ class Application(Adw.Application):
         window = self.props.active_window
         if window is None:
             window = Window(self)
+            window.timebar.set_speed(
+                self.lookup_action("playback-speed").get_state().unpack())
             if NIGHTLY:
                 # libadwaita's striped header bar for development builds.
                 window.add_css_class("devel")
@@ -56,6 +94,12 @@ class Application(Adw.Application):
     def _on_step_time(self, action, frames):
         if self.props.active_window:
             self.props.active_window.timebar.step(frames.unpack())
+
+    def _on_playback_speed(self, action, value):
+        action.set_state(value)
+        save_speed(value.unpack())
+        if self.props.active_window:
+            self.props.active_window.timebar.set_speed(value.unpack())
 
     def _on_about(self, *_):
         dialog = Adw.AboutDialog(

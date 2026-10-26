@@ -1,10 +1,69 @@
 """Time bar below the map: scrub through the frames, play/pause, a "Now"
-mark and forecast labelling (docs/radar-architecture.md, TimeBar)."""
-from gi.repository import GLib, GObject, Gtk, Pango
+mark and forecast labelling (docs/radar-architecture.md, TimeBar).
 
-# Playback speed and the pause at the end before it loops.
-FRAME_MS = 400
+Playback moves a fractional playhead at the display's frame rate; the
+map crossfades between the two frames on either side of it
+(docs/decisions/smooth-playback.md)."""
+import logging
+import math
+
+from gi.repository import GLib, GObject, Gsk, Gtk, Pango
+
+log = logging.getLogger(__name__)
+
+# Seconds per 5-min step at normal speed, and the pause at the end (in
+# steps) before playback loops.
+STEP_SECONDS = 0.4
 END_PAUSE_FRAMES = 3
+# Playback speeds offered in the main menu: (label, factor).
+SPEEDS = (("Slow", 0.5), ("Normal", 1.0), ("Fast", 2.0))
+# Playback redraws the radar at most this often. 30 per second looks
+# smooth for a crossfade and halves the drawing work of a 60 Hz display.
+FPS = 30
+# With GTK's software renderer (cairo: no usable GPU) every crossfade is
+# blended by the CPU, so update less often (docs/radar-architecture.md,
+# measurements).
+SOFTWARE_FPS = 10
+# A longer gap between two frame clock ticks (a stall, a hidden window)
+# does not make the playhead jump.
+MAX_TICK_SECONDS = 0.1
+
+
+def advance(position, frames, count, ready, hold=END_PAUSE_FRAMES):
+    """The playhead `frames` (fractional) later on a timeline of `count`
+    frames. Past the last frame it holds that frame for `hold` steps, then
+    loops to 0. It does not move into a frame that `ready(index)` says is
+    not rendered yet: it waits on the frame before it instead."""
+    last = count - 1
+    target = position + frames
+    if target >= last + hold:
+        return 0.0
+    # Showing a position between i and i + 1 needs frame i + 1.
+    for i in range(math.floor(position) + 1, min(math.floor(target) + 1, last) + 1):
+        if not ready(i):
+            return max(position, float(i - 1))
+    return target
+
+
+def blend(position, count):
+    """(index, fraction) to draw for a playhead: frame `index` crossfaded
+    into the next one by `fraction` (0 shows `index` alone)."""
+    last = count - 1
+    index = min(math.floor(position), last)
+    return index, (position - index if index < last else 0.0)
+
+
+def due(elapsed_us, fps=FPS):
+    """Whether a frame clock tick `elapsed_us` µs after the last update
+    should update again. The 20 % tolerance absorbs tick jitter, so a
+    60 Hz clock updates on every second tick, a 120 Hz one on every
+    fourth."""
+    return elapsed_us >= 0.8e6 / fps
+
+
+def step_frames(seconds, speed):
+    """Frames the playhead moves in `seconds` of frame clock time."""
+    return min(seconds, MAX_TICK_SECONDS) * speed / STEP_SECONDS
 
 
 def _local(time_):
@@ -26,10 +85,13 @@ def describe(entry, analysis_time):
 
 
 class TimeBar(Gtk.Box):
-    """Emits `selected` with the index of the frame to show."""
+    """Emits `selected` with the index of the frame to show, and while
+    playing `blend` with that index and how far (0 … 1) it has faded
+    into the next frame."""
 
     __gsignals__ = {
         "selected": (GObject.SignalFlags.RUN_FIRST, None, (int,)),
+        "blend": (GObject.SignalFlags.RUN_FIRST, None, (int, float)),
     }
 
     def __init__(self, ready=lambda index: True):
@@ -40,8 +102,11 @@ class TimeBar(Gtk.Box):
         self._ready = ready
         self._entries = []
         self._analysis_time = None
-        self._timer = 0
-        self._end_pause = 0
+        self._tick = 0
+        self._last_tick = 0
+        self._position = 0.0     # playhead in frames, past the end while holding
+        self._speed = 1.0
+        self._fps = FPS
 
         self._play = Gtk.Button(icon_name="media-playback-start-symbolic",
                                 valign=Gtk.Align.CENTER,
@@ -77,11 +142,16 @@ class TimeBar(Gtk.Box):
 
     @property
     def index(self):
-        return round(self._adjustment.get_value())
+        # Fractional while playing; the frame being faded out.
+        return math.floor(self._adjustment.get_value() + 1e-9)
 
     @property
     def playing(self):
-        return self._timer != 0
+        return self._tick != 0
+
+    def set_speed(self, speed):
+        """Playback speed factor, 1 = one 5-min step per STEP_SECONDS."""
+        self._speed = speed
 
     def set_frames(self, entries, analysis_time):
         """New timeline; keeps the selected time if it is still there,
@@ -107,6 +177,7 @@ class TimeBar(Gtk.Box):
         with GObject.signal_handler_block(self._adjustment, self._changed):
             self._adjustment.set_upper(max(0, len(entries) - 1))
             self._adjustment.set_value(index)
+        self._position = float(index)
         self._update(emit=True)
 
     def step(self, frames):
@@ -124,11 +195,18 @@ class TimeBar(Gtk.Box):
         if playing:
             if self.index == len(self._entries) - 1:
                 self._adjustment.set_value(0)
-            self._end_pause = 0
-            self._timer = GLib.timeout_add(FRAME_MS, self._on_tick)
+            self._last_tick = 0
+            renderer = self.get_native().get_renderer() if self.get_native() else None
+            self._fps = SOFTWARE_FPS if isinstance(renderer, Gsk.CairoRenderer) else FPS
+            log.debug("playing at up to %d updates/s (%s)", self._fps,
+                      type(renderer).__name__)
+            # Driven by the frame clock, at most self._fps updates per second.
+            self._tick = self.add_tick_callback(self._on_tick)
         else:
-            GLib.source_remove(self._timer)
-            self._timer = 0
+            self.remove_tick_callback(self._tick)
+            self._tick = 0
+            # Stop on a whole frame.
+            self._adjustment.set_value(round(self._adjustment.get_value()))
         self._set_play_button(playing)
 
     def _set_play_button(self, playing):
@@ -138,23 +216,33 @@ class TimeBar(Gtk.Box):
         self._play.set_tooltip_text(label)
         self._play.update_property([Gtk.AccessibleProperty.LABEL], [label])
 
-    def _on_tick(self):
-        last = len(self._entries) - 1
-        if self.index >= last:
-            # Hold the last frame for a moment, then loop.
-            self._end_pause += 1
-            if self._end_pause >= END_PAUSE_FRAMES:
-                self._end_pause = 0
-                self._adjustment.set_value(0)
-        elif self._ready(self.index + 1):
-            self._adjustment.set_value(self.index + 1)
+    def _on_tick(self, widget, clock):
+        now = clock.get_frame_time()
+        if self._last_tick and not due(now - self._last_tick, self._fps):
+            return GLib.SOURCE_CONTINUE
+        seconds = (now - self._last_tick) / 1e6 if self._last_tick else 0.0
+        self._last_tick = now
+        count = len(self._entries)
+        position = advance(self._position, step_frames(seconds, self._speed),
+                           count, self._ready)
+        if position != self._position:
+            previous = self.index
+            self._position = position
+            with GObject.signal_handler_block(self._adjustment, self._changed):
+                self._adjustment.set_value(min(position, count - 1))
+            index, fraction = blend(position, count)
+            if index != previous:
+                self._update(emit=True)
+            self.emit("blend", index, fraction)
         return GLib.SOURCE_CONTINUE
 
     def _on_value_changed(self, adjustment):
-        # Snap to whole frames while dragging.
-        if adjustment.get_value() != self.index:
-            adjustment.set_value(self.index)
+        # Snap to whole frames while dragging (and when playback stops).
+        value = adjustment.get_value()
+        if value != round(value):
+            adjustment.set_value(round(value))
             return
+        self._position = value
         self._update(emit=True)
 
     def _update(self, emit):
