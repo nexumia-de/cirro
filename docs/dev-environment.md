@@ -18,6 +18,8 @@ The app and its development need outbound HTTPS to:
 | `api.brightsky.dev`, `brightsky.dev` | Bright Sky API and docs |
 | `tile.openstreetmap.org` | Base map tiles |
 | `nominatim.openstreetmap.org` | Place search (M3) |
+| `opendataapi.dmi.dk` | DMI radar API and downloads ([DMI decision](decisions/dmi-radar.md)); proxy `403` on 2026-10-26 |
+| `www.dmi.dk` | DMI open data documentation and terms; proxy `403` on 2026-10-26 |
 | `nexumia.de` | Only Flathub's linter (`appid-url-not-reachable`, excepted in CI); the cloud proxy refused it (`403`, 2026-10-25) |
 
 Plus the toolkit's needs (Flathub, apt, GitHub). In a fresh container,
