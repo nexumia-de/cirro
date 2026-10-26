@@ -159,13 +159,9 @@ leaves the phone's GNSS off and relies on Wi-Fi/cell lookups alone
 2026-10-25).[^geoclue-locator] Without a portal
 (e.g. the dev container) the button shows the toast "Location
 unavailable". On the phone (2026-10-26) the portal granted
-`EXACT` and the map centred on the fix quickly, but the first fix was
-8–10 km off (the next town instead of the user's district), later
-≈ 55 km. Indoors the modem had no GNSS fix, so GeoClue used Wi-Fi/cell
-lookups and GeoIP; GNOME Maps showed the same places. Outdoors the
-modem got a GNSS fix within about 15 min (no A-GPS). Cirro passes on
-what GeoClue reports; the marker follows later fixes (moves ≥ 200 m),
-the map does not.
+`EXACT`, the map centred on the fix quickly and the marker followed
+later fixes; the map does not recentre on them. How precise the fix is
+depends on GeoClue and the device, not on Cirro.
 
 # Point nowcast (M3)
 
