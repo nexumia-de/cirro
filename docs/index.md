@@ -11,7 +11,7 @@ Change history is in [log.md](log.md).
 
 # Plan
 
-* [Roadmap](roadmap.md) - Milestones from the empty repository to a usable radar app and beyond.
+* [Roadmap](roadmap.md) - Goals and exit criteria of the milestones M0–M6; the work items are GitHub issues in those milestones.
 * [Feature inventory](features.md) - WarnWetter features, their priority and how they map to Cirro.
 
 # Design
