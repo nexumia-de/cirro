@@ -113,13 +113,12 @@ class Application(Adw.Application):
                  Gtk.License.CUSTOM, "BSD-2-Clause"),
                 ("NumPy", "© NumPy Developers",
                  Gtk.License.CUSTOM,
-                 "BSD-3-Clause; bundles OpenBLAS (BSD-3-Clause), "
-                 "libgfortran (GPL-3.0-or-later with GCC runtime exception) "
-                 "and libquadmath (LGPL-2.1-or-later)."),
+                 "BSD-3-Clause; includes code under 0BSD, MIT, Zlib and "
+                 "CC0-1.0."),
                 ("h5py", "© Andrew Collette and contributors",
-                 Gtk.License.CUSTOM,
-                 "BSD-3-Clause; bundles HDF5 (BSD-3-Clause) and libaec "
-                 "(BSD-2-Clause).")):
+                 Gtk.License.CUSTOM, "BSD-3-Clause"),
+                ("HDF5", "© The HDF Group",
+                 Gtk.License.CUSTOM, "BSD-3-Clause")):
             dialog.add_legal_section(name, holder, license_type, text)
         dialog.present(self.props.active_window)
 

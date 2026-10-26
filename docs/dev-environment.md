@@ -18,6 +18,8 @@ The app and its development need outbound HTTPS to:
 | `api.brightsky.dev`, `brightsky.dev` | Bright Sky API and docs |
 | `tile.openstreetmap.org` | Base map tiles |
 | `nominatim.openstreetmap.org` | Place search (M3) |
+| `opendataapi.dmi.dk` | DMI radar API and downloads ([DMI decision](decisions/dmi-radar.md)); proxy `403` on 2026-10-26 |
+| `www.dmi.dk` | DMI open data documentation and terms; proxy `403` on 2026-10-26 |
 | `nexumia.de` | Only Flathub's linter (`appid-url-not-reachable`, excepted in CI); the cloud proxy refused it (`403`, 2026-10-25) |
 
 Plus the toolkit's needs (Flathub, apt, GitHub). In a fresh container,
@@ -29,9 +31,10 @@ environment the hosts above go under the environment's network access settings
 DWD, Bright Sky and OSM hosts (proxy answered `403` to `CONNECT`); after
 they were allowed, `opendata.dwd.de`, `maps.dwd.de`, `api.brightsky.dev`
 and `tile.openstreetmap.org` answered normally (21:15 UTC). Building the
-Flatpak also needs `download.gnome.org`, `github.com` (protobuf-c),
-`files.pythonhosted.org` (wheels) and `raw.githubusercontent.com`
-(libaec licence text, see [dependencies](dependencies.md)).
+Flatpak also needs `download.gnome.org`, `github.com` (protobuf-c,
+HDF5, and the git tag for the Flathub manifest) and
+`files.pythonhosted.org` (numpy and h5py source archives, build tool
+wheels; see [dependencies](dependencies.md)).
 
 Checking for updates locally with flatpak-external-data-checker (see
 [dependencies](dependencies.md)) also needs `pypi.org`,

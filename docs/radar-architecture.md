@@ -177,7 +177,10 @@ expected in the next 2 hours". No extra download.
   costs 12–35 ms per frame.
 - `reproject_grid()` builds the index table in blocks of 128 rows: the
   peak RSS of building it dropped from 210 MB to 112 MB, and it got
-  faster (0.72 s → 0.20 s).
+  faster (0.72 s → 0.20 s). With numpy built from source without
+  BLAS (2026-10-25, see [dependencies](dependencies.md)) the sandboxed
+  app takes 0.17 s for the table and 0.11 s to decode one member: BLAS
+  is not used on this path.
 - Bandwidth: a new analysis costs one tar of 1.9–11.6 MB, i.e. up to
   ~140 MB per hour while the window is visible in wide rain; a poll
   without news costs one `304`. A start with an empty cache adds 12 past
