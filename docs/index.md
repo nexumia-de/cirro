@@ -28,4 +28,4 @@ Change history is in [log.md](log.md).
 
 # Decision records
 
-* [Decisions](decisions/index.md) - Name, language, map widget, radar data source, colour scale, no own backend, smooth playback; proposed: warning product, forecast source, DMI radar.
+* [Decisions](decisions/index.md) - Name, language, map widget, radar data source, colour scale, no own backend, smooth playback, own-location pin; proposed: warning product, forecast source, DMI radar.
