@@ -38,7 +38,8 @@ modules:
           type: json
           url: https://api.github.com/repos/protobuf-c/protobuf-c/releases/latest
           version-query: .tag_name | sub("^v"; "")
-          url-query: .assets[] | select(.name == "protobuf-c-" + $version + ".tar.gz") | .browser_download_url
+          url-query: .assets[] | select(.name == "protobuf-c-" + $version + ".tar.gz")
+            | .browser_download_url
 
   - name: libshumate
     buildsystem: meson
@@ -68,8 +69,8 @@ modules:
   - name: python3-build-tools
     buildsystem: simple
     build-commands:
-      - pip3 install --no-index --find-links="file://${PWD}" --prefix=${FLATPAK_DEST} --no-deps
-        meson-python pyproject-metadata pkgconfig
+      - pip3 install --no-index --find-links="file://${PWD}" --prefix=${FLATPAK_DEST}
+        --no-deps meson-python pyproject-metadata pkgconfig
       - |
         for d in ${FLATPAK_DEST}/lib/python3*/site-packages/*.dist-info; do
           dest=${FLATPAK_DEST}/share/licenses/${FLATPAK_ID}/python3-build-tools/$(basename "$d" | sed 's/-[0-9].*//')
@@ -110,10 +111,12 @@ modules:
   - name: python3-numpy
     buildsystem: simple
     build-commands:
-      - pip3 install --no-index --no-build-isolation --find-links="file://${PWD}" --prefix=${FLATPAK_DEST} --no-deps
-        -Csetup-args=-Dblas=none -Csetup-args=-Dlapack=none numpy
+      - pip3 install --no-index --no-build-isolation --find-links="file://${PWD}"
+        --prefix=${FLATPAK_DEST} --no-deps -Csetup-args=-Dblas=none -Csetup-args=-Dlapack=none
+        numpy
       - install -d ${FLATPAK_DEST}/share/licenses/${FLATPAK_ID}
-      - cp -r ${FLATPAK_DEST}/lib/python3*/site-packages/numpy-*.dist-info/licenses ${FLATPAK_DEST}/share/licenses/${FLATPAK_ID}/python3-numpy
+      - cp -r ${FLATPAK_DEST}/lib/python3*/site-packages/numpy-*.dist-info/licenses
+        ${FLATPAK_DEST}/share/licenses/${FLATPAK_ID}/python3-numpy
     sources:
       - type: file
         url: https://files.pythonhosted.org/packages/95/b0/c7453d0b6e2073c3264468b106ee1563750cecc910965e67357e3698c83e/numpy-2.5.4.tar.gz
@@ -144,15 +147,16 @@ modules:
       - /bin
     sources:
       - type: archive
-        url: https://github.com/HDFGroup/hdf5/releases/download/2.0.0/hdf5-2.0.0.tar.gz
+        url: https://github.com/HDFGroup/hdf5/releases/download/2.2.0/hdf5-2.2.0.tar.gz
         # The paths start with ./hdf5-2.0.0/.
         strip-components: 2
-        sha256: f4c2edc5668fb846627182708dbe1e16c60c467e63177a75b0b9f12c19d7efed
+        sha256: 1a1ab8209b35586fbc1aa279ba76d102130b95badcb20ca329587219112d8c16
         x-checker-data:
           type: json
           url: https://api.github.com/repos/HDFGroup/hdf5/releases/latest
           version-query: .tag_name | sub("^hdf5_"; "")
-          url-query: .assets[] | select(.name == "hdf5-" + $version + ".tar.gz") | .browser_download_url
+          url-query: .assets[] | select(.name == "hdf5-" + $version + ".tar.gz") |
+            .browser_download_url
 
   - name: python3-h5py
     buildsystem: simple
@@ -160,9 +164,11 @@ modules:
       env:
         HDF5_DIR: /app
     build-commands:
-      - pip3 install --no-index --no-build-isolation --find-links="file://${PWD}" --prefix=${FLATPAK_DEST} --no-deps h5py
+      - pip3 install --no-index --no-build-isolation --find-links="file://${PWD}"
+        --prefix=${FLATPAK_DEST} --no-deps h5py
       - install -d ${FLATPAK_DEST}/share/licenses/${FLATPAK_ID}
-      - cp -r ${FLATPAK_DEST}/lib/python3*/site-packages/h5py-*.dist-info/licenses ${FLATPAK_DEST}/share/licenses/${FLATPAK_ID}/python3-h5py
+      - cp -r ${FLATPAK_DEST}/lib/python3*/site-packages/h5py-*.dist-info/licenses
+        ${FLATPAK_DEST}/share/licenses/${FLATPAK_ID}/python3-h5py
     sources:
       - type: file
         url: https://files.pythonhosted.org/packages/db/33/acd0ce6863b6c0d7735007df01815403f5589a21ff8c2e1ee2587a38f548/h5py-3.16.0.tar.gz
