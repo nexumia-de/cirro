@@ -1,5 +1,8 @@
 # Directory Update Log
 
+## 2026-10-26
+* **Creation**: Three proposed decision records for the owner: [CAP open data as warning source](decisions/warning-product.md) (#20), [MOSMIX directly as forecast source](decisions/forecast-source.md) (#23) and [DMI as second radar source for Denmark](decisions/dmi-radar.md) (#11). [Data sources](data-sources.md) sections 3–5 now hold live facts (2026-10-25/26) on DWD CAP files, the GeoServer warning WMS/WFS, MOSMIX_L/S, DWD observation CSVs and Bright Sky `/weather`, `/current_weather`, `/alerts`; new section 8 on DMI radar from documentation only, because all DMI hosts were blocked (`403`); hosts added to the [dev environment](dev-environment.md).
+
 ## 2026-10-25
 * **Update**: The map scale shows kilometres only and is hidden below 600 sp, where it overlapped the attribution ([radar architecture](radar-architecture.md)); checked at 360, 600, 640 and 1000 px, also in the Flatpak screenshots. Repository URLs, User-Agent and workflow references name the current owner `nexumia-de` instead of `suitably`; actions pinned to commit SHAs. `nexumia.de` added to the [dev environment](dev-environment.md) hosts (Flathub linter only).
 * **Update**: Support link (toolkit [support for development](../../phosh-toolkit/docs/support.md)): metainfo `url type="donation"` and the About dialog's "Support Development" link (on its Details page) point to `https://liberapay.com/suitably` (`cirro.SUPPORT_URL`, a test keeps both equal); README "Support" section and `.github/FUNDING.yml`. Checked with `scripts/screenshot.sh` at 360×720 and 1000×700.
