@@ -8,9 +8,9 @@ phones, modelled on the feature set of DWD's WarnWetter app. Focus: the
 **rain radar with a 2-hour forecast** (DWD RADVOR nowcast) on a map,
 animated from the past hour to +2 h.
 
-Status: milestone M2, the animated radar from −60 min to +2 h with a
-time bar and the own location; phone measurements and the first
-release are still open. See the
+Status: milestone M3. The animated radar from −60 min to +2 h is
+released (0.2.0). Next: a 2-hour rain forecast for the own location,
+saved places as pins, a tap on the map or a searched town. See the
 [milestones](https://github.com/nexumia-de/cirro/milestones) and
 [docs/roadmap.md](docs/roadmap.md).
 

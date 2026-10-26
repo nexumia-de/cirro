@@ -8,8 +8,8 @@ version-files = ["meson.build", "cirro/__init__.py"]
 # the radar; map tiles are fetched). Add a shot by naming it, giving a
 # caption and listing the actions that open the state to show.
 [screenshots]
-env = { CIRRO_DEMO_DATA = "{root}/tests/data/demo", TZ = "Europe/Berlin" }
-expose = ["{root}/tests/data/demo"]
+env = { CIRRO_DEMO_DATA = "{root}/tests/data/demo", CIRRO_DEMO_PLACES = "{root}/tests/data/places-demo.json", TZ = "Europe/Berlin" }
+expose = ["{root}/tests/data/demo", "{root}/tests/data/places-demo.json"]
 delay = 4
 
 [[screenshots.shot]]
@@ -20,3 +20,8 @@ caption = "Rain radar for Germany with the past hour"
 name = "forecast"
 caption = "Rain forecast one hour ahead"
 actions = ["app.step-time(12)"]
+
+[[screenshots.shot]]
+name = "places"
+caption = "Saved places with the rain forecast for the selected one"
+actions = ["app.show-places"]

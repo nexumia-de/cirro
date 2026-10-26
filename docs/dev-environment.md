@@ -17,7 +17,10 @@ The app and its development need outbound HTTPS to:
 | `www.dwd.de` | DWD product documentation |
 | `api.brightsky.dev`, `brightsky.dev` | Bright Sky API and docs |
 | `tile.openstreetmap.org` | Base map tiles |
-| `nominatim.openstreetmap.org` | Place search (M3) |
+| `nominatim.openstreetmap.org` | Place names and place search (M3); answered on 2026-10-26 |
+| `operations.osmfoundation.org` | Nominatim usage policy (docs only); proxy `403` on 2026-10-26 |
+| `nominatim.org` | Nominatim API documentation (docs only); proxy `403` on 2026-10-26 |
+| `wiki.osmfoundation.org`, `www.openstreetmap.org` | OSM attribution guidelines and copyright page (docs only); proxy `403` on 2026-10-26 |
 | `opendataapi.dmi.dk` | DMI radar API and downloads ([DMI decision](decisions/dmi-radar.md)); proxy `403` on 2026-10-26 |
 | `www.dmi.dk` | DMI open data documentation and terms; proxy `403` on 2026-10-26 |
 | `nexumia.de` | Only Flathub's linter (`appid-url-not-reachable`, excepted in CI); the cloud proxy refused it (`403`, 2026-10-25) |
@@ -87,6 +90,13 @@ are cached in `~/.cache/cirro/frames` (in the Flatpak:
 cold start. The flatpak build command below shares `/root/.cache` with
 the sandbox, so host and sandbox runs share this cache in the dev
 container.
+
+Recorded places for screenshots: `CIRRO_DEMO_PLACES=tests/data/places-demo.json`
+loads them read only and never looks names up; release.toml sets it for
+the store screenshots. Without it, places are kept in
+`~/.local/share/cirro/places.json` (in the Flatpak:
+`~/.var/app/de.nexumia.Cirro/data/cirro/places.json`); delete it to
+start without places.
 
 The dev container has no location portal: "Show My Location" shows
 "Location unavailable" there. To check the marker and the map

@@ -147,9 +147,11 @@ the Jade Bight shows the cells following the coast.
 
 `cirro/location.py` uses libportal (`Xdp`, `XdpGtk4`, both in
 `org.gnome.Platform//51`) to start the location portal's monitor on
-the first tap of "Show My Location"; the portal asks the user and
-GeoClue provides the fix, so the manifest needs no permission. The map
-then animates to the fix at zoom ≥ 8.5 and shows a `Shumate.Point`.
+the first tap of "Show My Location", and at every launch once it gave a
+fix; the portal asks the user and GeoClue provides the fix, so the
+manifest needs no permission. The map then animates to the fix at
+zoom ≥ 8.5. The own location is a pin of the place store, stored with
+its last fix ([places](places.md)).
 Updates arrive for moves of 200 m or more; the monitor stops while the
 window is hidden. Accuracy is `EXACT`: GeoClue starts a source only if
 the requested level is at least the level the source offers, and its
@@ -165,8 +167,8 @@ depends on GeoClue and the device, not on Cirro.
 
 # Point nowcast (M3)
 
-The same FrameStore gives the value series at the grid cell of the own
-location (or the map centre) → bar chart of the 37 frames and a
+The same FrameStore gives the value series at the grid cell of the
+selected place ([places](places.md)) → bar chart of the 37 frames and a
 sentence: "Rain starts in 35 min" / "No rain expected in the next 2
 hours". No extra download. Details: [point nowcast](nowcast.md).
 

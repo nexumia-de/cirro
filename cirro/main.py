@@ -11,6 +11,7 @@ from gi.repository import Adw, Gdk, Gio, GLib, Gtk, Shumate  # noqa: E402
 
 from cirro import (APP_ID, NAME, NIGHTLY, REPO_URL, SUPPORT_URL,  # noqa: E402
                    USER_AGENT, VERSION_LABEL, metainfo)
+from cirro.preferences import PreferencesDialog  # noqa: E402
 from cirro.timebar import load_speed, save_speed  # noqa: E402
 from cirro.window import Window  # noqa: E402
 
@@ -32,13 +33,21 @@ class Application(Adw.Application):
         step.connect("activate", self._on_step_time)
         self.add_action(step)
         # app.playback-speed(f): radar playback speed factor (timebar.SPEEDS),
-        # radio items in the main menu, kept across starts.
+        # set in the preferences, kept across starts.
         speed = Gio.SimpleAction.new_stateful(
             "playback-speed", GLib.VariantType("d"),
             GLib.Variant("d", load_speed()))
         speed.connect("change-state", self._on_playback_speed)
         self.add_action(speed)
+        preferences = Gio.SimpleAction.new("preferences", None)
+        preferences.connect("activate", self._on_preferences)
+        self.add_action(preferences)
+        # app.show-places: the list of places; on the phone its own page.
+        places = Gio.SimpleAction.new("show-places", None)
+        places.connect("activate", self._on_show_places)
+        self.add_action(places)
         self.set_accels_for_action("app.quit", ["<Control>q"])
+        self.set_accels_for_action("app.preferences", ["<Control>comma"])
         self.set_accels_for_action("app.step-time(1)", ["<Control>Right"])
         self.set_accels_for_action("app.step-time(-1)", ["<Control>Left"])
 
@@ -46,6 +55,12 @@ class Application(Adw.Application):
         Adw.Application.do_startup(self)
         # Map tile requests (OSM tile policy: identify the application).
         Shumate.set_user_agent(USER_AGENT)
+        # Pin sizes (docs/places.md, pins).
+        css = Gtk.CssProvider()
+        css.load_from_path(str(Path(__file__).with_name("style.css")))
+        Gtk.StyleContext.add_provider_for_display(
+            Gdk.Display.get_default(), css,
+            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
         # Running from the source tree: the app icon is not installed.
         icons = Path(__file__).resolve().parent.parent / "data" / "icons"
         if icons.is_dir():
@@ -66,6 +81,16 @@ class Application(Adw.Application):
     def _on_step_time(self, action, frames):
         if self.props.active_window:
             self.props.active_window.timebar.step(frames.unpack())
+
+    def _on_preferences(self, *_):
+        window = self.props.active_window
+        if window:
+            PreferencesDialog(window.places,
+                              self.lookup_action("playback-speed")).present(window)
+
+    def _on_show_places(self, *_):
+        if self.props.active_window:
+            self.props.active_window.split.set_show_content(False)
 
     def _on_playback_speed(self, action, value):
         action.set_state(value)
@@ -103,7 +128,8 @@ class Application(Adw.Application):
             "Map Data", "© OpenStreetMap contributors",
             Gtk.License.CUSTOM,
             "Available under the <a href='https://www.openstreetmap.org/"
-            "copyright'>Open Database License</a>.")
+            "copyright'>Open Database License</a>. Place names and search "
+            "by Nominatim.")
         # Bundled libraries (docs/dependencies.md); full licence texts are
         # in /app/share/licenses/de.nexumia.Cirro/.
         for name, holder, license_type, text in (

@@ -17,7 +17,8 @@ Change history is in [log.md](log.md).
 # Design
 
 * [Radar architecture](radar-architecture.md) - How radar frames are fetched, cached, projected and animated on the map.
-* [Point nowcast](nowcast.md) - Rain rate at the own location or the map centre over 3 hours, the bar chart and the "Rain starts in N min" sentence.
+* [Point nowcast](nowcast.md) - Rain rate at the selected place over 3 hours, the bar chart and the "Rain starts in N min" sentence.
+* [Places](places.md) - Saved places and the own location as pins and in a sidebar, names and search from Nominatim, move/rename/delete, default place.
 * [Data sources](data-sources.md) - DWD open data products and other services the app uses, with open questions.
 
 # Development
@@ -28,4 +29,4 @@ Change history is in [log.md](log.md).
 
 # Decision records
 
-* [Decisions](decisions/index.md) - Name, language, map widget, radar data source, colour scale, no own backend, smooth playback; proposed: warning product, forecast source, DMI radar.
+* [Decisions](decisions/index.md) - Name, language, map widget, radar data source, colour scale, no own backend, smooth playback, movable own-location pin; proposed: warning product, forecast source, DMI radar.

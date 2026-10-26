@@ -1,0 +1,10 @@
+{
+ "version": 1,
+ "default": "a1",
+ "own": {"id": "own", "latitude": 52.52, "longitude": 13.405, "default_name": "Berlin"},
+ "places": [
+  {"id": "a1", "latitude": 50.1109, "longitude": 8.6821, "default_name": "Frankfurt am Main"},
+  {"id": "b2", "latitude": 53.5511, "longitude": 9.9937, "default_name": "Hamburg"},
+  {"id": "c3", "latitude": 48.0167, "longitude": 8.05, "default_name": "St. Peter", "name": "Cabin"}
+ ]
+}

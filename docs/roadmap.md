@@ -39,7 +39,7 @@ frame decoded, reprojected to Web Mercator, coloured and aligned
 ([radar architecture](radar-architecture.md)); legend
 ([colour scale](decisions/colour-scale.md)).
 
-# M2 – Animated radar with forecast (core feature)
+# M2 – Animated radar with forecast (core feature, done)
 
 [Milestone M2](https://github.com/nexumia-de/cirro/milestone/1)
 
@@ -52,8 +52,9 @@ recorded in [radar architecture](radar-architecture.md); the first
 stable release is installed on the phone
 ([release channels](release-channels.md)).
 
-Done so far: RadarSource, FrameStore with disk cache, TimeBar, own
-location through the location portal.
+Done: RadarSource, FrameStore with disk cache, TimeBar, own location
+through the location portal, measurements on the phone, release 0.2.0
+in the shared repository.
 
 # M3 – Point nowcast and places
 
@@ -66,6 +67,10 @@ current location, for saved places and for any point on the map.
 ([point nowcast](nowcast.md));
 place search (Nominatim, with its usage policy) and saved places in an
 `AdwNavigationSplitView` sidebar that collapses on the phone.
+
+Implemented: point nowcast, and [places](places.md) as pins with the
+own location, search, tap on the map, sidebar and default place. Still
+open: the `on device` checks.
 
 # M4 – Warnings
 
