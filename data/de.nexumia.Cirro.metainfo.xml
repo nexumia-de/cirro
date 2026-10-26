@@ -40,7 +40,40 @@
     <control>touch</control>
     <internet>always</internet>
   </supports>
+  <screenshots>
+    <screenshot type="default">
+      <caption>Rain radar for Germany with the past hour</caption>
+      <image>https://github.com/nexumia-de/cirro/releases/download/v0.2.0/radar-phone-light.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Rain radar for Germany with the past hour</caption>
+      <image>https://github.com/nexumia-de/cirro/releases/download/v0.2.0/radar-desktop-light.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Rain forecast one hour ahead</caption>
+      <image>https://github.com/nexumia-de/cirro/releases/download/v0.2.0/forecast-phone-light.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Rain forecast one hour ahead</caption>
+      <image>https://github.com/nexumia-de/cirro/releases/download/v0.2.0/forecast-desktop-light.png</image>
+    </screenshot>
+  </screenshots>
   <releases>
+    <release version="0.2.0" date="2026-10-26">
+      <description>
+        <ul>
+          <li>Animated rain radar from one hour ago to two hours ahead, with a time bar to scrub through it or play it.</li>
+          <li>Step through the radar times with Ctrl+Left and Ctrl+Right.</li>
+          <li>Show your own location on the map.</li>
+          <li>See whether rain is coming in the next two hours: a sentence like “Rain starts in 35 min” and a bar chart for your location or the map centre.</li>
+          <li>A banner tells when the radar data is out of date, and opening the app shows the last radar data at once.</li>
+          <li>The About dialog and GNOME Software link to Liberapay, where you can support development.</li>
+          <li>The About dialog shows what is new in this version.</li>
+          <li>Radar playback is now smooth, fading between frames, and its speed can be set to slow, normal or fast in the main menu.</li>
+          <li>On narrow screens the map scale no longer covers the map attribution; the scale shows kilometres only.</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.1.0" date="2026-10-24">
       <description>
         <p>Project scaffold with an empty adaptive window.</p>
