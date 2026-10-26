@@ -7,7 +7,7 @@ sources:
   - id: geoclue-locator
     resource: https://gitlab.freedesktop.org/geoclue/geoclue/-/blob/master/src/gclue-locator.c
     title: GeoClue gclue-locator.c (source selection by accuracy level)
-generated: { by: claude-code/2.1.310, at: 2026-10-25T12:30:00Z }
+generated: { by: claude-code/2.1.310, at: 2026-10-26T07:00:00Z }
 ---
 
 # Goal
@@ -62,12 +62,21 @@ RadarSource ──► FrameStore ──► Colorizer ──► RadarLayer (Shuma
    and appends the texture with `snapshot.append_scaled_texture()`
    (linear filtering, a `Gsk.ScalingFilter.NEAREST` option for crisp
    cells at high zoom). Switching frames swaps one texture reference, so
-   animation costs nothing besides a redraw.
+   animation costs nothing besides a redraw. Between two frames it draws
+   both textures in a GSK cross-fade node (`push_cross_fade`), so the
+   blend happens in the GSK renderer (on the GPU with GL/Vulkan), never
+   in Python or numpy.
 7. **TimeBar**: `Gtk.Scale` with a mark per full hour and a "Now"
    mark, the measured part filled, play/pause button, label "14:05" plus
-   "35 min ago" / "Now" / "Forecast +35 min"; playback via
-   `GLib.timeout_add(400 ms)`, waits for frames that are not rendered
-   yet, holds the last frame for three steps and loops.
+   "35 min ago" / "Now" / "Forecast +35 min". Smooth playback
+   ([decision](decisions/smooth-playback.md)): a fractional playhead
+   advanced by a widget tick callback (the display's frame clock),
+   0.4 s per 5-min step at "Normal", half/double at "Slow"/"Fast";
+   at most 30 updates per second (10 with GTK's software renderer);
+   the map crossfades between the frames on either side of the
+   playhead and the slider knob glides with it. Playback waits for
+   frames that are not rendered yet, holds the last frame for three
+   steps and loops. Dragging snaps to whole frames.
 
 # Implementation status
 
@@ -89,10 +98,10 @@ M2 animates the whole timeline:
 | `cirro/frames.py` | `FrameStore`: entries keyed by valid time, newer analysis wins; `timeline()` = analyses from −60 min to *t0* plus *t0*'s forecasts; `missing_past()`; disk cache with atomic writes; `radar.peek()` reads the times from the HDF5 attributes in 5 ms without decompressing the data. |
 | `cirro/radar_source.py` | `RadarSource` (GObject): loads the cache, then polls in a worker thread; fetches missing past analyses newest first (a `404` is remembered, other errors abort the round); signals `changed` and `failed`; `stale` property. |
 | `cirro/renderer.py` | `FrameRenderer`: worker thread that decodes, reprojects and colours the requested frames (selected one first) into an LRU of 8 textures. |
-| `cirro/timebar.py` | `TimeBar` widget (step 7). |
+| `cirro/timebar.py` | `TimeBar` widget (step 7); the playback timing is in pure functions (`advance()`, `blend()`, `due()`, `step_frames()`), tested in `tests/test_timebar.py`; `load_speed()` / `save_speed()` for the speed setting. |
 | `cirro/location.py` | Own location through the location portal (below). |
 | `cirro/window.py` | Map, location button and marker, stale banner, time bar, legend. Polls, plays and tracks the location only while the window is mapped and not `suspended`. The map scale shows kilometres only and is hidden below 600 sp (an `AdwBreakpoint`): at 360 px it overlapped the OSM and DWD attribution, which has to stay readable. |
-| `cirro/main.py` | `app.step-time(n)`: n frames later (earlier if negative), Ctrl+Right / Ctrl+Left; an app action so that screenshots can activate it over D-Bus. About dialog with "What's New" from `cirro/metainfo.py`. |
+| `cirro/main.py` | `app.playback-speed(f)`: stateful action behind the "Playback Speed" radio items of the main menu (0.5, 1, 2), kept in the key file `$XDG_CONFIG_HOME/cirro/settings.ini` (`[playback] speed=`). `app.step-time(n)`: n frames later (earlier if negative), Ctrl+Right / Ctrl+Left; an app action so that screenshots can activate it over D-Bus. About dialog with "What's New" from `cirro/metainfo.py`. |
 
 ## Recorded demo data
 
@@ -168,7 +177,10 @@ hours". No extra download. Details: [point nowcast](nowcast.md).
   costs 12–35 ms per frame.
 - `reproject_grid()` builds the index table in blocks of 128 rows: the
   peak RSS of building it dropped from 210 MB to 112 MB, and it got
-  faster (0.72 s → 0.20 s).
+  faster (0.72 s → 0.20 s). With numpy built from source without
+  BLAS (2026-10-25, see [dependencies](dependencies.md)) the sandboxed
+  app takes 0.17 s for the table and 0.11 s to decode one member: BLAS
+  is not used on this path.
 - Bandwidth: a new analysis costs one tar of 1.9–11.6 MB, i.e. up to
   ~140 MB per hour while the window is visible in wide rain; a poll
   without news costs one `304`. A start with an empty cache adds 12 past
@@ -190,11 +202,45 @@ x86_64 dev container, 4 cores, Python 3.12, 2026-10-25 around 12:00 UTC
 | Whole app while playing (Broadway, 8 textures) | ≈ 245 MB RSS, ≈ 0.3 core |
 | First start, empty cache | 17.3 MB downloaded |
 
+### Smooth playback (2026-10-26)
+
+Same container, demo data (`CIRRO_DEMO_DATA`), 25–30 s of playback
+after 12 s of warm-up, whole-process CPU time (`getrusage`, all
+threads, so it includes the renderer worker that keeps re-rendering the
+37 frames through the LRU of 8) and redraws of the radar layer per
+second. "Python" is the time spent in the tick callback and
+`RadarLayer.do_snapshot()` alone.
+
+| Backend / GSK renderer | Before (steps every 0.4 s) | After (crossfade) |
+|---|---|---|
+| Xvfb, `GSK_RENDERER=cairo` (software) | 0.17–0.18 core, 2.4 redraws/s | 0.84 core at 30 updates/s; **0.44 core** at the 10 updates/s the app uses with cairo |
+| Xvfb, `GSK_RENDERER=ngl` on llvmpipe (software GL) | 0.33 core | 2.7–2.9 cores, 23–25 redraws/s |
+| Broadway (screenshot setup) | 0.21–0.22 core, 2.3 redraws/s | 0.98 core, 17.6 redraws/s |
+| Python share (tick + snapshot) | 0.002 core | 0.007–0.012 core |
+
+Zoom 10 over the Rhineland costs the same as the Germany view (0.81
+vs. 0.84 core with cairo at 30/s). So the Python side stays negligible
+(about 0.4 ms per update); the added cost is the blending of two
+1400×1364 textures per redraw, which the container does in software.
+On a phone with a GL/Vulkan GSK renderer that work moves to the GPU;
+with the cairo fallback (no usable GPU) the app updates only 10 times
+per second. The speed setting does not change the cost (0.92–1.10 core
+for Slow/Normal/Fast under Broadway), since the update rate is the
+same.
+
+The measuring driver runs the app with `GDK_BACKEND=x11` under
+`xvfb-run -s "-screen 0 1000x800x24"`, starts
+`window.timebar.set_playing(True)` after the warm-up and compares
+`resource.getrusage()` before and after; it counts redraws with a
+`RadarLayer` subclass that overrides `do_snapshot()`. Under Broadway
+a browser has to be connected (Playwright), otherwise GTK draws nothing.
+
 Phone numbers are still missing. To collect them, run
 `CIRRO_DEBUG=1 flatpak run de.nexumia.Cirro`: it logs every download
 (status, bytes, seconds), the decode and colour time of every frame,
 and after every refresh the frame count, total bytes received, RSS and
-CPU time. Then tune `renderer.CAPACITY` (memory vs. CPU while playing:
+CPU time; starting playback logs the GSK renderer in use and the update
+rate chosen for it ("playing at up to 30 updates/s (GskGLRenderer)"). Then tune `renderer.CAPACITY` (memory vs. CPU while playing:
 with fewer textures than frames, every loop renders each frame again)
 and the poll interval.
 
