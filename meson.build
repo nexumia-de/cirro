@@ -21,6 +21,8 @@ python.install_sources(
   'cirro/location.py',
   'cirro/main.py',
   'cirro/metainfo.py',
+  'cirro/nowcast.py',
+  'cirro/nowcast_view.py',
   'cirro/projection.py',
   'cirro/radar.py',
   'cirro/radar_layer.py',

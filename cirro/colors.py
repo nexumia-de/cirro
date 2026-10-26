@@ -35,3 +35,13 @@ def colorize(frame, reprojection):
     """Frame → (height, width, 4) uint8 RGBA in the reprojection's grid."""
     lut = rgba_lut(frame.gain, frame.offset, frame.undetect)
     return lut[reprojection.apply(frame.raw, NODATA)]
+
+
+def rgb(rate):
+    """Colour (r, g, b) of the class a rain rate in mm/h falls into, None
+    below the lowest class or without data (NaN)."""
+    colour = None
+    for bound, class_rgb in SCALE:
+        if rate >= bound:
+            colour = class_rgb
+    return colour

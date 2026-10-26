@@ -67,8 +67,9 @@ phone. Feature priorities: [feature inventory](features.md).
 
 # M3 – Point nowcast and places
 
-- [ ] Value series at a location from the FrameStore → 2-h bar chart
-      and a "rain starts in N min" sentence.
+- [x] Value series at a location from the FrameStore → 2-h bar chart
+      and a "rain starts in N min" sentence. See
+      [point nowcast](nowcast.md).
 - [ ] Saved places: search (Nominatim, with its usage policy), current
       location, list in an `AdwNavigationSplitView` sidebar that
       collapses on the phone.

@@ -10,6 +10,7 @@ from gi.repository import Adw, Gio, GLib, GObject, Gtk, Shumate  # noqa: E402
 from cirro.frames import FrameStore  # noqa: E402
 from cirro.legend import Legend  # noqa: E402
 from cirro.location import Location  # noqa: E402
+from cirro.nowcast_view import NowcastView  # noqa: E402
 from cirro.radar_layer import RadarLayer  # noqa: E402
 from cirro import radar_source  # noqa: E402
 from cirro.radar_source import RadarSource  # noqa: E402
@@ -24,6 +25,9 @@ GERMANY = (51.2, 10.4, 5.8)
 LOCATION_ZOOM = 8.5
 # Below this width the map scale would overlap the attribution.
 SCALE_MIN_WIDTH = 600
+# Below this height the nowcast chart leaves too little map; the
+# sentence stays.
+CHART_MIN_HEIGHT = 560
 
 
 class Window(Adw.ApplicationWindow):
@@ -116,6 +120,14 @@ class Window(Adw.ApplicationWindow):
         self.location.connect("failed", self._on_location_failed)
         self._location_wanted = False
 
+        # Point nowcast at the own location or the map centre.
+        self.nowcast = NowcastView(viewport, self.location)
+        bottom.prepend(self.nowcast)
+        short = Adw.Breakpoint.new(
+            Adw.BreakpointCondition.parse(f"max-height: {CHART_MIN_HEIGHT}sp"))
+        short.add_setter(self.nowcast.chart, "visible", False)
+        self.add_breakpoint(short)
+
         # Poll and animate only while the window can be seen.
         self.connect("notify::suspended", self._update_active)
         self.connect("map", self._update_active)
@@ -138,6 +150,7 @@ class Window(Adw.ApplicationWindow):
         t0 = source.store.analysis_time
         self._title.set_subtitle(f"Updated {clock(t0)}" if t0 else "")
         self.timebar.set_frames(self._entries, t0)
+        self.nowcast.set_frames(self._entries, t0)
         self._update_banner()
 
     def _is_rendered(self, index):

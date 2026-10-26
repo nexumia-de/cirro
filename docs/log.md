@@ -1,5 +1,8 @@
 # Directory Update Log
 
+## 2026-10-26
+* **Creation**: [Point nowcast](nowcast.md) (M3, issue #17): sentence ("Rain starts in 35 min", "Rain stops in 25 min", "No rain expected in the next 2 hours") and a 2-hour bar chart below the map for the own location or the map centre. New `cirro/nowcast.py` (series and sentence, tested on the recorded demo frames), `cirro/nowcast_view.py` (chart drawn with GtkSnapshot), `radar.sample()`/`radar.cell()` read one cell (37 members in 0.23–0.33 s instead of about 2 s), `colors.rgb()`. Rain threshold 0.1 mm/h from the [colour scale](decisions/colour-scale.md); the chart hides below 560 sp window height. [Radar architecture](radar-architecture.md) and [roadmap](roadmap.md) point to it.
+
 ## 2026-10-25
 * **Update**: The map scale shows kilometres only and is hidden below 600 sp, where it overlapped the attribution ([radar architecture](radar-architecture.md)); checked at 360, 600, 640 and 1000 px, also in the Flatpak screenshots. Repository URLs, User-Agent and workflow references name the current owner `nexumia-de` instead of `suitably`; actions pinned to commit SHAs. `nexumia.de` added to the [dev environment](dev-environment.md) hosts (Flathub linter only).
 * **Update**: Support link (toolkit [support for development](../../phosh-toolkit/docs/support.md)): metainfo `url type="donation"` and the About dialog's "Support Development" link (on its Details page) point to `https://liberapay.com/suitably` (`cirro.SUPPORT_URL`, a test keeps both equal); README "Support" section and `.github/FUNDING.yml`. Checked with `scripts/screenshot.sh` at 360×720 and 1000×700.
