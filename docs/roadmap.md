@@ -1,10 +1,20 @@
 ---
 type: Plan
 title: Roadmap
-description: Milestones from the empty repository to a usable radar app (M0–M3) and the secondary features (M4–M6).
+description: Goals and exit criteria of the milestones M0–M6, radar first; the work items are GitHub issues in the milestones linked here.
 tags: [plan, roadmap, milestones]
-generated: { by: claude-code/2.1.310, at: 2026-10-25T12:30:00Z }
+generated: { by: claude-code/2.1.310, at: 2026-10-25T19:46:00Z }
 ---
+
+# How the plan is tracked
+
+Work items are [issues](https://github.com/nexumia-de/cirro/issues),
+grouped by [milestones](https://github.com/nexumia-de/cirro/milestones)
+and `area: …` labels; issues without a milestone are the
+[backlog](https://github.com/nexumia-de/cirro/issues?q=is%3Aissue+is%3Aopen+no%3Amilestone).
+This file keeps only the goals; never add task checklists here. The
+workflow is the toolkit's
+[planning with issues and milestones](../../phosh-toolkit/docs/planning.md).
 
 # Principle
 
@@ -13,86 +23,77 @@ Radar first. M0–M3 deliver the core: an animated rain radar with a
 forecasts and notifications follow only after that works well on the
 phone. Feature priorities: [feature inventory](features.md).
 
-# M0 – Verify data and scaffold
+# M0 – Verify data and scaffold (done)
 
-- [x] Allow the hosts from [dev environment](dev-environment.md).
-- [x] Download `composite_rv_LATEST.tar`, inspect with `h5dump -H`,
-      record group paths, encoding, projection, corner coordinates, tar
-      size and update cadence in [data sources](data-sources.md).
-- [x] Check how far back older `composite_rv_<time>.tar` files exist
-      (past frames for the time bar).
-- [x] `GetCapabilities` of the DWD GeoServer WMS: radar layer names,
-      forecast `TIME` values, `EPSG:3857`. Record the results.
-- [x] Check whether libshumate and h5py/numpy are in
-      `org.gnome.Platform//51`; otherwise add them as manifest modules
-      (see [map decision](decisions/map-libshumate.md)).
-- [x] Confirm or revise the [radar source decision](decisions/radar-source.md).
-- [x] Scaffold: Python package `cirro/`, meson build, `.desktop`
-      (`X-Purism-FormFactor=Workstation;Mobile;`), metainfo with
-      `display_length ≥ 360` and touch, icon, Flatpak manifest
-      `de.nexumia.Cirro.yml`, Flatpak CI calling the
-      toolkit workflow, `tests/` with pytest.
-- [x] Empty adaptive window passes the 360×720 screenshot check;
-      `appstreamcli validate`, `desktop-file-validate` clean.
-- [x] CI green on x86_64 and aarch64; the app installs on the phone
-      from the shared repository via GNOME Software.
+Verified the RV composite and the WMS against the live services
+([data sources](data-sources.md)), accepted the
+[radar source](decisions/radar-source.md) and
+[map](decisions/map-libshumate.md) decisions, scaffolded the app with
+metadata, Flatpak manifest, CI and tests; the app installs on the phone
+from the shared repository.
 
-# M1 – Map with a static radar frame
+# M1 – Map with a static radar frame (done)
 
-- [x] `Shumate.SimpleMap` with OSM raster tiles, attribution, own
-      User-Agent, tile cache; initial view Germany.
-- [x] Decoder for one RV HDF5 member, unit-tested with a recorded file.
-- [x] Colorizer (mm/h LUT) and one-time reprojection to Web Mercator.
-- [x] `RadarLayer` draws the current frame correctly aligned (checked
-      against DWD's WMS rendering and the coast at zoom 9.5, see
-      [radar architecture](radar-architecture.md)).
-- [x] Legend ([colour scale decision](decisions/colour-scale.md)).
+OSM map with attribution, User-Agent and tile cache; the current RV
+frame decoded, reprojected to Web Mercator, coloured and aligned
+([radar architecture](radar-architecture.md)); legend
+([colour scale](decisions/colour-scale.md)).
 
 # M2 – Animated radar with forecast (core feature)
 
-- [x] RadarSource with 5-min refresh, conditional requests, stale guard.
-- [x] FrameStore with past frames (−60 min) and forecast (+120 min),
-      disk cache for instant start.
-- [x] TimeBar: scrub, play/pause, "now" mark, forecast labelling.
-- [x] Own location via the location portal (GeoClue), "centre on me"
-      (still to be tried on the phone).
-- [ ] Measure memory, CPU and bandwidth on the phone; tune the texture
-      LRU and polling. Record numbers in
-      [radar architecture](radar-architecture.md). Dev-container numbers
-      and the `CIRRO_DEBUG=1` logging are in place; phone numbers are
-      missing.
-- [ ] **First release**: merge the release pull request "Release 0.2.0"
-      (see [release channels](release-channels.md)), installed on the
-      phone.
+[Milestone M2](https://github.com/nexumia-de/cirro/milestone/1)
+
+**Goal**: the radar animates from −60 min to +120 min, refreshes every
+5 minutes, starts instantly from the disk cache and centres on the
+user's location.
+
+**Exit criteria**: memory, CPU and bandwidth measured on the phone and
+recorded in [radar architecture](radar-architecture.md); the first
+stable release is installed on the phone
+([release channels](release-channels.md)).
+
+Done so far: RadarSource, FrameStore with disk cache, TimeBar, own
+location through the location portal.
 
 # M3 – Point nowcast and places
 
-- [x] Value series at a location from the FrameStore → 2-h bar chart
-      and a "rain starts in N min" sentence. See
-      [point nowcast](nowcast.md).
-- [ ] Saved places: search (Nominatim, with its usage policy), current
-      location, list in an `AdwNavigationSplitView` sidebar that
-      collapses on the phone.
-- [ ] Tap on the map shows the nowcast for that point.
+[Milestone M3](https://github.com/nexumia-de/cirro/milestone/2)
+
+**Goal**: answer "will it rain here in the next two hours?" for the
+current location, for saved places and for any point on the map.
+
+**Exit criteria**: 2-hour chart and a "rain starts in N min" sentence
+([point nowcast](nowcast.md));
+place search (Nominatim, with its usage policy) and saved places in an
+`AdwNavigationSplitView` sidebar that collapses on the phone.
 
 # M4 – Warnings
 
-- [ ] Choose warning product (CAP open data vs. WMS), record as a
-      decision.
-- [ ] Warnings per saved place, severity colours, detail page.
-- [ ] Optional warning overlay on the map.
+[Milestone M4](https://github.com/nexumia-de/cirro/milestone/3)
+
+**Goal**: official weather warnings for saved places and on the map.
+
+**Exit criteria**: warning product chosen and recorded as a decision;
+warnings per place with severity and a detail page; optional overlay.
 
 # M5 – Forecasts
 
-- [ ] Choose MOSMIX directly vs. Bright Sky `/weather`, record as a
-      decision.
-- [ ] Current conditions, hourly chart, 10-day list per place.
+[Milestone M5](https://github.com/nexumia-de/cirro/milestone/4)
+
+**Goal**: the usual forecast view next to the radar.
+
+**Exit criteria**: forecast source chosen and recorded as a decision;
+current conditions, hourly chart and 10-day list per place.
 
 # M6 – Extras
 
-- [ ] Further map layers (lightning, temperature, satellite) via WMS.
-- [ ] Local notifications for warnings and imminent rain, polled by a
-      background portal/autostart service; battery impact measured.
+[Milestone M6](https://github.com/nexumia-de/cirro/milestone/5)
+
+**Goal**: more map layers and notifications without draining the
+battery.
+
+**Exit criteria**: further WMS layers; local notifications for warnings
+and imminent rain with measured battery impact.
 
 # Risks
 
