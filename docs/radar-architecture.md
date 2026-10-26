@@ -7,7 +7,7 @@ sources:
   - id: geoclue-locator
     resource: https://gitlab.freedesktop.org/geoclue/geoclue/-/blob/master/src/gclue-locator.c
     title: GeoClue gclue-locator.c (source selection by accuracy level)
-generated: { by: claude-code/2.1.310, at: 2026-10-26T07:00:00Z }
+generated: { by: claude-code/2.1.310, at: 2026-10-26T13:20:00Z }
 ---
 
 # Goal
@@ -158,7 +158,10 @@ leaves the phone's GNSS off and relies on Wi-Fi/cell lookups alone
 (checked in GeoClue's `gclue-locator.c` and `gclue-modem-gps.c`,
 2026-10-25).[^geoclue-locator] Without a portal
 (e.g. the dev container) the button shows the toast "Location
-unavailable". Not yet tried on the phone.
+unavailable". On the phone (2026-10-26) the portal granted
+`EXACT`, the map centred on the fix quickly and the marker followed
+later fixes; the map does not recentre on them. How precise the fix is
+depends on GeoClue and the device, not on Cirro.
 
 # Point nowcast (M3)
 
@@ -235,14 +238,55 @@ The measuring driver runs the app with `GDK_BACKEND=x11` under
 `RadarLayer` subclass that overrides `do_snapshot()`. Under Broadway
 a browser has to be connected (Playwright), otherwise GTK draws nothing.
 
-Phone numbers are still missing. To collect them, run
-`CIRRO_DEBUG=1 flatpak run de.nexumia.Cirro`: it logs every download
-(status, bytes, seconds), the decode and colour time of every frame,
-and after every refresh the frame count, total bytes received, RSS and
-CPU time; starting playback logs the GSK renderer in use and the update
-rate chosen for it ("playing at up to 30 updates/s (GskGLRenderer)"). Then tune `renderer.CAPACITY` (memory vs. CPU while playing:
-with fewer textures than frames, every loop renders each frame again)
-and the poll interval.
+### Phone (2026-10-26)
+
+Fairphone 6 (aarch64, 8 cores, Phosh, 360×720), nightly
+`0.2.0~dev.20261026.d8fdf0a` from phosh-apps, run as
+`CIRRO_DEBUG=1 flatpak run de.nexumia.Cirro.Devel` on Wi-Fi,
+11:56–13:09 UTC. Light rain: tars of 1.33–1.51 MB. The GSK renderer
+was `VulkanRenderer` (30 updates/s). RSS and CPU time (`utime +
+stime` of all threads) were sampled from `/proc/<pid>` on the host every
+2 s; per-thread CPU from `/proc/<pid>/task/*/stat`; renders counted
+from the `coloured in` log lines. Speed and scrubbing were driven over
+D-Bus (`org.gtk.Actions` `SetState playback-speed`, `Activate
+step-time`). An idle inhibitor (`gnome-session-inhibit --inhibit idle`)
+kept the screen on, since polls pause while the window is hidden.
+
+| What | Value |
+|---|---|
+| Start with a 2-hour-old disk cache: first refresh | 2.0 MB (one tar + 12 past members of ≈ 55 kB), RSS 304 MB, 7.2 s CPU |
+| Index table / first decode (imports) | 0.48 s / 0.58 s |
+| Decode one member / reproject + colour | 8–17 ms / 48–64 ms |
+| Window visible, not playing (70 s) | 0.00 core, RSS 296 MB |
+| Playing at Fast / Normal / Slow (60 s each) | **0.82 / 0.69 / 0.61 core** |
+| … of it renderer worker | 0.33 / 0.17 / 0.09 core (4.7 / 2.4 / 1.2 renders/s) |
+| … of it main thread (crossfade, GTK, Vulkan submission) | ≈ 0.5 core at every speed |
+| Compositor (phoc) while playing at Fast | 0.06 core |
+| Scrubbing (`step-time` ±1, 6.4 steps/s, sweeping the 37 frames) | 0.65 core, one render per step |
+| Paused after scrubbing (60 s) | 0.001 core |
+| One hour visible, not playing (incl. 12 refreshes, a location fix, zooming) | 16.8 s CPU = 0.005 core |
+| RSS over that hour | 286–309 MB before the location fix and zoom-in, 316–349 MB after (map tiles), 338 MB at the end; no steady growth |
+| Bandwidth per hour, 5-min refresh | 12 polls, each found a new analysis (12 × `206` 512 B, 12 × `200` tar): **16.9 MB/h** in light rain |
+
+Conclusions:
+
+- `renderer.CAPACITY` stays at 8. Holding all 37 textures would cost
+  ≈ 220 MB more RSS to save the worker's 0.09–0.33 core. The constant
+  ≈ 0.5 core of the main thread at 30 updates/s costs more than the
+  re-rendering.
+- The poll interval stays at 5 min: every poll in the hour found a new
+  analysis, so polling less often only adds delay. Bandwidth scales
+  with the tar size: 16.9 MB/h in light rain, up to the estimated
+  ~140 MB/h in wide rain (budget above).
+- Memory is ≈ 300 MB RSS on the phone (≈ 245 MB in the dev
+  container); the extra ≈ 50 MB after zooming in is libshumate's tiles.
+
+To repeat: `CIRRO_DEBUG=1 flatpak run de.nexumia.Cirro` logs every
+download (status, bytes, seconds), the decode and colour time of every
+frame, and after every refresh the frame count, total bytes received,
+RSS and CPU time; starting playback logs the GSK renderer in use and
+the update rate chosen for it ("playing at up to 30 updates/s
+(VulkanRenderer)").
 
 # Fallback
 
