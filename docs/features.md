@@ -22,7 +22,7 @@ Priorities: **P1** must have for the first usable release, **P2** next,
 | Own location on the radar map (GeoClue portal) | P1 | Location portal | M2 |
 | Radar legend (mm/h colour scale), timestamp, "forecast" marker | P1 | – | M2 |
 | Point nowcast: "Rain starts in 15 min", 2-h precipitation bar chart for a place | P1 | RV values at a cell | M3 |
-| Saved places (search by name, current location) | P2 | Geocoding | M3 |
+| Saved places as pins on the map (search by name, current location, rename, move, default place) | P2 | Geocoding | M3 |
 | Weather warnings for a place (list + map colouring) | P2 | DWD warnings | M4 |
 | Current conditions and 10-day forecast per place | P2 | MOSMIX or Bright Sky | M5 |
 | Hourly forecast chart (temperature, precipitation, wind) | P2 | MOSMIX | M5 |
