@@ -22,3 +22,10 @@ path = ["tests/data/composite_rv_*", "tests/data/demo/**"]
 precedence = "override"
 SPDX-FileCopyrightText = "Deutscher Wetterdienst"
 SPDX-License-Identifier = "CC-BY-4.0"
+
+# Nominatim answers recorded for tests: OpenStreetMap data (ODbL 1.0).
+[[annotations]]
+path = "tests/data/nominatim/**"
+precedence = "override"
+SPDX-FileCopyrightText = "OpenStreetMap contributors"
+SPDX-License-Identifier = "ODbL-1.0"

@@ -1,31 +1,36 @@
 ---
 type: Decision Record
-title: Own-location pin can be moved by hand
-description: The user may move the own-location pin by hand; it says "Set by hand" until the next real fix from the location portal overwrites it.
-tags: [decision, places, location, map]
-generated: { by: claude-code/2.1.310, at: 2026-10-26T16:30:00Z }
+title: The own-location pin can be moved by hand
+description: The user may move the own-location pin with the same actions as other pins; it then says "Set by hand" until the next real fix from the location portal overwrites it.
+tags: [decision, places, location]
+generated: { by: claude-code/2.1.310, at: 2026-10-26T20:00:00Z }
 ---
 
 # Status
 
-Accepted by the owner (2026-10-26, issue #41, part of #35).
+Accepted by the owner on 2026-10-26 (issue #41).
 
 # Context
 
-The own location is a pin of its own on the map (#35). It keeps the
-last fix on disk and uses it when the location portal gives no new fix.
-The question was whether the user may move this pin (for example with
-GNSS off or indoors), or whether only the portal changes it.
+The own location comes from the location portal. Sometimes there is no
+fix: location is off, there is no GNSS indoors, or the portal is
+refused. Sometimes the fix is wrong, for example a Wi-Fi lookup that
+places the phone in the wrong town. Issue #35 asked that the user can
+move the own-location pin.
 
 # Decision
 
-The user can move the own-location pin with the same move actions as
-other pins (#39). While the position is set by hand, the pin says "Set
-by hand", so a manual position never passes for a live one. The next
-real fix from the portal overwrites the manual position.
+- The own-location pin offers the same move actions as every pin:
+  "Move on Map" and "Move To…". It can't be deleted.
+- While it is set by hand, the pin and the nowcast row say "Set by
+  hand".
+- The next real fix from the portal overwrites the hand-set position
+  and clears the "Set by hand" state.
 
 # Consequences
 
-- The place store (#36) keeps a "manual" flag next to the last position.
-- The own-location pin can't be deleted or renamed away from its role;
-  only its position changes.
+- A user without location access can still use the own pin as "home",
+  but it changes as soon as the portal delivers a fix. A fixed place
+  belongs in a saved place instead.
+- The store keeps a `manual` flag on the own location
+  ([places](../places.md)).

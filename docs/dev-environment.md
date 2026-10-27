@@ -17,7 +17,10 @@ The app and its development need outbound HTTPS to:
 | `www.dwd.de` | DWD product documentation |
 | `api.brightsky.dev`, `brightsky.dev` | Bright Sky API and docs |
 | `tile.openstreetmap.org` | Base map tiles |
-| `nominatim.openstreetmap.org` | Place search (M3) |
+| `nominatim.openstreetmap.org` | Place names and place search (M3); answered on 2026-10-26 |
+| `operations.osmfoundation.org` | Nominatim usage policy (docs only); proxy `403` on 2026-10-26 |
+| `nominatim.org` | Nominatim API documentation (docs only); proxy `403` on 2026-10-26 |
+| `wiki.osmfoundation.org`, `www.openstreetmap.org` | OSM attribution guidelines and copyright page (docs only); proxy `403` on 2026-10-26 |
 | `opendataapi.dmi.dk` | DMI radar API and downloads ([DMI decision](decisions/dmi-radar.md)); proxy `403` on 2026-10-26 |
 | `www.dmi.dk` | DMI open data documentation and terms; proxy `403` on 2026-10-26 |
 | `nexumia.de` | Only Flathub's linter (`appid-url-not-reachable`, excepted in CI); the cloud proxy refused it (`403`, 2026-10-25) |
@@ -88,6 +91,13 @@ cold start. The flatpak build command below shares `/root/.cache` with
 the sandbox, so host and sandbox runs share this cache in the dev
 container.
 
+Recorded places for screenshots: `CIRRO_DEMO_PLACES=tests/data/places-demo.json`
+loads them read only and never looks names up; release.toml sets it for
+the store screenshots. Without it, places are kept in
+`~/.local/share/cirro/places.json` (in the Flatpak:
+`~/.var/app/de.nexumia.Cirro/data/cirro/places.json`); delete it to
+start without places.
+
 The dev container has no location portal: "Show My Location" shows
 "Location unavailable" there. To check the marker and the map
 animation, call the `Location` object's `_on_updated()` with a fixed
@@ -132,6 +142,16 @@ Two things fail only in the cloud dev container, not on a device:
   host run (`python3.12 -m cirro`) instead.
 
 # Store screenshots
+
+In demo mode (`CIRRO_DEMO_DATA`) the window starts maximized, as on
+Phosh. Maximizing it later by a double-click on the header bar crashed
+`gtk4-broadwayd` with `decode_nodes: assertion failed: (node != NULL)`
+in 6 of 6 runs at 1000×700, both with Ubuntu's broadwayd and with the
+one from `org.gnome.Platform//51` (GTK 4.24); with the maximized start,
+12 of 12 shots passed (2026-10-27). Cause and limits: the toolkit's
+[screenshot testing](../../phosh-toolkit/docs/screenshot-testing.md).
+`flatpak run` needs a system bus in the dev container: `mkdir -p
+/run/dbus && dbus-daemon --system --fork`.
 
 After installing the Flatpak (`flatpak-builder --user --install …`, or
 `--repo=repo` and `flatpak install --user` from it), take every shot
