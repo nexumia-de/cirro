@@ -176,6 +176,12 @@ search buttons.
 
 # Checked
 
+Store screenshots: the "radar" and "forecast" shots show the recorded
+places from `tests/data/places-demo.json`. There is no shot of the
+sidebar yet: under Broadway with GTK 4.24, rows that use the same
+symbolic icon lose their menu buttons in the picture (toolkit
+[screenshot testing](../../phosh-toolkit/docs/screenshot-testing.md)).
+
 At 360×720 and 1000×700 with recorded data (`CIRRO_DEMO_PLACES`):
 pins, the selected pin, the sidebar, preferences, the search with
 recorded results, rename, move mode, the delete toast, and the place

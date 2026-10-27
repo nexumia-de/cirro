@@ -143,6 +143,16 @@ Two things fail only in the cloud dev container, not on a device:
 
 # Store screenshots
 
+In demo mode (`CIRRO_DEMO_DATA`) the window starts maximized, as on
+Phosh. Maximizing it later by a double-click on the header bar crashed
+`gtk4-broadwayd` with `decode_nodes: assertion failed: (node != NULL)`
+in 6 of 6 runs at 1000×700, both with Ubuntu's broadwayd and with the
+one from `org.gnome.Platform//51` (GTK 4.24); with the maximized start,
+12 of 12 shots passed (2026-10-27). Cause and limits: the toolkit's
+[screenshot testing](../../phosh-toolkit/docs/screenshot-testing.md).
+`flatpak run` needs a system bus in the dev container: `mkdir -p
+/run/dbus && dbus-daemon --system --fork`.
+
 After installing the Flatpak (`flatpak-builder --user --install …`, or
 `--repo=repo` and `flatpak install --user` from it), take every shot
 `release.toml` declares, as CI does:

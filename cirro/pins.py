@@ -87,11 +87,11 @@ class PinLayer(Shumate.MarkerLayer):
             label = f"{name}, {state}" if name != "My Location" else state
         else:
             label = name
+        if selected:
+            label = f"{label}, selected"
         button = Gtk.Button(icon_name=OWN_ICON if place.own else PLACE_ICON,
                             css_classes=classes, tooltip_text=label)
         button.update_property([Gtk.AccessibleProperty.LABEL], [label])
-        if selected:
-            button.update_state([Gtk.AccessibleState.SELECTED], [True])
         place_id = place.id
         button.connect("clicked", lambda *_: self.emit("activated", place_id))
         marker = Shumate.Marker(child=button)

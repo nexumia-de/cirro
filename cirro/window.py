@@ -165,6 +165,10 @@ class Window(Adw.ApplicationWindow):
         if demo:
             # Recorded data, e.g. tests/data/demo for screenshots.
             self.source = radar_source.demo(demo)
+            # Start at the screen size, as Phosh does: resizing the full
+            # window under Broadway can crash gtk4-broadwayd
+            # (docs/dev-environment.md, store screenshots).
+            self.maximize()
         else:
             cache = Path(GLib.get_user_cache_dir()) / "cirro" / "frames"
             self.source = RadarSource(FrameStore(cache))

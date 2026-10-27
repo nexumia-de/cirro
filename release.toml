@@ -20,8 +20,3 @@ caption = "Rain radar for Germany with the past hour"
 name = "forecast"
 caption = "Rain forecast one hour ahead"
 actions = ["app.step-time(12)"]
-
-[[screenshots.shot]]
-name = "places"
-caption = "Saved places with the rain forecast for the selected one"
-actions = ["app.show-places"]
