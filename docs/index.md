@@ -18,7 +18,7 @@ Change history is in [log.md](log.md).
 
 * [Radar architecture](radar-architecture.md) - How radar frames are fetched, cached, projected and animated on the map.
 * [Point nowcast](nowcast.md) - Rain rate at the selected place over 3 hours, the bar chart and the "Rain starts in N min" sentence.
-* [Places](places.md) - Saved places and the own location as pins and in a sidebar, names and search from Nominatim, move/rename/delete, default place.
+* [Places](places.md) - Saved places and the own location as pins and in a sidebar, names and search from Nominatim, add (search, current location, on the map)/rename/delete, default place.
 * [Data sources](data-sources.md) - DWD open data products and other services the app uses, with open questions.
 
 # Development

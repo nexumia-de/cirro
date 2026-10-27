@@ -8,7 +8,11 @@ generated: { by: claude-code/2.1.310, at: 2026-10-26T20:00:00Z }
 
 # Status
 
-Accepted by the owner on 2026-10-26 (issue #41).
+Superseded on 2026-10-27: the owner dropped moving pins altogether.
+Places are added (search, current location, chosen on the map) and
+deleted instead; the own location comes only from the location portal
+([places](../places.md)). Accepted by the owner on 2026-10-26 (issue
+#41).
 
 # Context
 

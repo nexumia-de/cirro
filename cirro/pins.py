@@ -1,6 +1,6 @@
 """Places as pins on the map (docs/places.md, pins): one button per
 place, a different icon for the own location, the selected pin
-highlighted, and an unsaved point where the user tapped or searched."""
+highlighted, and an unsaved point for a search result."""
 import gi
 
 gi.require_version("Gtk", "4.0")
@@ -12,12 +12,8 @@ PLACE_ICON = "mark-location-symbolic"
 
 
 def status(place):
-    """How the own location's position was obtained, or None."""
-    if not place.own:
-        return None
-    if place.manual:
-        return "Set by hand"
-    return "My location"
+    """"My location" for the own location, else None."""
+    return "My location" if place.own else None
 
 
 class PinLayer(Shumate.MarkerLayer):
@@ -32,7 +28,6 @@ class PinLayer(Shumate.MarkerLayer):
         super().__init__(viewport=viewport)
         self._store = store
         self._selected = None
-        self._hidden = None
         self._live = False
         # The unsaved point is always the selected one, so it looks like
         # a selected pin; the nowcast row says "Not saved".
@@ -47,11 +42,6 @@ class PinLayer(Shumate.MarkerLayer):
 
     def select(self, place_id):
         self._selected = place_id
-        self._rebuild()
-
-    def hide(self, place_id):
-        """Hide one pin while it is being moved."""
-        self._hidden = place_id
         self._rebuild()
 
     def set_live(self, live):
@@ -71,7 +61,7 @@ class PinLayer(Shumate.MarkerLayer):
         self.add_marker(self._point)
         for i in range(self._store.model.get_n_items()):
             place = self._store.model.get_item(i)
-            if place.has_position and place.id != self._hidden:
+            if place.has_position:
                 self.add_marker(self._marker(place))
 
     def _marker(self, place):
@@ -82,7 +72,7 @@ class PinLayer(Shumate.MarkerLayer):
         name = place.title
         if place.own:
             state = status(place)
-            if not place.manual and not self._live:
+            if not self._live:
                 state = "My location, last known"
             label = f"{name}, {state}" if name != "My Location" else state
         else:

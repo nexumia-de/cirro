@@ -53,8 +53,6 @@ class Place(GObject.Object):
     longitude = GObject.Property(type=float, default=0.0)
     custom_name = GObject.Property(type=str, default="")
     default_name = GObject.Property(type=str, default="")
-    # Own location: moved by hand since the last fix.
-    manual = GObject.Property(type=bool, default=False)
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -85,16 +83,13 @@ class Place(GObject.Object):
             data["name"] = self.custom_name
         if self.default_name:
             data["default_name"] = self.default_name
-        if self.manual:
-            data["manual"] = True
         return data
 
     @classmethod
     def from_json(cls, data, own=False):
         place = cls(id=OWN if own else str(data["id"]), own=own,
                     custom_name=str(data.get("name", "")),
-                    default_name=str(data.get("default_name", "")),
-                    manual=bool(data.get("manual", False)))
+                    default_name=str(data.get("default_name", "")))
         if "latitude" in data and "longitude" in data:
             place.set_position(float(data["latitude"]), float(data["longitude"]))
         return place
@@ -161,7 +156,7 @@ class PlaceStore(GObject.Object):
 
     def _watch(self, place):
         for name in ("latitude", "longitude", "custom-name", "default-name",
-                     "manual", "has-position"):
+                     "has-position"):
             place.connect(f"notify::{name}", self._on_place_changed)
 
     def _on_place_changed(self, *_):
@@ -247,16 +242,6 @@ class PlaceStore(GObject.Object):
         self.model.insert(position, place)
         self.save()
 
-    def move(self, place, latitude, longitude):
-        """New position chosen by the user. The default name is looked up
-        again (empty until then); a custom name stays."""
-        place.freeze_notify()
-        place.set_position(latitude, longitude)
-        place.default_name = ""
-        if place.own:
-            place.manual = True
-        place.thaw_notify()
-
     def reorder(self, place, position):
         """Move a saved place to `position` in the list (1 = first after
         the own location)."""
@@ -271,15 +256,13 @@ class PlaceStore(GObject.Object):
         self.save()
 
     def update_own(self, latitude, longitude):
-        """A fix from the location portal: overwrites the stored and any
-        hand-set position. Returns True if it moved so far that its
-        default name is stale."""
+        """A fix from the location portal: overwrites the stored position.
+        Returns True if it moved so far that its default name is stale."""
         own = self.own
-        moved = (own.position is None or own.manual or
+        moved = (own.position is None or
                  distance_m(own.position, (latitude, longitude)) > RENAME_AFTER_M)
         own.freeze_notify()
         own.set_position(latitude, longitude)
-        own.manual = False
         if moved:
             own.default_name = ""
         own.thaw_notify()

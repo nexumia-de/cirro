@@ -70,12 +70,13 @@ later warnings and forecasts, are about.
 place search (Nominatim, with its usage policy) and saved places, kept
 on disk with the last own position, shown as pins on the map (own
 location with its own marker) and in an `AdwNavigationSplitView`
-sidebar that collapses on the phone; places can be added, renamed,
-moved and deleted, get a reverse-geocoded default name, and one of them
+sidebar that collapses on the phone; places can be added, renamed
+and deleted, get a reverse-geocoded default name, and one of them
 is the default place at start.
 
 Implemented: point nowcast, and [places](places.md) as pins with the
-own location, search, tap on the map, sidebar and default place. Still
+own location, search, adding at the current location or on the map,
+sidebar and default place. Still
 open: the `on device` checks.
 
 # M4 – Warnings
