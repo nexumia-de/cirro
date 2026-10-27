@@ -4,10 +4,3 @@
   min-height: 44px;
   padding: 0;
 }
-
-/* The fixed pin of the move mode. */
-.cirro-point {
-  min-width: 44px;
-  min-height: 44px;
-  border-radius: 9999px;
-}

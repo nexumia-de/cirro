@@ -102,26 +102,15 @@ def test_reorder(tmp_path):
     assert [p.id for p in PlaceStore(path).places()] == [a.id, b.id, c.id]
 
 
-def test_move_keeps_custom_name_and_clears_default_name(tmp_path):
-    store = PlaceStore(tmp_path / "places.json")
-    place = store.add(1.0, 2.0, default_name="Old", custom_name="Mine")
-    store.move(place, 3.0, 4.0)
-    assert place.position == (3.0, 4.0)
-    assert place.default_name == "" and place.custom_name == "Mine"
-    assert store.unnamed() == [place]
-
-
-def test_own_location_moved_by_hand_until_the_next_fix(tmp_path):
+def test_old_manual_flag_is_ignored(tmp_path):
+    # Files from 0.2.x may mark the own location as set by hand.
     path = tmp_path / "places.json"
+    path.write_text(json.dumps({"version": 1, "own": {
+        "id": "own", "latitude": 51.0, "longitude": 10.0, "manual": True}}))
     store = PlaceStore(path)
-    assert store.update_own(50.0, 9.0)
-    store.own.default_name = "Fulda"
-    store.move(store.own, 51.0, 10.0)
-    assert store.own.manual
-    assert PlaceStore(path).own.manual
-    # The next real fix overwrites the hand-set position.
-    assert store.update_own(50.0, 9.0)
-    assert store.own.position == (50.0, 9.0) and not store.own.manual
+    assert store.own.position == (51.0, 10.0)
+    store.update_own(50.0, 9.0)
+    assert "manual" not in json.loads(path.read_text())["own"]
 
 
 def test_small_moves_keep_the_own_name(tmp_path):

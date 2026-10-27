@@ -8,7 +8,7 @@
 * [Radar colour scale](colour-scale.md) - Eight mm/h classes from 0.1 to 50, blue to magenta, semi-transparent.
 * [AGPL-3.0 license](license.md) - Strong copyleft keeps every copy open; contributor terms keep the author's rights.
 * [Smooth radar playback](smooth-playback.md) - Crossfade between frames at up to 30 updates per second on the frame clock; Slow/Normal/Fast in the menu.
-* [Movable own-location pin](own-location-pin.md) - The user may move the own-location pin by hand; it says "Set by hand" until the next fix overwrites it.
+* [Movable own-location pin](own-location-pin.md) - Superseded: pins can't be moved any more; it allowed moving the own-location pin by hand.
 * [CAP open data as warning source](warning-product.md) - Proposed: warnings per place from DWD's CAP status files; WMS layer only for the optional overlay.
 * [MOSMIX directly as forecast source](forecast-source.md) - Proposed: forecasts from MOSMIX_L single-station KMZ files, not Bright Sky.
 * [DMI as second radar source for Denmark](dmi-radar.md) - Proposed: DMI composite behind a radar provider interface after M3, past frames only; not verified live.

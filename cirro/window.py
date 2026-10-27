@@ -47,7 +47,8 @@ class Window(Adw.ApplicationWindow):
         self._centre_on_fix = False
         self._selected = None      # id of the selected place
         self._point = None         # unsaved point: (name, latitude, longitude)
-        self._moving = None        # id of the place being moved
+        self._picking = False      # choosing a new place on the map
+        self._add_on_fix = False   # "Current Location" waits for a fix
         self._live = False         # own location has a fix from this session
 
         # Places (docs/places.md). Recorded places for screenshots are
@@ -79,19 +80,20 @@ class Window(Adw.ApplicationWindow):
                                      action_name="win.search"))
         self._header = header
 
-        # Header while a pin is moved: the map pans under a fixed pin.
+        # Header while a new place is chosen on the map: the map pans
+        # under a fixed pin.
         cancel = Gtk.Button(label="_Cancel", use_underline=True)
-        cancel.connect("clicked", lambda *_: self._end_move())
-        done = Gtk.Button(label="_Done", use_underline=True,
+        cancel.connect("clicked", lambda *_: self._end_pick())
+        save = Gtk.Button(label="_Save", use_underline=True,
                           css_classes=["suggested-action"])
-        done.connect("clicked", lambda *_: self._finish_move())
-        self._move_header = Adw.HeaderBar(
-            title_widget=Adw.WindowTitle(title="Move Place",
-                                         subtitle="Pan the map to the new spot"),
+        save.connect("clicked", lambda *_: self._finish_pick())
+        self._pick_header = Adw.HeaderBar(
+            title_widget=Adw.WindowTitle(title="Add Place",
+                                         subtitle="Pan the map"),
             show_start_title_buttons=False, show_end_title_buttons=False,
             visible=False)
-        self._move_header.pack_start(cancel)
-        self._move_header.pack_end(done)
+        self._pick_header.pack_start(cancel)
+        self._pick_header.pack_end(save)
 
         self._banner = Adw.Banner(button_label="Reload")
         self._banner.connect("button-clicked", lambda *_: self.source.refresh())
@@ -119,15 +121,15 @@ class Window(Adw.ApplicationWindow):
         self.pins = PinLayer(viewport, self.places)
         self.pins.connect("activated", lambda _, place_id: self._select(place_id))
         self.map.add_overlay_layer(self.pins)
-        # A tap on an empty spot shows the nowcast there (issue #19).
-        tap = Gtk.GestureClick()
-        tap.connect("released", self._on_tap)
-        self.map.get_map().add_controller(tap)
-        # The fixed pin of the move mode, at the centre of the map.
-        self._crosshair = Gtk.Image(
-            icon_name=PLACE_ICON, css_classes=["osd", "cirro-point"],
+        # The fixed pin for choosing a place, at the centre of the map.
+        # Styled like the selected pin, so it stands out from the saved ones.
+        self._crosshair = Gtk.Button(
+            icon_name=PLACE_ICON, can_focus=False,
+            css_classes=["circular", "suggested-action", "cirro-pin"],
             halign=Gtk.Align.CENTER, valign=Gtk.Align.CENTER,
             can_target=False, visible=False)
+        self._crosshair.update_property([Gtk.AccessibleProperty.LABEL],
+                                        ["New place"])
         overlay = Gtk.Overlay(child=self.map)
         overlay.add_overlay(self._crosshair)
 
@@ -141,7 +143,7 @@ class Window(Adw.ApplicationWindow):
         self._toasts = Adw.ToastOverlay(child=overlay)
         view = Adw.ToolbarView(content=self._toasts)
         view.add_top_bar(header)
-        view.add_top_bar(self._move_header)
+        view.add_top_bar(self._pick_header)
         view.add_top_bar(self._banner)
         view.add_bottom_bar(Adw.Clamp(maximum_size=560, child=bottom))
 
@@ -150,9 +152,13 @@ class Window(Adw.ApplicationWindow):
         self.sidebar.connect("activated",
                              lambda _, place_id: self._select(place_id, centre=True))
         sidebar_header = Adw.HeaderBar()
-        sidebar_header.pack_start(Gtk.Button(icon_name="list-add-symbolic",
-                                             tooltip_text="Add Place",
-                                             action_name="win.add-place-search"))
+        add_menu = Gio.Menu()
+        add_menu.append("_Search…", "win.add-place-search")
+        add_menu.append("_Current Location", "win.add-current-location")
+        add_menu.append("Choose on _Map", "win.add-place-on-map")
+        sidebar_header.pack_start(Gtk.MenuButton(icon_name="list-add-symbolic",
+                                                 tooltip_text="Add Place",
+                                                 menu_model=add_menu))
         sidebar_view = Adw.ToolbarView(content=self.sidebar)
         sidebar_view.add_top_bar(sidebar_header)
         self._content = Adw.NavigationPage(title="Cirro", child=view)
@@ -310,13 +316,13 @@ class Window(Adw.ApplicationWindow):
         add("rename-place", self._rename)
         add("delete-place", self._delete)
         add("set-default-place", self._set_default)
-        add("move-place", self._start_move)
-        add("move-place-to", self._move_to)
         add("place-up", lambda place_id: self._reorder(place_id, -1))
         add("place-down", lambda place_id: self._reorder(place_id, 1))
         add("add-place", self._add_point, None)
         add("search", self._search, None)
         add("add-place-search", self._add_from_search, None)
+        add("add-current-location", self._add_current_location, None)
+        add("add-place-on-map", self._start_pick, None)
         add("reload", lambda _: self.source.refresh(), None)
         app = self.get_application()
         app.set_accels_for_action("win.search", ["<Control>f"])
@@ -327,7 +333,9 @@ class Window(Adw.ApplicationWindow):
 
     def _select(self, place_id, centre=False, show=True):
         place = self._place(place_id)
-        if place is None:
+        # While choosing a new place, pins and rows don't change the
+        # selection.
+        if place is None or self._picking:
             return
         self._point = None
         self.pins.show_point(None)
@@ -343,7 +351,7 @@ class Window(Adw.ApplicationWindow):
         self._update_place()
 
     def _show_point(self, name, latitude, longitude, centre=False):
-        """An unsaved point: a tap on the map or a search result."""
+        """An unsaved point: a search result."""
         self._point = (name, latitude, longitude)
         self._selected = None
         self.pins.select(None)
@@ -353,13 +361,6 @@ class Window(Adw.ApplicationWindow):
             self._go_to(latitude, longitude)
         self.split.set_show_content(True)
         self._update_place()
-
-    def _on_tap(self, gesture, presses, x, y):
-        if presses != 1 or self._moving:
-            return
-        latitude, longitude = self.map.get_viewport().widget_coords_to_location(
-            self.map.get_map(), x, y)
-        self._show_point("", latitude, longitude)
 
     def _on_places_changed(self, store):
         if self._selected and not self.places.get(self._selected):
@@ -384,12 +385,10 @@ class Window(Adw.ApplicationWindow):
         elif place:
             title, position = place.title, place.position
             label = status(place) or ""
-            if place.own and not place.manual and not self._live:
+            if place.own and not self._live:
                 label = "My location, last known"
             target = GLib.Variant("s", place.id)
-            items = [("_Rename…", "win.rename-place"),
-                     ("_Move on Map", "win.move-place"),
-                     ("Move _To…", "win.move-place-to")]
+            items = [("_Rename…", "win.rename-place")]
             if place is not self.places.default:
                 items.append(("Set as _Default", "win.set-default-place"))
             if not place.own:
@@ -428,46 +427,46 @@ class Window(Adw.ApplicationWindow):
             self._select(place.id, centre=True)
         self._search(title="Add Place", chosen=chosen)
 
-    def _move_to(self, place_id):
-        place = self._place(place_id)
-        if place is None:
-            return
+    def _add_current_location(self, _):
+        """A saved place at the own location; waits for a fix if there is
+        none from this session."""
+        if self._live:
+            self._add_own_position()
+        else:
+            self._add_on_fix = True
+            self._location_wanted = True
+            self.location.start(self)
 
-        def chosen(dialog, name, latitude, longitude):
-            self.places.move(place, latitude, longitude)
-            # The search result names the spot; no lookup needed.
-            place.default_name = name
-            self._select(place.id, centre=True)
-        self._search(title="Move To", chosen=chosen)
+    def _add_own_position(self):
+        own = self.places.own
+        place = self.places.add(own.latitude, own.longitude,
+                                default_name=own.default_name)
+        if not place.default_name:
+            self.namer.request(place)
+        self._select(place.id, centre=True)
 
-    def _start_move(self, place_id):
-        place = self._place(place_id)
-        if place is None or not place.has_position:
-            return
-        self._select(place.id)
-        self._moving = place.id
-        self.pins.hide(place.id)
-        self.map.get_map().center_on(place.latitude, place.longitude)
+    def _start_pick(self, _):
+        """Choose a new place: the map pans under a fixed pin."""
+        self._picking = True
+        self.pins.select(None)
+        self.split.set_show_content(True)
         self._crosshair.set_visible(True)
         self._header.set_visible(False)
-        self._move_header.set_visible(True)
+        self._pick_header.set_visible(True)
 
-    def _finish_move(self):
-        place = self._place(self._moving)
-        if place:
-            viewport = self.map.get_viewport()
-            self.places.move(place, viewport.get_latitude(),
-                             viewport.get_longitude())
-            self.namer.request(place)
-        self._end_move()
+    def _finish_pick(self):
+        viewport = self.map.get_viewport()
+        place = self.places.add(viewport.get_latitude(), viewport.get_longitude())
+        self.namer.request(place)
+        self._end_pick()
+        self._select(place.id)
 
-    def _end_move(self):
-        self._moving = None
-        self.pins.hide(None)
+    def _end_pick(self):
+        self._picking = False
+        self.pins.select(self._selected)
         self._crosshair.set_visible(False)
-        self._move_header.set_visible(False)
+        self._pick_header.set_visible(False)
         self._header.set_visible(True)
-        self._update_place()
 
     def _rename(self, place_id):
         place = self._place(place_id)
@@ -550,11 +549,14 @@ class Window(Adw.ApplicationWindow):
         if self._centre_on_fix:
             self._centre_on_fix = False
             self._select(own.id, centre=True)
+        if self._add_on_fix:
+            self._add_on_fix = False
+            self._add_own_position()
         self._update_place()
 
     def _on_location_failed(self, location, message):
         # The own pin keeps its last known position.
         self._location_wanted = False
-        if self._centre_on_fix:
-            self._centre_on_fix = False
+        if self._centre_on_fix or self._add_on_fix:
+            self._centre_on_fix = self._add_on_fix = False
             self._toasts.add_toast(Adw.Toast(title="Location unavailable"))

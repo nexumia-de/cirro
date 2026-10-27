@@ -170,7 +170,7 @@ class NowcastView(Gtk.Box):
         self._point = point
         if not point:
             self._generation += 1
-            self._sentence.set_label("Tap the map or search for a place")
+            self._sentence.set_label("Add a place or search for one")
             self._chart_box.set_visible(False)
             return
         self._start()

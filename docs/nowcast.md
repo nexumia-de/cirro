@@ -9,11 +9,11 @@ generated: { by: claude-code/2.1.310, at: 2026-10-26T10:00:00Z }
 # What it shows
 
 Below the map, above the time bar: one sentence about rain at the
-selected place, what the place is ("My location", "Set by hand", "Not
-saved"), its actions menu, and a bar chart with one bar per 5-min frame
-from −60 min to +120 min. The place is the selected pin, a tapped point
-or a search result ([places](places.md)); its name is the header title.
-Without any, the row reads "Tap the map or search for a place" and the
+selected place, what the place is ("My location", "Not saved"), its
+actions menu, and a bar chart with one bar per 5-min frame from −60 min
+to +120 min. The place is the selected pin or a search result
+([places](places.md)); its name is the header title. Without any, the
+row reads "Add a place or search for one" and the
 chart is hidden. No extra download: the
 values come from the [FrameStore](radar-architecture.md) frames the map
 animates.
