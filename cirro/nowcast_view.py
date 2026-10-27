@@ -1,6 +1,5 @@
 """Point nowcast below the map: a sentence and a 2-hour bar chart of the
-rain rate at the user's location, or at the map centre without one
-(docs/nowcast.md)."""
+rain rate at the selected place (docs/nowcast.md)."""
 import threading
 
 import gi
@@ -11,8 +10,6 @@ from gi.repository import Gdk, GLib, Graphene, Gtk  # noqa: E402
 from cirro import colors, nowcast  # noqa: E402
 from cirro.timebar import clock  # noqa: E402
 
-# Wait this long after the map stopped moving before sampling the frames.
-SETTLE_MS = 400
 # Time axis of the chart, in minutes relative to the analysis time.
 FIRST, LAST, STEP = -60, 120, 5
 # Guide lines with their rate in mm/h.
@@ -122,13 +119,12 @@ class NowcastChart(Gtk.Widget):
 
 class NowcastView(Gtk.Box):
     """Samples the frames at the place in a worker thread (decoding a
-    member costs 12–55 ms) and shows the result. Hidden until there is
-    one."""
+    member costs 12–55 ms) and shows the result. `actions` is a widget
+    shown next to the place, e.g. its menu."""
 
-    def __init__(self, viewport, location):
+    def __init__(self, actions=None):
         super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=6,
-                         margin_start=12, margin_end=12, margin_top=6,
-                         visible=False)
+                         margin_start=12, margin_end=12, margin_top=6)
         row = Gtk.Box(spacing=6)
         self._sentence = Gtk.Label(xalign=0, hexpand=True, wrap=True,
                                    css_classes=["heading"])
@@ -136,22 +132,24 @@ class NowcastView(Gtk.Box):
                                 css_classes=["caption", "dim-label"])
         row.append(self._sentence)
         row.append(self._place)
+        if actions:
+            actions.set_valign(Gtk.Align.CENTER)
+            row.append(actions)
         self.append(row)
+        # The window's breakpoint hides the chart itself; this box hides
+        # it while there is nothing to show.
         self.chart = NowcastChart()
-        self.append(self.chart)
+        self._chart_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL,
+                                  visible=False)
+        self._chart_box.append(self.chart)
+        self.append(self._chart_box)
 
         self._entries = []
         self._analysis_time = None
         self._point = None
         self._cache = {}
         self._generation = 0
-        self._timer = 0
-        self._viewport = viewport
-        self._location = location
-        viewport.connect("notify::latitude", self._on_moved)
-        viewport.connect("notify::longitude", self._on_moved)
-        location.connect("changed", lambda *_: self._follow())
-        self._follow()
+        self.set_place(None)
 
     def set_frames(self, entries, analysis_time):
         self._entries = list(entries)
@@ -161,31 +159,21 @@ class NowcastView(Gtk.Box):
                        if k[0] in names}
         self._start()
 
-    def _on_moved(self, *_):
-        if self._location.fix:
+    def set_place(self, position, label=""):
+        """Sample at (latitude, longitude), or show a hint without one.
+        `label` says what the place is, e.g. "My location"."""
+        self._place.set_label(label)
+        self._place.set_visible(bool(label))
+        point = position and (round(position[0], 3), round(position[1], 3))
+        if point == self._point and point:
             return
-        if self._timer:
-            GLib.source_remove(self._timer)
-        self._timer = GLib.timeout_add(SETTLE_MS, self._on_settled)
-
-    def _on_settled(self):
-        self._timer = 0
-        self._follow()
-        return GLib.SOURCE_REMOVE
-
-    def _follow(self):
-        """Own location if known, else the map centre."""
-        if self._location.fix:
-            latitude, longitude = self._location.fix[:2]
-            self._place.set_label("My location")
-        else:
-            latitude = self._viewport.get_latitude()
-            longitude = self._viewport.get_longitude()
-            self._place.set_label("Map centre")
-        point = (round(latitude, 3), round(longitude, 3))
-        if point != self._point:
-            self._point = point
-            self._start()
+        self._point = point
+        if not point:
+            self._generation += 1
+            self._sentence.set_label("Tap the map or search for a place")
+            self._chart_box.set_visible(False)
+            return
+        self._start()
 
     def _start(self):
         self._generation += 1
@@ -212,5 +200,5 @@ class NowcastView(Gtk.Box):
         self._sentence.set_label(text)
         self.chart.set_values(values)
         self.chart.update_property([Gtk.AccessibleProperty.DESCRIPTION], [text])
-        self.set_visible(True)
+        self._chart_box.set_visible(True)
         return GLib.SOURCE_REMOVE

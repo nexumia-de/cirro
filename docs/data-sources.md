@@ -62,6 +62,9 @@ sources:
   - id: dmi-terms
     resource: https://www.dmi.dk/friedata/dokumentation/terms-of-use
     title: DMI, Terms of Use (CC BY 4.0)
+  - id: nominatim-policy
+    resource: https://operations.osmfoundation.org/policies/nominatim/
+    title: OSMF, Nominatim Usage Policy (proxy 403 on 2026-10-26; not read live)
   - id: dmi-nowcast
     resource: https://github.com/fink42/dmi-nowcast
     title: "dmi-nowcast: third-party STEPS nowcast from DMI composites (README, fetch.py, parse.py, geo.py)"
@@ -78,7 +81,10 @@ for the M4/M5 decisions. Section 6 is from web research only. Section 7
 was checked against the live DWD pages on 2026-10-25. Section 8 (DMI) is
 from DMI's documentation as quoted by web search and from third-party
 code only: every DMI host was blocked in the cloud environment
-(proxy `403`, 2026-10-26), so nothing in it is verified live.
+(proxy `403`, 2026-10-26), so nothing in it is verified live. Section 9
+(Nominatim): the API answers were checked live on 2026-10-26; the usage
+policy page was blocked (proxy `403`), so the policy facts are from
+memory of the published policy and still to be checked against it.
 
 # 1. RADVOR RV nowcast composite (primary radar data)
 
@@ -403,6 +409,48 @@ Verify them before building on them.
 - Licence: CC BY 4.0; credit, link to the licence, and indicate
   changes.[^dmi-terms]
 
+# 9. Nominatim (place names and search, M3)
+
+`https://nominatim.openstreetmap.org/`, the OSMF's public Nominatim
+instance on OpenStreetMap data. Used for the default names of places
+(`/reverse`) and the place search (`/search`), see
+[places](places.md).
+
+## Answers *(live, 2026-10-26)*
+
+Recorded in `tests/data/nominatim/` with `format=jsonv2`,
+`addressdetails=1`, `accept-language=en`:
+
+- `/reverse?lat=…&lon=…&zoom=14` returns one object; `address` holds the
+  administrative names, e.g. Berlin Mitte: `suburb` "Mitte", `city`
+  "Berlin"; Munich old town: `quarter`, `suburb` "Old Town", `city`
+  "Munich"; a farm near St. Peter (Black Forest): `isolated_dwelling`,
+  `hamlet`, `village` "St. Peter", `municipality`, `county`. The North
+  Sea (55° N, 5° E) answers `{"error":"Unable to geocode"}` with HTTP
+  200.
+- Zoom 14 (suburb level) still lists `city`/`town`/`village`, so Cirro
+  takes the first of city → town → village → suburb → municipality →
+  county, then the object's `name`.
+- `/search?q=Freiburg&limit=10` returns a list, best match first, each
+  with `name`, `display_name`, `lat`/`lon` as strings and `address`; an
+  unknown query returns `[]`.
+- Every answer carries `"licence": "Data © OpenStreetMap contributors,
+  ODbL 1.0. http://osm.org/copyright"`.
+- No `Cache-Control` for clients; the CDN reported `x-cache: MISS`.
+
+## Usage policy *(not verified live)*
+
+The policy page was blocked from the cloud environment
+(2026-10-26).[^nominatim-policy] As published, it asks for: an absolute
+maximum of 1 request per second per application, a `User-Agent` or
+`Referer` that identifies the application, caching of results, no
+autocomplete (search as you type), no bulk or systematic queries, and
+the ODbL attribution. Cirro follows all of these (one request per
+second across all threads, `Cirro/<version> (+repo URL)`, names cached
+in the place store, search results cached per session, search only on
+Enter, attribution in the search dialog and the About dialog). Check
+the page from a network that can reach it and update this section.
+
 [^dwd-radar-products]: DWD, Radar products
 [^sdwf-40]: simple_dwd_weatherforecast #40
 [^rain-warner-9]: ha-rain-warner #9
@@ -423,3 +471,4 @@ Verify them before building on them.
 [^dmi-auth]: DMI, Authentication
 [^dmi-terms]: DMI, Terms of Use
 [^dmi-nowcast]: dmi-nowcast (fink42)
+[^nominatim-policy]: OSMF, Nominatim Usage Policy

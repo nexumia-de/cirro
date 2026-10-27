@@ -17,22 +17,31 @@ python.install_sources(
   'cirro/__main__.py',
   'cirro/colors.py',
   'cirro/frames.py',
+  'cirro/geocode.py',
   'cirro/legend.py',
   'cirro/location.py',
   'cirro/main.py',
   'cirro/metainfo.py',
+  'cirro/namer.py',
   'cirro/nowcast.py',
   'cirro/nowcast_view.py',
+  'cirro/pins.py',
+  'cirro/places.py',
+  'cirro/places_view.py',
+  'cirro/preferences.py',
   'cirro/projection.py',
   'cirro/radar.py',
   'cirro/radar_layer.py',
   'cirro/radar_source.py',
   'cirro/renderer.py',
+  'cirro/search.py',
   'cirro/source.py',
   'cirro/timebar.py',
   'cirro/window.py',
   subdir: 'cirro',
 )
+# Loaded next to the Python files, also from the source tree.
+install_data('cirro/style.css', install_dir: pythondir / 'cirro')
 
 conf = configuration_data()
 conf.set('PYTHON', python.full_path())

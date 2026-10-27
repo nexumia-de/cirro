@@ -1,18 +1,20 @@
 ---
 type: Concept
 title: Point nowcast
-description: Rain rate at one place from −60 to +120 min, the 2-hour bar chart below the map and the "Rain starts in N min" sentence.
+description: Rain rate at the selected place from −60 to +120 min, the 2-hour bar chart below the map and the "Rain starts in N min" sentence.
 tags: [radar, nowcast, chart, location]
 generated: { by: claude-code/2.1.310, at: 2026-10-26T10:00:00Z }
 ---
 
 # What it shows
 
-Below the map, above the time bar: one sentence about rain at a place,
-the place ("My location" or "Map centre") and a bar chart with one bar
-per 5-min frame from −60 min to +120 min. The place is the own location
-once the location portal gave a fix, otherwise the map centre, sampled
-again 400 ms after the map stopped moving. No extra download: the
+Below the map, above the time bar: one sentence about rain at the
+selected place, what the place is ("My location", "Set by hand", "Not
+saved"), its actions menu, and a bar chart with one bar per 5-min frame
+from −60 min to +120 min. The place is the selected pin, a tapped point
+or a search result ([places](places.md)); its name is the header title.
+Without any, the row reads "Tap the map or search for a place" and the
+chart is hidden. No extra download: the
 values come from the [FrameStore](radar-architecture.md) frames the map
 animates.
 
@@ -77,7 +79,4 @@ recorded demo data.
 
 # Open points
 
-- The map centre is not marked on the map, so "Map centre" is only
-  approximate for the user; tapping the map to choose the point is a
-  separate M3 item.
 - Sampling time on the phone is not measured yet.
