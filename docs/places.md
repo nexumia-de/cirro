@@ -191,7 +191,5 @@ Nominatim name) and that a tap on the map adds no point. In Broadway, real click
 button worked (2026-10-26). On the phone the owner confirmed
 (2026-10-27): with location off, the own pin shows the last position
 marked as not current, and it updates once a fix arrives again. Not
-checked yet: touch on the phone, the
-on-screen keyboard over the rename and search dialogs, and the own
-location with location off, on a cold start without GNSS and with a
-late fix (`on device` items of #41).
+checked yet: touch on the phone, the on-screen keyboard over the
+rename and search dialogs, and "Current Location" in the "+" menu.
