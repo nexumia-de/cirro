@@ -1,6 +1,8 @@
-# Cirro
+# Weather Radar (Cirro)
 
-Named after cirrus clouds (*cirro-* as in cirrostratus), the high
+*Weather Radar* is the name you see in the app grid; the code name
+*Cirro* is used for the repository, app id and package. It is named
+after cirrus clouds (*cirro-* as in cirrostratus), the high
 clouds that often announce rain a day ahead. Formerly *Wetterblick*.
 
 Adaptive GTK4/libadwaita weather app for [Phosh](https://phosh.mobi/)
@@ -22,7 +24,7 @@ Deutscher Wetterdienst (DWD). Weather data: DWD open data. Map data:
 
 On the phone, open <https://flatpak.nexumia.de/> and tap
 Cirro; GNOME Software installs it and keeps it updated. Cirro is
-updated with every release (tag `v<version>`); *Cirro (Nightly)*, which
+updated with every release (tag `v<version>`); *Weather Radar (Nightly)*, which
 installs next to it, with every push to `main`. See
 [docs/release-channels.md](docs/release-channels.md).
 

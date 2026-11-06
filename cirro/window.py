@@ -40,7 +40,7 @@ CHART_MIN_HEIGHT = 560
 
 class Window(Adw.ApplicationWindow):
     def __init__(self, app):
-        super().__init__(application=app, title="Cirro")
+        super().__init__(application=app, title="Weather Radar")
         self.set_default_size(800, 600)
         self.set_size_request(360, 294)
         self._entries = []
@@ -65,8 +65,8 @@ class Window(Adw.ApplicationWindow):
         menu = Gio.Menu()
         menu.append("_Reload Radar", "win.reload")
         menu.append("_Preferences", "app.preferences")
-        menu.append("_About Cirro", "app.about")
-        self._title = Adw.WindowTitle(title="Cirro")
+        menu.append("_About Weather Radar", "app.about")
+        self._title = Adw.WindowTitle(title="Weather Radar")
         header = Adw.HeaderBar(title_widget=self._title)
         header.pack_end(Gtk.MenuButton(
             icon_name="open-menu-symbolic", menu_model=menu,
@@ -161,7 +161,7 @@ class Window(Adw.ApplicationWindow):
                                                  menu_model=add_menu))
         sidebar_view = Adw.ToolbarView(content=self.sidebar)
         sidebar_view.add_top_bar(sidebar_header)
-        self._content = Adw.NavigationPage(title="Cirro", child=view)
+        self._content = Adw.NavigationPage(title="Weather Radar", child=view)
         self.split = Adw.NavigationSplitView(
             sidebar=Adw.NavigationPage(title="Places", child=sidebar_view),
             content=self._content, show_content=True)
@@ -398,7 +398,7 @@ class Window(Adw.ApplicationWindow):
                 item.set_action_and_target_value(action, target)
                 menu.append_item(item)
         else:
-            title, label, position = "Cirro", "", None
+            title, label, position = "Weather Radar", "", None
         self._place_actions.set_visible(menu.get_n_items() > 0)
         self._title.set_title(title)
         self._content.set_title(title)

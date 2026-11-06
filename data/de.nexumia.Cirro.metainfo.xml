@@ -3,16 +3,16 @@
   <id>de.nexumia.Cirro</id>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>AGPL-3.0-or-later</project_license>
-  <name>Cirro</name>
+  <name>Weather Radar</name>
   <summary>Rain radar with a 2-hour forecast</summary>
   <description>
     <p>
-      Cirro shows the rain radar for Germany on a map, animated from
+      Weather Radar shows the rain radar for Germany on a map, animated from
       the past hour to two hours ahead, based on the radar nowcast that
       the Deutscher Wetterdienst publishes as open data.
     </p>
     <p>
-      Cirro is an independent project and not affiliated with the
+      Weather Radar is an independent project and not affiliated with the
       Deutscher Wetterdienst. Map data © OpenStreetMap contributors.
     </p>
   </description>

@@ -13,11 +13,11 @@ BASE_ID = "de.nexumia.Cirro"
 
 def nightly(text, app_id):
     text = text.replace(BASE_ID, app_id)
-    text = text.replace("\nName=Cirro\n", "\nName=Cirro (Nightly)\n")
-    text = text.replace("<name>Cirro</name>", "<name>Cirro (Nightly)</name>")
+    text = text.replace("\nName=Weather Radar\n", "\nName=Weather Radar (Nightly)\n")
+    text = text.replace("<name>Weather Radar</name>", "<name>Weather Radar (Nightly)</name>")
     # Only the stable app replaces the old Wetterblick id.
     text = re.sub(r"\n\s*<replaces>.*?</replaces>", "", text, flags=re.S)
-    if "Cirro (Nightly)" not in text:
+    if "Weather Radar (Nightly)" not in text:
         raise ValueError("no Name= line or <name> element to rename")
     return text
 

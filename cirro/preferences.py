@@ -18,7 +18,7 @@ class PreferencesDialog(Adw.PreferencesDialog):
         names[0] = ("My Location" if names[0] == "My Location"
                     else f"My Location ({names[0]})")
         place = Adw.ComboRow(title="Default Place",
-                             subtitle="Shown when Cirro starts",
+                             subtitle="Shown when Weather Radar starts",
                              model=Gtk.StringList.new(names))
         default = store.default
         place.set_selected(self._places.index(default)

@@ -121,7 +121,8 @@ class Application(Adw.Application):
             "Based on data from Deutscher Wetterdienst, "
             "gridded data reproduced graphically",
             Gtk.License.CUSTOM,
-            "Radar composites reprojected and coloured by Cirro. Licensed "
+            "Radar composites reprojected and coloured by Weather Radar "
+            "(Cirro). Licensed "
             "under <a href='https://creativecommons.org/licenses/by/4.0/'>"
             "CC BY 4.0</a>.")
         dialog.add_legal_section(

@@ -6,7 +6,10 @@ Weather app for Phosh, modelled on DWD's WarnWetter app. The rain radar
 with its 2-hour forecast is the core feature; everything else is
 secondary. The shared rules in ../phosh-toolkit/AGENTS.md apply as well.
 
-- App id: `de.nexumia.Cirro`.
+- App id: `de.nexumia.Cirro`. Visible name: **Weather Radar** (chosen by
+  the owner on 2026-11-06, [decision](docs/decisions/app-name.md)); the
+  code name Cirro stays for the repository, app id, package, docs and
+  `User-Agent`.
 - Plan: work items are [issues](https://github.com/nexumia-de/cirro/issues)
   in [milestones](https://github.com/nexumia-de/cirro/milestones);
   goals per milestone are in [docs/roadmap.md](docs/roadmap.md). Work on
