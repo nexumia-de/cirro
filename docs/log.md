@@ -1,5 +1,8 @@
 # Directory Update Log
 
+## 2026-11-06
+* **Update**: [App name](decisions/app-name.md): the owner chose the visible name **Weather Radar**. `.desktop` `Name` (plus `GenericName=Rain Radar` and the keyword `cirro`), metainfo `<name>`, window and header title, About dialog and the texts that name the app say Weather Radar, the nightly "Weather Radar (Nightly)"; repository, app id, package, docs and the `User-Agent` keep the code name Cirro.
+
 ## 2026-10-27
 * **Update**: Own location checked on the phone by the owner: with location off the last position is shown as "last known", and it updates when a fix arrives (issue #41). Recorded in [places](places.md).
 * **Update**: [Places](places.md), owner feedback: a tap on the map no longer drops an unsaved pin, and places can't be moved ("Move on Map", "Move To…" and moving the own location by hand are gone; the [own-location decision](decisions/own-location-pin.md) is superseded). The "+" of the places list is a menu with "Search…", "Current Location" (saves the current fix, waits for one if needed) and "Choose on Map" (pan the map under a fixed blue pin, then "Save"). The store drops the `manual` flag and `move()`; old files with the flag still load. Checked at 360×720 and 1000×700, with a live Nominatim name for a place saved from the map.

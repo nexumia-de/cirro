@@ -1,14 +1,16 @@
 ---
 type: Decision Record
 title: App name Cirro
-description: The app is called Cirro (id de.nexumia.Cirro) and lives in suitably/cirro; it was called Wetterblick until M1.
+description: The code name is Cirro (id de.nexumia.Cirro, repository nexumia-de/cirro); it was called Wetterblick until M1. The visible name is Weather Radar.
 tags: [decision, name, app-id, repository]
 generated: { by: claude-code/2.1.310, at: 2026-10-25T00:10:00Z }
 ---
 
 # Status
 
-Accepted (2026-10-25), decided by the project owner.
+Accepted (2026-10-25), decided by the project owner. The visible name
+**Weather Radar** was chosen by the owner on 2026-11-06 under the toolkit
+decision [code names and visible names](../../../phosh-toolkit/docs/decisions/app-names.md).
 
 # Context
 
@@ -27,6 +29,12 @@ chose a new name and a new repository, `suitably/cirro`
   one commit on top of it.
 - The metainfo declares `<replaces>` for `io.github.suitably.Wetterblick`,
   and the `.desktop` file keeps "Wetterblick" as a search keyword.
+- Users see **Weather Radar**: the `.desktop` `Name` (with
+  `GenericName=Rain Radar` and the keyword `cirro`), the metainfo
+  `<name>`, the window and header title, the About dialog and the texts
+  that name the app; the nightly build says "Weather Radar (Nightly)".
+  The `User-Agent` keeps the code name. On 2026-11-06 Flathub's search
+  had no app named "Weather Radar"; "Weather" is GNOME's own app.
 
 # Consequences
 

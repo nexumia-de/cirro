@@ -50,12 +50,12 @@ def test_nightly_variant_of_desktop_file_and_metainfo():
     nightly_id = f"{APP_ID}.Devel"
     desktop = nightly((ROOT / "data" / f"{APP_ID}.desktop").read_text(),
                       nightly_id)
-    assert "\nName=Cirro (Nightly)\n" in desktop
+    assert "\nName=Weather Radar (Nightly)\n" in desktop
     assert f"\nIcon={nightly_id}\n" in desktop
     root = ET.fromstring(nightly(
         (ROOT / "data" / f"{APP_ID}.metainfo.xml").read_text(), nightly_id))
     assert root.findtext("id") == nightly_id
-    assert root.findtext("name") == "Cirro (Nightly)"
+    assert root.findtext("name") == "Weather Radar (Nightly)"
     assert root.findtext("launchable") == f"{nightly_id}.desktop"
     # Only the stable app replaces the old Wetterblick id.
     assert root.find("replaces") is None
