@@ -129,3 +129,33 @@ def test_bar_height_and_colour():
     assert colors.rgb(0.09) is None and colors.rgb(math.nan) is None
     assert colors.rgb(0.1) == colors.SCALE[0][1]
     assert colors.rgb(12) == colors.SCALE[5][1]
+
+
+def test_sample_points_matches_sample(timeline):
+    entry = timeline[20]
+    points = [(51.23, 6.78), (52.52, 13.40), (40.0, -20.0), (50.11, 8.68)]
+    rates = radar.sample_points(entry.data, points)
+    for (lat, lon), rate in zip(points, rates):
+        single = radar.sample(entry.data, lat, lon)
+        assert (math.isnan(rate) and math.isnan(single)) or rate == pytest.approx(single)
+    assert radar.sample_points(entry.data, []) == []
+
+
+def test_series_many_is_series_for_each_point(timeline):
+    points = [(50.11, 8.68), (52.52, 13.40)]
+    many = nowcast.series_many(timeline, T0, points)
+    assert [[v.rate for v in values] for values in many] == \
+        [[v.rate for v in values_at(timeline, *p)] for p in points]
+    assert nowcast.series_many(timeline, T0, points, cancelled=lambda: True) is None
+
+
+@pytest.mark.parametrize("rates, text", [
+    ([0.0] * 25, "Dry for 2 h"),
+    ([0.0, 0.0, 0.0, 0.1] + [0.0] * 21, "Rain in 15 min"),
+    ([1.0] * 25, "Raining"),
+    ([1.0, 2.0, 0.0, 0.0] + [0.0] * 21, "Raining, stops in 10 min"),
+    ([0.0], "Dry"),
+    ([math.nan] * 25, "No radar data here"),
+])
+def test_short(rates, text):
+    assert nowcast.short(made_up(rates)) == text

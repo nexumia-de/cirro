@@ -45,7 +45,17 @@ or Alt+→ go back to the map without changing anything (issue #50).
 view the collapsed split view puts inside itself, and connects again
 whenever the split view collapses, because libadwaita makes a new one
 each time. Alt+← / Alt+→ were checked under Xvfb (2026-11-07); the
-touch swipe still has to be checked on the phone. That list is the keyboard and screen reader route to the places
+touch swipe still has to be checked on the phone. Each row starts with the place's rain status (issue #56): "Rain in
+35 min", "Raining, stops in 25 min", "Raining", "Dry for 2 h" or "No
+radar data here", from the same radar frames as the nowcast
+(`nowcast.short()`). `cirro/places_rain.py` samples all places in one
+pass over the frames in a worker thread (`radar.sample_points()` opens
+each member once for all places), when a new analysis arrives and when
+the places change. The status only changes the rows' subtitles: a first
+version rebuilt all rows and crashed `gtk4-broadwayd` in CI's desktop
+store screenshot (the sidebar is shown there; the phone shots passed),
+like the toolkit's [shared render nodes](../../phosh-toolkit/docs/screenshot-testing.md)
+limit. That list is the keyboard and screen reader route to the places
 (issue #18): selecting a row selects the same place as its pin and
 centres the map on it.
 

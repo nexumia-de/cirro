@@ -11,6 +11,7 @@ from gi.repository import GLib, GObject
 
 from cirro.layers import catalogue, geometry, info, legend_data, settings, wms
 from cirro.layers.cache import ImageCache
+from cirro.layers.station_view import StationView
 from cirro.layers.view import LayerView
 from cirro.timebar import clock
 
@@ -120,8 +121,9 @@ class LayerManager(GObject.Object):
                       {k: v.variant_index for k, v in self.overlays.items()})
 
     def _add(self, layer, variant, behind):
-        view = LayerView(layer, variant, self._viewport, self._cache,
-                         self._executor)
+        kind = StationView if layer.source == "wfs" else LayerView
+        view = kind(layer, variant, self._viewport, self._cache,
+                    self._executor)
         self._map.insert_layer_behind(view.drawing, behind)
         view.connect("failed", lambda v, message: self.emit("failed", v.layer.title))
         view.connect("image", lambda *_: self.emit("ready"))
@@ -262,6 +264,14 @@ class LayerManager(GObject.Object):
             if asked >= limit:
                 break
             if view.layer.value is None or view.caps is None:
+                continue
+            if isinstance(view, StationView):
+                text = view.describe_at(latitude, longitude)
+                if text:
+                    asked += 1
+                    when = f" · {clock(view.time)}" if view.time else ""
+                    GLib.idle_add(lambda t=f"{view.layer.title}: {text}{when}":
+                                  (callback(t), GLib.SOURCE_REMOVE)[1])
                 continue
             time_ = None if view.timeless else view.time
             if not view.timeless and time_ is None:
