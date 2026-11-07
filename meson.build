@@ -16,6 +16,7 @@ python.install_sources(
   'cirro/__init__.py',
   'cirro/__main__.py',
   'cirro/colors.py',
+  'cirro/forward_swipe.py',
   'cirro/frames.py',
   'cirro/geocode.py',
   'cirro/legend.py',
