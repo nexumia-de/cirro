@@ -1,7 +1,7 @@
 ---
 type: Decision Record
 title: Radar focus, no forecast view
-description: Accepted - Cirro covers radar, rain nowcast, warnings and what GNOME Weather lacks; the per-place forecast (current conditions, hourly, 10-day) is dropped because GNOME Weather already shows it.
+description: Accepted - Cirro covers radar, rain nowcast, warnings and what GNOME Weather lacks (sunrise/sunset, wind); the per-place forecast (current conditions, hourly, 10-day) is dropped because GNOME Weather already shows it.
 tags: [decision, scope, forecast, gnome-weather, roadmap]
 generated: { by: claude-code/2.1.310, at: 2026-11-07T10:00:00Z }
 sources:
@@ -35,10 +35,16 @@ The app's visible name is **Weather Radar** ([app name](app-name.md)).
 - Cirro focuses on radar, the point nowcast, official DWD warnings, more
   map layers and local notifications. These are the reasons to install
   Cirro next to GNOME Weather.
-- Small additions that GNOME Weather lacks and that need no new data
-  source are allowed when they help the radar's question ("rain before
-  dark?"): sunrise and sunset for the selected place are computed
-  locally from the date and position (milestone M6).
+- Small additions that GNOME Weather lacks are allowed when they help
+  with the questions the radar answers ("rain before dark?", "is a
+  storm coming?") and come from DWD open data or local computation:
+  - sunrise and sunset for the selected place, computed locally from
+    the date and position (M6, #54);
+  - wind: a wind map with arrows, and the wind at the selected place
+    from the nearest DWD station (owner, 2026-11-07; M6, #58, #59). Source:
+    [data sources](../data-sources.md), section 10.
+- Temperature and the other current conditions stay with GNOME
+  Weather.
 
 # Consequences
 

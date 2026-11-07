@@ -64,3 +64,12 @@ def test_nightly_variant_of_desktop_file_and_metainfo():
 def test_stable_build_from_source_tree():
     assert cirro.APP_ID == APP_ID and not cirro.NIGHTLY
     assert cirro.VERSION_LABEL == cirro.VERSION
+
+
+def test_meson_installs_every_module():
+    # A module missing from install_sources breaks only the Flatpak:
+    # the source tree still imports it.
+    meson = (ROOT / "meson.build").read_text()
+    listed = set(re.findall(r"'cirro/([\w]+\.py)'", meson))
+    present = {p.name for p in (ROOT / "cirro").glob("*.py")}
+    assert present - listed == set()

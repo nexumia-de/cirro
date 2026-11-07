@@ -2,7 +2,7 @@
 type: Reference
 title: Data sources
 description: DWD open data products and other services Cirro uses, what is known about each and what still has to be verified.
-tags: [data, dwd, radar, radvor, wms, warnings, cap, mosmix, brightsky, dmi, osm]
+tags: [data, dwd, radar, radvor, wms, wfs, wind, warnings, cap, mosmix, brightsky, dmi, osm]
 generated: { by: claude-code/2.1.310, at: 2026-10-26T06:30:00Z }
 sources:
   - id: dwd-radar-products
@@ -454,6 +454,43 @@ second across all threads, `Cirro/<version> (+repo URL)`, names cached
 in the place store, search results cached per session, search only on
 Enter, attribution in the search dialog and the About dialog). Check
 the page from a network that can reach it and update this section.
+
+
+# 10. Wind *(live, 2026-11-07 11:20 UTC)*
+
+For the wind map and the wind at the selected place
+([radar focus](decisions/scope-radar-focus.md)). Same GeoServer as
+section 2, `https://maps.dwd.de/geoserver/dwd/`, same DWD terms
+(section 7).
+
+## Station measurements (WFS `dwd:RBSN_FF`)
+
+- `ows?service=WFS&version=2.0.0&request=GetFeature&typeNames=dwd:RBSN_FF&outputFormat=application/json`
+  returns GeoJSON points (EPSG:4326) with `ID`, `NAME`, `SPEED` (m/s,
+  one decimal), `DIRECTION` (degrees, the direction the wind comes
+  from, steps of 10°) and `M_DATE` (hourly, UTC).
+- **72 stations** in Germany (6.0–15.0° E, 47.4–55.0° N, about one
+  per 70 km, including mountain tops such as Brocken), hourly, the
+  last **72 hours** (5 183 features, 1.5 MB). The 11:00 UTC values
+  were there at 11:18 UTC.
+- `CQL_FILTER=M_DATE='2026-11-07T11:00:00Z'` limits it to one hour:
+  21.5 KB. No `ETag` or `Last-Modified`, so poll at most once an
+  hour, after about :20.
+- No gusts in this layer.
+
+## Pre-rendered layers (WMS)
+
+- `RBSN_FF` with style `RBSN_FF_Pfeile` draws wind barbs at the same
+  stations; the default style draws "5.3m/s 110°" labels. Barbs are
+  meteorological notation, black on transparent, not theme aware.
+- `Icon_reg025_fd_sl_UV10M` (style `icon_reg025_fd_sl_uv10m_wmc_windbarbs`):
+  ICON global forecast, 0.25° (~28 km) grid, hourly steps, also as
+  barbs. `Ewam_…_UV10M` is a wave-model wind over the sea, every 12 h.
+- `EPSG:3857` works; 460×600 px over Germany is 23–25 KB, 0.7–1.2 s.
+
+A wind *forecast* field at higher resolution (ICON-D2, 2.2 km) is on
+`opendata.dwd.de/weather/nwp/icon-d2/` as GRIB2 only, which needs a
+GRIB decoder (ecCodes) in the Flatpak; not checked further.
 
 [^dwd-radar-products]: DWD, Radar products
 [^sdwf-40]: simple_dwd_weatherforecast #40
