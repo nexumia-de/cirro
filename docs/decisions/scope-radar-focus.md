@@ -43,8 +43,10 @@ The app's visible name is **Weather Radar** ([app name](app-name.md)).
   - wind: a wind map with arrows, and the wind at the selected place
     from the nearest DWD station (owner, 2026-11-07; M6, #58, #59). Source:
     [data sources](../data-sources.md), section 10.
-- Temperature and the other current conditions stay with GNOME
-  Weather.
+- Temperature and the other current conditions *for a place* stay
+  with GNOME Weather. As **map layers** they are in scope: GNOME
+  Weather has no map, and the owner wants every useful DWD layer in
+  Cirro (2026-11-07, [map layers](../map-layers.md)).
 
 # Consequences
 

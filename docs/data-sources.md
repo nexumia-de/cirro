@@ -72,7 +72,8 @@ sources:
 
 # Status of this file
 
-Sections 1 and 2 were checked against the live services on 2026-10-24
+Sections 10 and 11 were checked against the live GeoServer on
+2026-11-07. Sections 1 and 2 were checked against the live services on 2026-10-24
 around 21:15 UTC (milestone M0 of the [roadmap](roadmap.md)); facts
 marked *(live)* come from that check, footnoted facts from web research.
 Section 3 (Bright Sky), 4 (warnings) and 5 (forecasts) were checked
@@ -491,6 +492,36 @@ section 2, `https://maps.dwd.de/geoserver/dwd/`, same DWD terms
 A wind *forecast* field at higher resolution (ICON-D2, 2.2 km) is on
 `opendata.dwd.de/weather/nwp/icon-d2/` as GRIB2 only, which needs a
 GRIB decoder (ecCodes) in the Flatpak; not checked further.
+
+# 11. GeoServer layers for all map layers *(live, 2026-11-07 11:25 UTC)*
+
+The plan built on these facts is [map layers](map-layers.md).
+
+- `wms?service=WMS&version=1.3.0&request=GetCapabilities`: 975 KB,
+  **189 leaf layers**. `AccessConstraints` points to
+  `https://www.dwd.de/copyright` (section 7), `Fees` is `none`. Layer
+  `Attribution` elements are empty; some abstracts name other holders
+  (warning areas and `VG250_Gemeinden`: "Copyright GeoBasis-DE / BKG
+  2019 (Daten modifiziert)"; `Einzugsgebiete_DE`: BfG).
+- Layers advertise EPSG:4326 and others, but `GetMap` with
+  `crs=EPSG:3857` works for every layer tried (24 layers, 230×300 px
+  over Germany: 0.3–129 KB, satellite largest, 0.7–1.2 s).
+- `TIME` must be one of the advertised values: `2026-11-07T12:00Z`
+  and `2026-11-08T12:00Z` worked for `Icon_reg025_fd_sl_T2M`,
+  `12:07Z` returned a `ServiceException`. Forecast layers also have a
+  `REFERENCE_TIME` dimension (model run).
+- No `ETag`, `Last-Modified`, `Cache-Control` or `Expires` on `GetMap`.
+- `GetFeatureInfo` with `info_format=application/json` returns the
+  raster value: ICON 2 m temperature at 51.5° N 12.5° E was
+  `4.29` (°C) for `TIME` 11:00Z, `REFERENCE_TIME` 06:00Z.
+- `GetLegendGraphic` returns PNG legends (88 px wide, black on white,
+  German labels).
+- WMTS (`gwc/service/wmts`): 39 cached layers in `EPSG:900913`, all
+  without a time dimension (base maps, warning areas, storm cells of
+  the current time). Not usable for animated weather layers.
+- On a calm November day the thunderstorm, lightning and warning
+  layers returned empty images, pollen and UV were uniformly green;
+  test those with recorded data.
 
 [^dwd-radar-products]: DWD, Radar products
 [^sdwf-40]: simple_dwd_weatherforecast #40

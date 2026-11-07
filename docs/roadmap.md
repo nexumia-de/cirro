@@ -1,7 +1,7 @@
 ---
 type: Plan
 title: Roadmap
-description: Goals and exit criteria of the milestones M0–M4 and M6, radar first, no forecast view; the work items are GitHub issues in the milestones linked here.
+description: Goals and exit criteria of the milestones M0–M4 and M6, radar first, no forecast view, all DWD map layers; the work items are GitHub issues in the milestones linked here.
 tags: [plan, roadmap, milestones]
 generated: { by: claude-code/2.1.310, at: 2026-10-25T19:46:00Z }
 ---
@@ -90,18 +90,22 @@ open: the `on device` checks.
 **Goal**: official weather warnings for saved places and on the map.
 
 **Exit criteria**: warning product chosen and recorded as a decision;
-warnings per place with severity and a detail page; optional overlay.
+warnings per place with severity and a detail page; optional overlay,
+built on the map-layer foundation (layer catalogue and WMS source,
+layer picker, time bar for layer time steps, legends and tap values;
+[map layers](map-layers.md)).
 
 # M6 – Extras
 
 [Milestone M6](https://github.com/nexumia-de/cirro/milestone/5)
 
-**Goal**: more map layers (wind among them), notifications without
-draining the battery, and sunrise, sunset and wind for the selected
-place.
+**Goal**: every useful DWD map layer, notifications without draining
+the battery, and sunrise, sunset and wind for the selected place.
 
-**Exit criteria**: further map layers, including wind arrows from
-DWD's station measurements; local notifications for warnings and
+**Exit criteria**: the layer groups of [map layers](map-layers.md)
+(lightning and thunderstorms, satellite, temperature, precipitation
+forecast and totals, wind arrows from DWD's station measurements,
+gusts, pressure, pollen/UV/health, sea state, station measurements); local notifications for warnings and
 imminent rain with measured battery impact; sunrise and sunset
 computed locally and the nearest station's wind for the selected
 place.
