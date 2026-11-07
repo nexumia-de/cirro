@@ -51,7 +51,11 @@ radar data here", from the same radar frames as the nowcast
 (`nowcast.short()`). `cirro/places_rain.py` samples all places in one
 pass over the frames in a worker thread (`radar.sample_points()` opens
 each member once for all places), when a new analysis arrives and when
-the places change. That list is the keyboard and screen reader route to the places
+the places change. The status only changes the rows' subtitles: a first
+version rebuilt all rows and crashed `gtk4-broadwayd` in CI's desktop
+store screenshot (the sidebar is shown there; the phone shots passed),
+like the toolkit's [shared render nodes](../../phosh-toolkit/docs/screenshot-testing.md)
+limit. That list is the keyboard and screen reader route to the places
 (issue #18): selecting a row selects the same place as its pin and
 centres the map on it.
 

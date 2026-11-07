@@ -30,10 +30,17 @@ class PlacesView(Gtk.ScrolledWindow):
         self._rebuild()
 
     def set_rain(self, texts):
-        """Short rain status per place id, shown first in each row."""
-        if texts != self._rain:
-            self._rain = dict(texts)
-            self._rebuild()
+        """Short rain status per place id, shown first in each row. Only
+        the subtitles change: rebuilding the rows every 5 min would lose
+        the keyboard focus (and crashed gtk4-broadwayd in CI's desktop
+        screenshot, see docs/places.md)."""
+        if texts == self._rain:
+            return
+        self._rain = dict(texts)
+        for row in self._rows():
+            place = self._store.get(row.place_id)
+            if place is not None:
+                row.set_subtitle(GLib.markup_escape_text(self._notes(place)))
 
     def select(self, place_id):
         self._selected = place_id
@@ -56,7 +63,7 @@ class PlacesView(Gtk.ScrolledWindow):
             yield row
             row = row.get_next_sibling()
 
-    def _row(self, place):
+    def _notes(self, place):
         notes = []
         if place.id in self._rain and place.has_position:
             notes.append(self._rain[place.id])
@@ -67,8 +74,11 @@ class PlacesView(Gtk.ScrolledWindow):
             notes.append("Unknown position")
         if place is self._store.default:
             notes.append("Default place")
+        return " · ".join(notes)
+
+    def _row(self, place):
         row = Adw.ActionRow(title=GLib.markup_escape_text(place.title),
-                            subtitle=GLib.markup_escape_text(" · ".join(notes)),
+                            subtitle=GLib.markup_escape_text(self._notes(place)),
                             activatable=True)
         row.place_id = place.id
         row.add_prefix(Gtk.Image(icon_name=OWN_ICON if place.own else PLACE_ICON,
