@@ -78,8 +78,10 @@ def parse_capabilities(body, layer):
             if name == "time" and (dim.text or "").strip():
                 axis = TimeAxis.parse(dim.text)
             elif name == "reference_time":
-                reference = dim.get("default") or \
-                    (dim.text or "").split(",")[-1].strip()
+                # The newest run: the default is the oldest for some
+                # ensemble layers (two days old on 2026-11-07).
+                runs = [r.strip() for r in (dim.text or "").split(",") if r.strip()]
+                reference = max(runs, default=dim.get("default") or "")
         return Capabilities(axis, reference)
     raise ValueError(f"layer {layer} not in capabilities")
 
@@ -89,8 +91,14 @@ def fetch_capabilities(layer, base_url=BASE_URL):
     return parse_capabilities(_check(body, kind), layer)
 
 
+def _dims(params, dims):
+    # GeoServer's custom dimensions: DIM_<NAME>=value.
+    for name, value in dims:
+        params[f"dim_{name.lower()}"] = value
+
+
 def map_url(layers, bbox, size, time_=None, style=None, cql="",
-            reference_time="", base_url=BASE_URL):
+            reference_time="", dims=(), base_url=BASE_URL):
     """GetMap for EPSG:3857 `bbox` (west, south, east, north in metres)
     and `size` (width, height) in pixels."""
     params = {
@@ -108,6 +116,7 @@ def map_url(layers, bbox, size, time_=None, style=None, cql="",
         params["dim_reference_time"] = reference_time
     if cql:
         params["cql_filter"] = ";".join([cql] * len(layers))
+    _dims(params, dims)
     return f"{base_url}wms?" + _query(params)
 
 
@@ -135,7 +144,7 @@ def fetch_legend(layer, style=None, base_url=BASE_URL):
 
 
 def feature_info_url(layers, latitude, longitude, time_=None, cql="",
-                     reference_time="", fields=(), base_url=BASE_URL):
+                     reference_time="", fields=(), dims=(), base_url=BASE_URL):
     """GetFeatureInfo at one point: a 3×3 pixel map around it, queried in
     the middle."""
     d = 0.01
@@ -151,6 +160,7 @@ def feature_info_url(layers, latitude, longitude, time_=None, cql="",
     }
     if fields:
         params["propertyName"] = ",".join(fields)
+    _dims(params, dims)
     if time_ is not None:
         params["time"] = format_time(time_)
     if reference_time:

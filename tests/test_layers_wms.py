@@ -61,6 +61,21 @@ def test_map_url():
     assert q["transparent"] == "true"
 
 
+def test_extra_dimensions():
+    q = query(wms.map_url(("A",), (0, 0, 1, 1), (1, 1),
+                          dims=(("ENSEMBLE_PRODUCT", "Probabilities:>14m/s"),)))
+    assert q["dim_ensemble_product"] == "Probabilities:>14m/s"
+
+
+def test_newest_model_run_is_used():
+    body = b"""<WMS_Capabilities xmlns="http://www.opengis.net/wms"><Capability>
+      <Layer><Name>E</Name>
+      <Dimension name="time">2026-11-07T00:00:00Z/2026-11-08T00:00:00Z/PT6H</Dimension>
+      <Dimension name="REFERENCE_TIME" default="2026-11-05T12:00:00.000Z">2026-11-05T12:00:00.000Z,2026-11-06T00:00:00.000Z,2026-11-07T00:00:00.000Z</Dimension>
+      </Layer></Capability></WMS_Capabilities>"""
+    assert wms.parse_capabilities(body, "E").reference_time == "2026-11-07T00:00:00.000Z"
+
+
 def test_timeless_map_url_has_no_time():
     assert "time" not in query(wms.map_url(("A",), (0, 0, 1, 1), (1, 1)))
 

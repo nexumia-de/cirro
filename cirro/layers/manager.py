@@ -269,7 +269,8 @@ class LayerManager(GObject.Object):
             url = wms.feature_info_url(view.variant.wms, latitude, longitude,
                                        time_, view.variant.cql,
                                        view.caps.reference_time,
-                                       view.layer.value.fields)
+                                       view.layer.value.fields,
+                                       view.variant.dims)
             future = self._executor.submit(wms.fetch_feature_info, url)
             future.add_done_callback(lambda f, layer=view.layer, t=time_: GLib.idle_add(
                 self._value_done, f, layer, t, callback))

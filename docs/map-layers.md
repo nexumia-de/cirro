@@ -53,7 +53,7 @@ issues below decide which ones and how they are presented.
 - `app.layers` opens the picker, `app.show-layer("id:variant")` shows a
   layer (for screenshots and tests). In demo mode the choice is neither
   read nor saved.
-- Checked on 2026-11-07: every catalogue entry and variant (126) loads
+- Checked on 2026-11-07: every catalogue entry and variant (131) loads
   its capabilities, an image and its legend from the live server;
   screenshots at 360×720 (light and dark) and 1000×700.
 

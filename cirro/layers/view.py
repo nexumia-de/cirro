@@ -161,7 +161,7 @@ class LayerView(GObject.Object):
         url = wms.map_url(self.variant.wms, view.bbox, view.size,
                            None if self.timeless else time_,
                            self.variant.style, self.variant.cql,
-                           self.caps.reference_time)
+                           self.caps.reference_time, self.variant.dims)
         if time_ is not None:
             self._time_of[url] = time_
         return url

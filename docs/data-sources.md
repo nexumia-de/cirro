@@ -523,6 +523,13 @@ The plan built on these facts is [map layers](map-layers.md).
   11–15 KB (3 KB gzipped) instead of 975 KB. Forecast layers name their
   model runs in `REFERENCE_TIME` (default: the newest); `GetMap` takes
   `dim_reference_time`, an unknown run returns a `ServiceException`.
+- Ensemble layers (`Icon-eps_…`) have an `ENSEMBLE_PRODUCT` dimension
+  (percentiles, exceedance probabilities such as `Probabilities:>18m/s`
+  or `>10mm`, member mean/min/max/spread), set with
+  `dim_ensemble_product`. Their default is `Percentiles:10%` while the
+  default style colours probabilities in %, so Cirro always names the
+  product. Their default `REFERENCE_TIME` was the *oldest* of four runs
+  (2026-11-05 12 UTC on 2026-11-07); Cirro uses the newest listed run.
 - The advertised time axis promises more than the server has:
   Blitzdichte advertises 2025-07 onwards but rejects a time two weeks
   back; forecast sums exist only from their period after the model run

@@ -31,6 +31,7 @@ class Variant:
     # `every` (checked live, 2026-11-07); the time axis advertises more.
     lead: timedelta = timedelta(0)
     every: timedelta | None = None
+    dims: tuple = ()       # other WMS dimensions: (name, value) pairs
 
 
 @dataclass(frozen=True)
@@ -78,7 +79,7 @@ class Layer:
         v = self.variants[min(max(index, 0), len(self.variants) - 1)]
         return Variant(v.label, v.wms or self.wms, v.cql,
                        v.style if v.style is not None else self.style,
-                       v.lead, v.every)
+                       v.lead, v.every, v.dims)
 
 
 H = timedelta(hours=1)
@@ -131,7 +132,6 @@ _CLIMATE = (("Mean temperature 1961–1990", "TAMM_17_1961_30"),
 
 TEMPERATURE = Value("number", "°C")
 MM = Value("number", "mm", 1)
-MS = Value("number", "m/s", 1)
 
 LAYERS = (
     # Precipitation
@@ -153,8 +153,14 @@ LAYERS = (
                             lead=12 * H),
                     Variant("24 hours", ("Icon_reg025_fd_sl_TOTPREC24H",),
                             lead=24 * H),
-                    Variant("24 hours, ensemble", ("Icon-eps_reg025_fd_sl_TOTPREC24H",)),
                     Variant("Since model start", ("Icon_reg025_fd_sl_TOTPREC",)))),
+    Layer("precip-chance", "Precipitation Probability", "Precipitation",
+          ("Icon-eps_reg025_fd_sl_TOTPREC24H",),
+          note="Chance in 24 h, ICON ensemble, 7 days",
+          value=Value("number", "%"),
+          variants=tuple(Variant(f"More than {mm} mm", lead=24 * H,
+                                 dims=(("ENSEMBLE_PRODUCT", f"Probabilities:>{mm}mm"),))
+                         for mm in (1, 5, 10, 20, 50))),
     Layer("precip-ai", "Precipitation Forecast, AI Model", "Precipitation",
           ("Aicon_reg025_fd_sl_TOTPREC06H",), note="AICON, ~28 km", value=MM,
           variants=(Variant("6 hours", lead=9 * H),
@@ -214,8 +220,14 @@ LAYERS = (
           variants=(Variant("Forecast"),
                     Variant("Analysis", ("Autowarn_Analyse",)))),
     # Wind
-    Layer("gusts", "Gusts", "Wind", ("Icon-eps_reg025_fd_sl_VMAX10M12H",),
-          note="Max in 12 h, ICON ensemble", value=MS),
+    Layer("gusts", "Gust Probability", "Wind",
+          ("Icon-eps_reg025_fd_sl_VMAX10M12H",),
+          note="Chance in 12 h, ICON ensemble, 7 days",
+          value=Value("number", "%"),
+          variants=tuple(Variant(f"Gusts over {speed} m/s ({force} Bft)",
+                                 dims=(("ENSEMBLE_PRODUCT", f"Probabilities:>{speed}m/s"),))
+                         for speed, force in (("14", 7), ("18", 8), ("25", 10),
+                                              ("29", 11), ("33", 12)))),
     Layer("gust-risk", "Storm Probability", "Wind",
           ("icon-d2-eps_ecwarn_reg002_fd_sl_pVMAX10MgtX",),
           note="Gusts > 29 m/s, ICON-D2 ensemble, Germany",
@@ -223,8 +235,14 @@ LAYERS = (
           variants=(Variant("Germany, 2 days"),
                     Variant("Europe, 6 days",
                             ("icon-eu-eps_ecwarn_reg0125_fd_sl_pVMAX10MgtX",)))),
-    Layer("wind-speed", "Wind Speed", "Wind", ("Icon-eps_reg025_fd_pl_SP10M",),
-          note="10 m, ICON ensemble", value=MS),
+    Layer("wind-speed", "Wind Probability", "Wind",
+          ("Icon-eps_reg025_fd_pl_SP10M",),
+          note="Mean wind at 10 m, ICON ensemble, 7 days",
+          value=Value("number", "%"),
+          variants=tuple(Variant(f"Wind over {speed} m/s ({force} Bft)",
+                                 dims=(("ENSEMBLE_PRODUCT", f"Probabilities:>{speed}m/s"),))
+                         for speed, force in (("10", 5), ("14", 7), ("18", 8),
+                                              ("25", 10)))),
     Layer("wind-barbs", "Wind Barbs", "Wind", ("Icon_reg025_fd_sl_UV10M",),
           role=OVERLAY, note="10 m, ICON global", value=Value("wind"),
           variants=(Variant("ICON global"),
@@ -261,7 +279,9 @@ LAYERS = (
                     Variant("Europe model, dense", style="icon-eu_reg00625_fd_sl_qff_isolines_dense"),
                     Variant("Global model", ("Icon_reg025_fd_sl_PMSL",), style=""),
                     Variant("AI model", ("Aicon_reg025_fd_sl_PMSL",), style=""),
-                    Variant("Ensemble", ("Icon-eps_reg025_fd_sl_PMSL",), style=""))),
+                    Variant("Ensemble mean", ("Icon-eps_reg025_fd_sl_PMSL",), style="",
+                            dims=(("ENSEMBLE_PRODUCT",
+                                   "Products:Unweighted mean of all members"),)))),
     # Satellite
     Layer("satellite", "Satellite Image", "Satellite",
           ("Satellite_meteosat_1km_euat_rgb_day_hrv_and_night_ir108_3h",),
