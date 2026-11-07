@@ -1,6 +1,7 @@
 # Directory Update Log
 
 ## 2026-11-07
+* **Update**: Wind is in scope (owner): a wind map with arrows and the wind at the selected place, M6 ([decision](decisions/scope-radar-focus.md), [roadmap](roadmap.md), [features](features.md)). [Data sources](data-sources.md) section 10 holds the live facts on DWD's `RBSN_FF` station measurements (WFS GeoJSON, 72 stations, hourly, 21.5 KB per hour) and the wind barb WMS layers.
 * **Update**: [Places](places.md) on the phone: a right-to-left swipe, Alt+→ and a new "Back to Map" button (›, phone only) in the list's header close the places list and show the map again without changing anything (issue #50). New `cirro/forward_swipe.py` uses `get-next-page` of the collapsed split view's inner navigation view. Keyboard path checked under Xvfb, screenshots at 360×720 and 1000×700; touch to be checked on the phone.
 * **Creation**: Decision [radar focus, no forecast view](decisions/scope-radar-focus.md), chosen by the owner: GNOME Weather (main `b7de9e1`) already shows current conditions, hourly and daily forecasts on Phosh, so milestone M5 – Forecasts is dropped from the [roadmap](roadmap.md) and the [feature inventory](features.md), issues #14 and #23 are closed as not planned, and the [MOSMIX forecast source](decisions/forecast-source.md) is rejected. Sunrise and sunset for the selected place, which GNOME Weather does not show, are added to M6 as a local computation.
 

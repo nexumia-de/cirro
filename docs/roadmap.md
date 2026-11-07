@@ -96,12 +96,15 @@ warnings per place with severity and a detail page; optional overlay.
 
 [Milestone M6](https://github.com/nexumia-de/cirro/milestone/5)
 
-**Goal**: more map layers, notifications without draining the
-battery, and sunrise and sunset for the selected place.
+**Goal**: more map layers (wind among them), notifications without
+draining the battery, and sunrise, sunset and wind for the selected
+place.
 
-**Exit criteria**: further WMS layers; local notifications for warnings
-and imminent rain with measured battery impact; sunrise and sunset
-computed locally for the selected place.
+**Exit criteria**: further map layers, including wind arrows from
+DWD's station measurements; local notifications for warnings and
+imminent rain with measured battery impact; sunrise and sunset
+computed locally and the nearest station's wind for the selected
+place.
 
 # Risks
 

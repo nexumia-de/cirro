@@ -27,6 +27,7 @@ Priorities: **P1** must have for the first usable release, **P2** next,
 | Other map layers: warnings, lightning, temperature, satellite | P3 | DWD GeoServer | M6 |
 | Notifications for warnings and imminent rain | P3 | warnings + nowcast, background service | M6 |
 | Sunrise and sunset for the selected place | P3 | computed locally, no download | M6 |
+| Wind map with arrows; wind at the selected place (nearest station) | P3 | DWD WFS `RBSN_FF` | M6 |
 | Pollen, UV, health forecasts | P3 | DWD open data | later |
 | Widgets / lock screen | – | not available on Phosh | – |
 
