@@ -4,3 +4,9 @@
   min-height: 44px;
   padding: 0;
 }
+
+
+/* Swatch of a coloured class in a map layer's legend. */
+.cirro-legend-chip {
+  min-width: 10px;
+}

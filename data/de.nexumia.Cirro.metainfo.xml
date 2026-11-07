@@ -12,6 +12,13 @@
       the Deutscher Wetterdienst publishes as open data.
     </p>
     <p>
+      Besides the radar it shows the other weather maps of the Deutscher
+      Wetterdienst: warnings, lightning and thunderstorm cells, satellite
+      images, temperature, precipitation forecasts and totals, gusts, air
+      pressure, pollen, UV index, health weather and waves. Tap the map to
+      read the value at a point.
+    </p>
+    <p>
       Weather Radar is an independent project and not affiliated with the
       Deutscher Wetterdienst. Map data © OpenStreetMap contributors.
     </p>

@@ -1,0 +1,65 @@
+{
+    "Legend": [
+        {
+            "layerName": "UVIndex",
+            "title": "UV-Index (max)",
+            "rules": [
+                {
+                    "name": "Rule 0",
+                    "title": "UVI",
+                    "symbolizers": [
+                        {
+                            "Raster": {
+                                "colormap": {
+                                    "entries": [
+                                        {
+                                            "label": "UV-Index (max)",
+                                            "quantity": "0",
+                                            "color": "#000000",
+                                            "opacity": "0.0"
+                                        },
+                                        {
+                                            "label": [
+                                                "0 ... 2"
+                                            ],
+                                            "quantity": "2.5",
+                                            "color": "#00FF00"
+                                        },
+                                        {
+                                            "label": [
+                                                "3 ... 5"
+                                            ],
+                                            "quantity": "5.5",
+                                            "color": "#FFFF00"
+                                        },
+                                        {
+                                            "label": [
+                                                "6 ... 7"
+                                            ],
+                                            "quantity": "7.5",
+                                            "color": "#FFCC00"
+                                        },
+                                        {
+                                            "label": [
+                                                "8 ... 10"
+                                            ],
+                                            "quantity": "10.5",
+                                            "color": "#FF0000"
+                                        },
+                                        {
+                                            "label": ">= 11",
+                                            "quantity": "20",
+                                            "color": "#CC00FF"
+                                        }
+                                    ],
+                                    "type": "intervals"
+                                },
+                                "opacity": "1.0"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

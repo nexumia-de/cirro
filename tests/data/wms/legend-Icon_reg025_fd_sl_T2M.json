@@ -1,0 +1,134 @@
+{
+    "Legend": [
+        {
+            "layerName": "Icon_reg025_fd_sl_T2M",
+            "title": "Lufttemperatur in 2m aus ICON",
+            "rules": [
+                {
+                    "symbolizers": [
+                        {
+                            "Raster": {
+                                "colormap": {
+                                    "entries": [
+                                        {
+                                            "label": " < -60 \u00b0C",
+                                            "quantity": "-60.0",
+                                            "color": "#FFF7F3"
+                                        },
+                                        {
+                                            "label": " -60 ... -55",
+                                            "quantity": "-55.0",
+                                            "color": "#FDE0DD"
+                                        },
+                                        {
+                                            "label": " -55 ... -50",
+                                            "quantity": "-50.0",
+                                            "color": "#FCC5C0"
+                                        },
+                                        {
+                                            "label": " -50 ... -45",
+                                            "quantity": "-45.0",
+                                            "color": "#FA9FB5"
+                                        },
+                                        {
+                                            "label": " -45 ... -40",
+                                            "quantity": "-40.0",
+                                            "color": "#F768A1"
+                                        },
+                                        {
+                                            "label": " -40 ... -35",
+                                            "quantity": "-35.0",
+                                            "color": "#DD3497"
+                                        },
+                                        {
+                                            "label": " -35 ... -30",
+                                            "quantity": "-30.0",
+                                            "color": "#AE017E"
+                                        },
+                                        {
+                                            "label": " -30 ... -25",
+                                            "quantity": "-25.0",
+                                            "color": "#7A0177"
+                                        },
+                                        {
+                                            "label": " -25 ... -20",
+                                            "quantity": "-20.0",
+                                            "color": "#680099"
+                                        },
+                                        {
+                                            "label": " -20 ... -15",
+                                            "quantity": "-15.0",
+                                            "color": "#0570B0"
+                                        },
+                                        {
+                                            "label": " -15 ... -10",
+                                            "quantity": "-10.0",
+                                            "color": "#74A9CF"
+                                        },
+                                        {
+                                            "label": " -10 ... -5",
+                                            "quantity": "-5.0",
+                                            "color": "#BDC9E1"
+                                        },
+                                        {
+                                            "label": " -5 ... 0",
+                                            "quantity": "0.0",
+                                            "color": "#EDF8FB"
+                                        },
+                                        {
+                                            "label": " 0 ... 5",
+                                            "quantity": "5.0",
+                                            "color": "#C7E9B4"
+                                        },
+                                        {
+                                            "label": " 5 ... 10",
+                                            "quantity": "10.0",
+                                            "color": "#FFFFB2"
+                                        },
+                                        {
+                                            "label": " 10 ... 15",
+                                            "quantity": "15.0",
+                                            "color": "#FED976"
+                                        },
+                                        {
+                                            "label": " 15 ... 20",
+                                            "quantity": "20.0",
+                                            "color": "#FEB24C"
+                                        },
+                                        {
+                                            "label": " 20 ... 25",
+                                            "quantity": "25.0",
+                                            "color": "#FD8D3C"
+                                        },
+                                        {
+                                            "label": " 25 ... 30",
+                                            "quantity": "30.0",
+                                            "color": "#FC4E2A"
+                                        },
+                                        {
+                                            "label": " 30 ... 35",
+                                            "quantity": "35.0",
+                                            "color": "#E31A1C"
+                                        },
+                                        {
+                                            "label": " 35 ... 40",
+                                            "quantity": "40.0",
+                                            "color": "#B10026"
+                                        },
+                                        {
+                                            "label": " > 40",
+                                            "quantity": "60.0",
+                                            "color": "#4D0000"
+                                        }
+                                    ],
+                                    "type": "intervals"
+                                },
+                                "opacity": "1.0"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

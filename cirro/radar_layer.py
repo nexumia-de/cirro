@@ -3,6 +3,7 @@ import math
 import gi
 
 gi.require_version("Gsk", "4.0")
+gi.require_version("Graphene", "1.0")
 gi.require_version("Shumate", "1.0")
 from gi.repository import Gdk, GLib, Graphene, Gsk, Shumate  # noqa: E402
 

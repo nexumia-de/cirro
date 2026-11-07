@@ -1,9 +1,9 @@
 ---
 type: Plan
 title: Map layers
-description: Every DWD GeoServer layer, sorted into what Cirro shows, what it may show later and what it leaves out; the foundation all layers share and the issue for each group.
+description: Every DWD GeoServer layer, sorted into what Cirro shows and what it leaves out; how the layer code works (catalogue, views, manager, picker, time bar, legends, tap values) and the issue for each group.
 tags: [map, layers, wms, wfs, dwd, plan]
-generated: { by: claude-code/2.1.310, at: 2026-11-07T11:45:00Z }
+generated: { by: claude-code/2.1.310, at: 2026-11-07T12:30:00Z }
 ---
 
 # Goal
@@ -28,6 +28,34 @@ the first user, so they come with M4:
 
 With these in place, adding any DWD layer is one catalogue entry; the
 issues below decide which ones and how they are presented.
+
+# How it works (`cirro/layers/`)
+
+| File | Job |
+|---|---|
+| `catalogue.py` | One `Layer` per picker row: WMS names, role (base or overlay), group, note, how far back the time bar reaches (`past`), variants (other WMS layer, CQL filter or style; forecast sums with their first `lead` and cadence `every`), tap value kind, extra credits, English legend labels, opacity (base layers 75 %). |
+| `timeaxis.py` | Parses the `time` dimension (instants, `start/end/period`), windows it, picks the nearest step. |
+| `wms.py` | GTK-free requests: per-layer `GetCapabilities` (time axis and `REFERENCE_TIME`), `GetMap` in EPSG:3857, `GetLegendGraphic` as JSON, `GetFeatureInfo` as JSON with `propertyName`. |
+| `cache.py` | PNGs on disk in `~/.cache/cirro/layers/`, 80 MB, oldest out; not for timeless layers. |
+| `geometry.py` | The visible map area in Web Mercator, at most 1280 px per side. |
+| `view.py` | One shown layer: its steps (refreshed every 5 min for nowcasts, 30 min otherwise), textures for the view and time (48 in memory), prefetching, dropping steps the server has no data for. |
+| `manager.py` | Base layer plus overlays, overlays following the base layer's time (nearest own step within half a step, at least 10 min), the map's source note with extra credits, the base layer's legend, tap values. |
+| `control.py` | The window side: layers button at the end of the time bar, the time bar's entries for a DWD base layer, legend, failure toast, tap → toast. |
+| `picker.py`, `legend.py`, `settings.py` | The picker dialog, the legend widget, the saved choice (`settings.ini`, `[layers]`). |
+
+- The radar stays its own base layer with its own timeline and
+  crossfade. With a DWD base layer, the time bar shows that layer's
+  steps (`Fri 14:00`, "Forecast +5 h", dates for daily layers) and the
+  radar is hidden; the nowcast sentence below the map stays.
+- Layers are drawn by the same texture layer as the radar
+  (`cirro/radar_layer.py`), base layers behind the radar, overlays
+  behind the pins.
+- `app.layers` opens the picker, `app.show-layer("id:variant")` shows a
+  layer (for screenshots and tests). In demo mode the choice is neither
+  read nor saved.
+- Checked on 2026-11-07: every catalogue entry and variant (137) loads
+  its capabilities, an image and its legend from the live server;
+  screenshots at 360×720 (light and dark) and 1000×700.
 
 # Layers Cirro shows
 

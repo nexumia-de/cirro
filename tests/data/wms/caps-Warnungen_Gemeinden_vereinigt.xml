@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?><WMS_Capabilities xmlns:inspire_vs="http://inspire.ec.europa.eu/schemas/inspire_vs/1.0" xmlns:inspire_common="http://inspire.ec.europa.eu/schemas/common/1.0" version="1.3.0" updateSequence="29466" xmlns="http://www.opengis.net/wms" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wms https://maps.dwd.de/geoserver/schemas/wms/1.3.0/capabilities_1_3_0.xsd http://inspire.ec.europa.eu/schemas/inspire_vs/1.0 https://inspire.ec.europa.eu/schemas/inspire_vs/1.0/inspire_vs.xsd">
+  <Service>
+    <Name>WMS</Name>
+    <Title>DWD GeoServer WMS</Title>
+    <Abstract>This is the Web Map Server of DWD.</Abstract>
+    <KeywordList>
+      <Keyword>meteorology</Keyword>
+      <Keyword>climatology</Keyword>
+    </KeywordList>
+    <OnlineResource xlink:type="simple" xlink:href="https://maps.dwd.de/geoserver/"/>
+    <ContactInformation>
+      <ContactPersonPrimary>
+        <ContactPerson/>
+        <ContactOrganization>Deutscher Wetterdienst</ContactOrganization>
+      </ContactPersonPrimary>
+      <ContactPosition/>
+      <ContactAddress>
+        <AddressType>postal</AddressType>
+        <Address>Frankfurter Strasse 135</Address>
+        <City>Offenbach</City>
+        <StateOrProvince>Hessen</StateOrProvince>
+        <PostCode>63067</PostCode>
+        <Country>Germany</Country>
+      </ContactAddress>
+      <ContactVoiceTelephone/>
+      <ContactFacsimileTelephone/>
+      <ContactElectronicMailAddress>info@dwd.de</ContactElectronicMailAddress>
+    </ContactInformation>
+    <Fees>none</Fees>
+    <AccessConstraints>https://www.dwd.de/copyright</AccessConstraints>
+  </Service>
+  <Capability>
+    <Request>
+      <GetCapabilities>
+        <Format>text/xml</Format>
+        <DCPType>
+          <HTTP>
+            <Get>
+              <OnlineResource xlink:type="simple" xlink:href="https://maps.dwd.de/geoserver/dwd/Warnungen_Gemeinden_vereinigt/ows?SERVICE=WMS&amp;"/>
+            </Get>
+            <Post>
+              <OnlineResource xlink:type="simple" xlink:href="https://maps.dwd.de/geoserver/dwd/Warnungen_Gemeinden_vereinigt/ows?SERVICE=WMS&amp;"/>
+            </Post>
+          </HTTP>
+        </DCPType>
+      </GetCapabilities>
+      <GetMap>
+        <Format>image/png</Format>
+        <Format>application/atom+xml</Format>
+        <Format>application/json;type=utfgrid</Format>
+        <Format>application/pdf</Format>
+        <Format>application/rss+xml</Format>
+        <Format>application/vnd.google-earth.kml+xml</Format>
+        <Format>application/vnd.google-earth.kml+xml;mode=networklink</Format>
+        <Format>application/vnd.google-earth.kmz</Format>
+        <Format>image/geotiff</Format>
+        <Format>image/geotiff8</Format>
+        <Format>image/gif</Format>
+        <Format>image/jpeg</Format>
+        <Format>image/png; mode=8bit</Format>
+        <Format>image/svg+xml</Format>
+        <Format>image/tiff</Format>
+        <Format>image/tiff8</Format>
+        <Format>image/vnd.jpeg-png</Format>
+        <Format>image/vnd.jpeg-png8</Format>
+        <Format>text/html; subtype=openlayers</Format>
+        <Format>text/html; subtype=openlayers2</Format>
+        <Format>text/html; subtype=openlayers3</Format>
+        <DCPType>
+          <HTTP>
+            <Get>
+              <OnlineResource xlink:type="simple" xlink:href="https://maps.dwd.de/geoserver/dwd/Warnungen_Gemeinden_vereinigt/ows?SERVICE=WMS&amp;"/>
+            </Get>
+          </HTTP>
+        </DCPType>
+      </GetMap>
+      <GetFeatureInfo>
+        <Format>text/plain</Format>
+        <Format>application/vnd.ogc.gml</Format>
+        <Format>text/xml</Format>
+        <Format>application/vnd.ogc.gml/3.1.1</Format>
+        <Format>text/xml; subtype=gml/3.1.1</Format>
+        <Format>text/html</Format>
+        <Format>text/javascript</Format>
+        <Format>application/json</Format>
+        <DCPType>
+          <HTTP>
+            <Get>
+              <OnlineResource xlink:type="simple" xlink:href="https://maps.dwd.de/geoserver/dwd/Warnungen_Gemeinden_vereinigt/ows?SERVICE=WMS&amp;"/>
+            </Get>
+          </HTTP>
+        </DCPType>
+      </GetFeatureInfo>
+    </Request>
+    <Exception>
+      <Format>XML</Format>
+      <Format>INIMAGE</Format>
+      <Format>BLANK</Format>
+      <Format>JSON</Format>
+      <Format>JSONP</Format>
+    </Exception>
+    <inspire_vs:ExtendedCapabilities>
+      <inspire_common:MetadataUrl>
+        <inspire_common:URL>https://gdk.gdi-de.org/gdi-de/srv/eng/csw?request=GetRecordById&amp;version=2.0.2&amp;service=CSW&amp;outputSchema=http://www.isotc211.org/2005/gmd&amp;elementSetName=full&amp;id=de.dwd.services.wms</inspire_common:URL>
+        <inspire_common:MediaType>application/vnd.iso.19139+xml</inspire_common:MediaType>
+      </inspire_common:MetadataUrl>
+      <inspire_common:SupportedLanguages>
+        <inspire_common:DefaultLanguage>
+          <inspire_common:Language>ger</inspire_common:Language>
+        </inspire_common:DefaultLanguage>
+      </inspire_common:SupportedLanguages>
+      <inspire_common:ResponseLanguage>
+        <inspire_common:Language>ger</inspire_common:Language>
+      </inspire_common:ResponseLanguage>
+    </inspire_vs:ExtendedCapabilities>
+    <Layer>
+      <Title>DWD GeoServer WMS</Title>
+      <Abstract>This is the Web Map Server of DWD.</Abstract>
+      <!--Limited list of EPSG projections:-->
+      <CRS>EPSG:3044</CRS>
+      <CRS>EPSG:3045</CRS>
+      <CRS>EPSG:3413</CRS>
+      <CRS>EPSG:3857</CRS>
+      <CRS>EPSG:4258</CRS>
+      <CRS>EPSG:4326</CRS>
+      <CRS>EPSG:4839</CRS>
+      <CRS>EPSG:25832</CRS>
+      <CRS>EPSG:25833</CRS>
+      <CRS>EPSG:31467</CRS>
+      <CRS>EPSG:31468</CRS>
+      <CRS>EPSG:900913</CRS>
+      <CRS>EPSG:1000001</CRS>
+      <EX_GeographicBoundingBox>
+        <westBoundLongitude>5.87691362426438</westBoundLongitude>
+        <eastBoundLongitude>15.0375065863599</eastBoundLongitude>
+        <southBoundLatitude>47.2703623257608</southBoundLatitude>
+        <northBoundLatitude>55.0443808252149</northBoundLatitude>
+      </EX_GeographicBoundingBox>
+      <BoundingBox CRS="EPSG:3044" minx="5235211.557758826" miny="263775.07916933636" maxx="6116404.116539874" maxy="956617.1902880904"/>
+      <BoundingBox CRS="EPSG:3045" minx="5235209.894029989" miny="-189842.99148423388" maxx="6137846.122101069" maxy="502837.0440071357"/>
+      <BoundingBox CRS="EPSG:3413" minx="3028615.2657691888" miny="-3058591.109263103" maxx="4199471.678774853" maxy="-1949736.4168285478"/>
+      <BoundingBox CRS="EPSG:3857" minx="654215.0320891626" miny="5986316.28158884" maxx="1673967.5759940816" maxy="7370484.294871621"/>
+      <BoundingBox CRS="EPSG:4258" minx="47.27036236820169" miny="5.876913624264379" maxx="55.044380860846196" maxy="15.037506586359903"/>
+      <BoundingBox CRS="EPSG:4326" minx="47.2703623257608" miny="5.87691362426438" maxx="55.0443808252149" maxy="15.0375065863599"/>
+      <BoundingBox CRS="EPSG:4839" minx="-414718.8082431432" miny="-350067.8859562729" maxx="459288.12283450266" maxy="343595.94590632163"/>
+      <BoundingBox CRS="EPSG:25832" minx="263775.07916933636" miny="5235211.557758826" maxx="956617.1902880904" maxy="6116404.116539874"/>
+      <BoundingBox CRS="EPSG:25833" minx="-189842.99148423388" miny="5235209.894029989" maxx="502837.0440071357" maxy="6137846.122101069"/>
+      <BoundingBox CRS="EPSG:31467" minx="5236863.389266411" miny="3263756.6678743884" maxx="6118417.381104331" maxy="3956880.143738932"/>
+      <BoundingBox CRS="EPSG:31468" minx="5236859.897027642" miny="4036834.234706652" maxx="6118883.8477510465" maxy="4729955.412092093"/>
+      <BoundingBox CRS="EPSG:900913" minx="654215.0320891626" miny="5986316.28158884" maxx="1673967.5759940816" maxy="7370484.294871621"/>
+      <BoundingBox CRS="EPSG:1000001" minx="-334.3256115857707" miny="-4649.764022395601" maxx="408.298764965219" maxy="-3728.3309139150033"/>
+      <Layer>
+        <Name>Fachlayer</Name>
+        <Title>Fachlayer</Title>
+        <Layer>
+          <Name>Wetter</Name>
+          <Title>Wetter</Title>
+          <Layer>
+            <Name>Warnungen</Name>
+            <Title>Warnungen</Title>
+            <Layer queryable="1" opaque="0">
+              <Name>Warnungen_Gemeinden_vereinigt</Name>
+              <Title>Wetterwarnungen und Vorabinformationen auf Gemeindeebene (vereinigte Warngebiete)</Title>
+              <Abstract>aktuelle amtliche Wetterwarnungen und Vorabinformationen auf Gemeindeebene mit vereinigten Gemeindepolygonen für zusammenhängende Warngebiete</Abstract>
+              <KeywordList>
+                <Keyword>cap</Keyword>
+                <Keyword>Dauerregen</Keyword>
+                <Keyword>Eisberg</Keyword>
+                <Keyword>ergiebiger Dauerregen</Keyword>
+                <Keyword>extrem ergiebiger Dauerregen</Keyword>
+                <Keyword>extrem heftiger Starkregen</Keyword>
+                <Keyword>extrem schweres Gewitter</Keyword>
+                <Keyword>extrem starke Schneeverwehung</Keyword>
+                <Keyword>extrem starker Schneefall</Keyword>
+                <Keyword>extreme Orkanböen</Keyword>
+                <Keyword>extreme Unwetterwarnung</Keyword>
+                <Keyword>Frost</Keyword>
+                <Keyword>Gemeinde</Keyword>
+                <Keyword>Geographisches Gebiet</Keyword>
+                <Keyword>Gewitter</Keyword>
+                <Keyword>Glätte</Keyword>
+                <Keyword>Glatteis</Keyword>
+                <Keyword>heftiger Starkregen</Keyword>
+                <Keyword>Leiterseilschwingung</Keyword>
+                <Keyword>Nebel</Keyword>
+                <Keyword>Niederschlag</Keyword>
+                <Keyword>Orkanböen</Keyword>
+                <Keyword>Schneefall</Keyword>
+                <Keyword>Schneeverwehung</Keyword>
+                <Keyword>Schweres Gewitter</Keyword>
+                <Keyword>starke Schneeverwehung</Keyword>
+                <Keyword>starker Schneefall</Keyword>
+                <Keyword>starkes Gewitter</Keyword>
+                <Keyword>starkes Tauwetter</Keyword>
+                <Keyword>Starkregen</Keyword>
+                <Keyword>strenger Frost</Keyword>
+                <Keyword>Sturmböen</Keyword>
+                <Keyword>Tauwetter</Keyword>
+                <Keyword>Text</Keyword>
+                <Keyword>Tiefsttemperatur</Keyword>
+                <Keyword>Tornado</Keyword>
+                <Keyword>Tropischer Wirbelsturm</Keyword>
+                <Keyword>Tropischer Wirbelsturm (Hurrikan)</Keyword>
+                <Keyword>Tropischer Wirbelsturm (Taifun)</Keyword>
+                <Keyword>Tsunami</Keyword>
+                <Keyword>Turbulenz in wolkenfreier Luft</Keyword>
+                <Keyword>Unwetterwarnung</Keyword>
+                <Keyword>Verwaltungsgebiet</Keyword>
+                <Keyword>Vulkanaschewolke</Keyword>
+                <Keyword>Warngebiet</Keyword>
+                <Keyword>Wetterwarnungen</Keyword>
+                <Keyword>Windböen</Keyword>
+                <Keyword>XML</Keyword>
+                <Keyword>Zyklon</Keyword>
+              </KeywordList>
+              <CRS>EPSG:4326</CRS>
+              <BoundingBox CRS="EPSG:4326" minx="47.2703623257608" miny="5.87691362426438" maxx="55.0443808252149" maxy="15.0375065863599"/>
+              <BoundingBox CRS="EPSG:3044" minx="5235211.557758826" miny="263775.07916933636" maxx="6116404.116539874" maxy="956617.1902880904"/>
+              <BoundingBox CRS="EPSG:3045" minx="5235209.894029989" miny="-189842.99148423388" maxx="6137846.122101069" maxy="502837.0440071357"/>
+              <BoundingBox CRS="EPSG:3413" minx="3028615.2657691888" miny="-3058591.109263103" maxx="4199471.678774853" maxy="-1949736.4168285478"/>
+              <BoundingBox CRS="EPSG:3857" minx="654215.0320891626" miny="5986316.28158884" maxx="1673967.5759940816" maxy="7370484.294871621"/>
+              <BoundingBox CRS="EPSG:4258" minx="47.27036236820169" miny="5.876913624264379" maxx="55.044380860846196" maxy="15.037506586359903"/>
+              <BoundingBox CRS="EPSG:4839" minx="-414718.8082431432" miny="-350067.8859562729" maxx="459288.12283450266" maxy="343595.94590632163"/>
+              <BoundingBox CRS="EPSG:25832" minx="263775.07916933636" miny="5235211.557758826" maxx="956617.1902880904" maxy="6116404.116539874"/>
+              <BoundingBox CRS="EPSG:25833" minx="-189842.99148423388" miny="5235209.894029989" maxx="502837.0440071357" maxy="6137846.122101069"/>
+              <BoundingBox CRS="EPSG:31467" minx="5236863.389266411" miny="3263756.6678743884" maxx="6118417.381104331" maxy="3956880.143738932"/>
+              <BoundingBox CRS="EPSG:31468" minx="5236859.897027642" miny="4036834.234706652" maxx="6118883.8477510465" maxy="4729955.412092093"/>
+              <BoundingBox CRS="EPSG:900913" minx="654215.0320891626" miny="5986316.28158884" maxx="1673967.5759940816" maxy="7370484.294871621"/>
+              <BoundingBox CRS="EPSG:1000001" minx="-334.3256115857707" miny="-4649.764022395601" maxx="408.298764965219" maxy="-3728.3309139150033"/>
+              <Style>
+                <Name>Warnungen_Landkreise</Name>
+                <Title>Basiswarnungen</Title>
+                <LegendURL width="306" height="160">
+                  <Format>image/png</Format>
+                  <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://maps.dwd.de/geoserver/dwd/Warnungen_Gemeinden_vereinigt/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=Warnungen_Gemeinden_vereinigt"/>
+                </LegendURL>
+              </Style>
+              <Style>
+                <Name>warnungen_gemeinden_vereinigt_event_seamless_param</Name>
+                <Title>Basiswarnungen</Title>
+                <Abstract>Warnungen plus Ereignislabel</Abstract>
+                <LegendURL width="231" height="160">
+                  <Format>image/png</Format>
+                  <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://maps.dwd.de/geoserver/dwd/Warnungen_Gemeinden_vereinigt/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=Warnungen_Gemeinden_vereinigt&amp;style=warnungen_gemeinden_vereinigt_event_seamless_param"/>
+                </LegendURL>
+              </Style>
+              <Style>
+                <Name>warnungen_icons</Name>
+                <Title>DWD Warnungen</Title>
+                <Abstract>Amtliche DWD Warnungen</Abstract>
+                <LegendURL width="655" height="940">
+                  <Format>image/png</Format>
+                  <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://maps.dwd.de/geoserver/dwd/Warnungen_Gemeinden_vereinigt/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=Warnungen_Gemeinden_vereinigt&amp;style=warnungen_icons"/>
+                </LegendURL>
+              </Style>
+            </Layer>
+          </Layer>
+        </Layer>
+      </Layer>
+    </Layer>
+  </Capability>
+</WMS_Capabilities>

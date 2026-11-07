@@ -9,6 +9,7 @@ from gi.repository import Adw, Gio, GLib, GObject, Gtk, Shumate  # noqa: E402
 
 from cirro.forward_swipe import ForwardSwipe  # noqa: E402
 from cirro.frames import FrameStore  # noqa: E402
+from cirro.layers.control import LayerControl  # noqa: E402
 from cirro.legend import Legend  # noqa: E402
 from cirro.location import Location  # noqa: E402
 from cirro.namer import Namer  # noqa: E402
@@ -64,6 +65,7 @@ class Window(Adw.ApplicationWindow):
         self._install_actions()
 
         menu = Gio.Menu()
+        menu.append("_Map Layers", "win.layers")
         menu.append("_Reload Radar", "win.reload")
         menu.append("_Preferences", "app.preferences")
         menu.append("_About Weather Radar", "app.about")
@@ -139,9 +141,17 @@ class Window(Adw.ApplicationWindow):
         self.timebar.connect("blend", self._on_blend)
         bottom = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         bottom.append(self.timebar)
-        bottom.append(Legend())
+        radar_legend = Legend()
+        bottom.append(radar_legend)
 
         self._toasts = Adw.ToastOverlay(child=overlay)
+        # DWD map layers besides the radar (docs/map-layers.md).
+        self.layers = LayerControl(
+            self, self.map, self.radar_layer, self.pins,
+            self.timebar, radar_legend, bottom, self._toasts,
+            lambda: (self._entries, self.source.store.analysis_time
+                     if hasattr(self, "source") else None),
+            persist=not os.environ.get("CIRRO_DEMO_DATA"))
         view = Adw.ToolbarView(content=self._toasts)
         view.add_top_bar(header)
         view.add_top_bar(self._pick_header)
@@ -261,14 +271,21 @@ class Window(Adw.ApplicationWindow):
         self._entries = source.store.timeline()
         t0 = source.store.analysis_time
         self._title.set_subtitle(f"Updated {clock(t0)}" if t0 else "")
-        self.timebar.set_frames(self._entries, t0)
+        if self.layers.radar:
+            self.timebar.set_frames(self._entries, t0)
         self.nowcast.set_frames(self._entries, t0)
         self._update_banner()
 
     def _is_rendered(self, index):
+        if not self.layers.radar:
+            return self.layers.ready(index)
         return self.renderer.get(self._entries[index]) is not None
 
     def _on_selected(self, timebar, index):
+        if not self.layers.radar:
+            self.layers.selected(index, None)
+            return
+        self.layers.selected(index, self._entries[index].valid_time)
         rendered = self.renderer.get(self._entries[index])
         if rendered:
             self.radar_layer.set_frame(rendered.texture, rendered.bounds)
@@ -279,6 +296,8 @@ class Window(Adw.ApplicationWindow):
         self.renderer.request([self._entries[i] for i in ahead + behind])
 
     def _on_blend(self, timebar, index, fraction):
+        if not self.layers.radar:
+            return
         # Playback between two frames: crossfade their textures.
         rendered = self.renderer.get(self._entries[index])
         if not rendered:
@@ -292,7 +311,8 @@ class Window(Adw.ApplicationWindow):
                                    following and following.texture, fraction)
 
     def _on_rendered(self, name):
-        if self._entries and self._entries[self.timebar.index].name == name:
+        if self.layers.radar and self._entries and \
+                self._entries[self.timebar.index].name == name:
             rendered = self.renderer.get(self._entries[self.timebar.index])
             self.radar_layer.set_frame(rendered.texture, rendered.bounds)
         return GLib.SOURCE_REMOVE
@@ -330,12 +350,14 @@ class Window(Adw.ApplicationWindow):
         add("place-down", lambda place_id: self._reorder(place_id, 1))
         add("add-place", self._add_point, None)
         add("search", self._search, None)
+        add("layers", lambda _: self.layers.present_picker(), None)
         add("add-place-search", self._add_from_search, None)
         add("add-current-location", self._add_current_location, None)
         add("add-place-on-map", self._start_pick, None)
         add("reload", lambda _: self.source.refresh(), None)
         app = self.get_application()
         app.set_accels_for_action("win.search", ["<Control>f"])
+        app.set_accels_for_action("win.layers", ["<Control>l"])
         app.set_accels_for_action("win.reload", ["<Control>r", "F5"])
 
     def _place(self, place_id):

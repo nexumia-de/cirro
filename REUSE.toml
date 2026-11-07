@@ -29,3 +29,10 @@ path = "tests/data/nominatim/**"
 precedence = "override"
 SPDX-FileCopyrightText = "OpenStreetMap contributors"
 SPDX-License-Identifier = "ODbL-1.0"
+
+# GeoServer answers recorded for the map-layer tests: DWD (CC BY 4.0).
+[[annotations]]
+path = "tests/data/wms/**"
+precedence = "override"
+SPDX-FileCopyrightText = "Deutscher Wetterdienst"
+SPDX-License-Identifier = "CC-BY-4.0"
