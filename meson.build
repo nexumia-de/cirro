@@ -29,6 +29,7 @@ python.install_sources(
   'cirro/pins.py',
   'cirro/places.py',
   'cirro/place_details.py',
+  'cirro/places_rain.py',
   'cirro/places_view.py',
   'cirro/preferences.py',
   'cirro/projection.py',

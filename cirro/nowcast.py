@@ -48,6 +48,41 @@ def series(entries, analysis_time, latitude, longitude, cache=None,
     return values
 
 
+def series_many(entries, analysis_time, points, cancelled=lambda: False,
+                sample=radar.sample_points):
+    """series() for several points in one pass over the frames: a list
+    of value lists, one per point, or None if cancelled."""
+    out = [[] for _ in points]
+    if not points:
+        return out
+    for entry in entries:
+        if cancelled():
+            return None
+        rates = sample(entry.data, points)
+        minutes = round((entry.valid_time - analysis_time).total_seconds() / 60)
+        for values, rate in zip(out, rates):
+            values.append(Value(entry.valid_time, minutes, entry.forecast, rate))
+    return out
+
+
+def short(values):
+    """The places list's short status: "Rain in 35 min", "Raining, stops
+    in 25 min", "Dry for 2 h", "No radar data here"."""
+    text = summary(values)
+    if text is None:
+        return "No radar data here"
+    ahead = [v for v in values if v.minutes >= 0]
+    if text.startswith("Rain starts in "):
+        return "Rain in " + text[len("Rain starts in "):]
+    if text.startswith("Rain stops in "):
+        return "Raining, stops in " + text[len("Rain stops in "):]
+    if text.startswith("Rain for the next ") or text == "Raining now":
+        return "Raining"
+    if text.startswith("No rain expected"):
+        return f"Dry for {duration(ahead[-1].minutes)}"
+    return "Dry"
+
+
 def is_rain(rate):
     return rate >= RAIN     # False for NaN
 
