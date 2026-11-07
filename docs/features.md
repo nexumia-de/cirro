@@ -24,11 +24,12 @@ Priorities: **P1** must have for the first usable release, **P2** next,
 | Point nowcast: "Rain starts in 15 min", 2-h precipitation bar chart for a place | P1 | RV values at a cell | M3 |
 | Saved places as pins on the map (search by name, current location, rename, move, default place) | P2 | Geocoding | M3 |
 | Weather warnings for a place (list + map colouring) | P2 | DWD warnings | M4 |
-| Other map layers: warnings, lightning, temperature, satellite | P3 | DWD GeoServer | M6 |
+| Map-layer foundation: catalogue, layer picker, time bar per layer, legends, tap values | P2 | DWD GeoServer WMS | M4 |
+| All useful DWD map layers: lightning, satellite, temperature, precipitation forecast and totals, gusts, pressure, sea state, stations ([map layers](map-layers.md)) | P3 | DWD GeoServer WMS/WFS | M6 |
 | Notifications for warnings and imminent rain | P3 | warnings + nowcast, background service | M6 |
 | Sunrise and sunset for the selected place | P3 | computed locally, no download | M6 |
 | Wind map with arrows; wind at the selected place (nearest station) | P3 | DWD WFS `RBSN_FF` | M6 |
-| Pollen, UV, health forecasts | P3 | DWD open data | later |
+| Pollen, UV, health forecasts (map layers) | P3 | DWD GeoServer WMS | M6 |
 | Widgets / lock screen | – | not available on Phosh | – |
 
 # Explicitly out of scope
