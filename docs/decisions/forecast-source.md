@@ -1,14 +1,18 @@
 ---
 type: Decision Record
 title: MOSMIX directly as forecast source
-description: Proposed - the per-place forecast reads DWD's MOSMIX_L single-station KMZ files; Bright Sky is not used in the app.
+description: Rejected - superseded by the radar-focus decision; it proposed that the per-place forecast reads DWD's MOSMIX_L single-station KMZ files; Bright Sky is not used in the app.
 tags: [decision, forecast, mosmix, brightsky, dwd, data]
 generated: { by: claude-code/2.1.310, at: 2026-10-26T06:30:00Z }
 ---
 
 # Status
 
-Proposed (2026-10-26) for M5, issue
+Rejected (2026-11-07): the forecast view is dropped, see
+[radar focus, no forecast view](scope-radar-focus.md). The record stays
+for the facts it collected.
+
+Was proposed (2026-10-26) for M5, issue
 [#23](https://github.com/nexumia-de/cirro/issues/23) (the view itself is
 [#14](https://github.com/nexumia-de/cirro/issues/14)). The owner decides.
 Facts were checked against the live services on 2026-10-25/26

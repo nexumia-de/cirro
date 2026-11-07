@@ -1,7 +1,7 @@
 ---
 type: Plan
 title: Roadmap
-description: Goals and exit criteria of the milestones M0–M6, radar first; the work items are GitHub issues in the milestones linked here.
+description: Goals and exit criteria of the milestones M0–M4 and M6, radar first, no forecast view; the work items are GitHub issues in the milestones linked here.
 tags: [plan, roadmap, milestones]
 generated: { by: claude-code/2.1.310, at: 2026-10-25T19:46:00Z }
 ---
@@ -20,8 +20,12 @@ workflow is the toolkit's
 
 Radar first. M0–M3 deliver the core: an animated rain radar with a
 2-hour forecast and a point nowcast for the user's location. Warnings,
-forecasts and notifications follow only after that works well on the
-phone. Feature priorities: [feature inventory](features.md).
+more map layers and notifications follow only after that works well on
+the phone. Feature priorities: [feature inventory](features.md).
+
+Cirro does not rebuild what GNOME Weather already shows (current
+conditions, hourly and daily forecasts); the former milestone M5 –
+Forecasts is dropped ([decision](decisions/scope-radar-focus.md)).
 
 # M0 – Verify data and scaffold (done)
 
@@ -63,7 +67,7 @@ in the shared repository.
 **Goal**: answer "will it rain here in the next two hours?" for the
 current location, for saved places and for any point on the map.
 Places are pins on the map; the selected pin is what the nowcast, and
-later warnings and forecasts, are about.
+later warnings, are about.
 
 **Exit criteria**: 2-hour chart and a "rain starts in N min" sentence
 ([point nowcast](nowcast.md));
@@ -88,24 +92,16 @@ open: the `on device` checks.
 **Exit criteria**: warning product chosen and recorded as a decision;
 warnings per place with severity and a detail page; optional overlay.
 
-# M5 – Forecasts
-
-[Milestone M5](https://github.com/nexumia-de/cirro/milestone/4)
-
-**Goal**: the usual forecast view next to the radar.
-
-**Exit criteria**: forecast source chosen and recorded as a decision;
-current conditions, hourly chart and 10-day list per place.
-
 # M6 – Extras
 
 [Milestone M6](https://github.com/nexumia-de/cirro/milestone/5)
 
-**Goal**: more map layers and notifications without draining the
-battery.
+**Goal**: more map layers, notifications without draining the
+battery, and sunrise and sunset for the selected place.
 
 **Exit criteria**: further WMS layers; local notifications for warnings
-and imminent rain with measured battery impact.
+and imminent rain with measured battery impact; sunrise and sunset
+computed locally for the selected place.
 
 # Risks
 

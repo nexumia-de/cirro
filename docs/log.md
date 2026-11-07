@@ -1,5 +1,8 @@
 # Directory Update Log
 
+## 2026-11-07
+* **Creation**: Decision [radar focus, no forecast view](decisions/scope-radar-focus.md), chosen by the owner: GNOME Weather (main `b7de9e1`) already shows current conditions, hourly and daily forecasts on Phosh, so milestone M5 – Forecasts is dropped from the [roadmap](roadmap.md) and the [feature inventory](features.md), issues #14 and #23 are closed as not planned, and the [MOSMIX forecast source](decisions/forecast-source.md) is rejected. Sunrise and sunset for the selected place, which GNOME Weather does not show, are added to M6 as a local computation.
+
 ## 2026-11-06
 * **Update**: [App name](decisions/app-name.md): the owner chose the visible name **Weather Radar**. `.desktop` `Name` (plus `GenericName=Rain Radar` and the keyword `cirro`), metainfo `<name>`, window and header title, About dialog and the texts that name the app say Weather Radar, the nightly "Weather Radar (Nightly)"; repository, app id, package, docs and the `User-Agent` keep the code name Cirro.
 
