@@ -24,15 +24,17 @@ Priorities: **P1** must have for the first usable release, **P2** next,
 | Point nowcast: "Rain starts in 15 min", 2-h precipitation bar chart for a place | P1 | RV values at a cell | M3 |
 | Saved places as pins on the map (search by name, current location, rename, move, default place) | P2 | Geocoding | M3 |
 | Weather warnings for a place (list + map colouring) | P2 | DWD warnings | M4 |
-| Current conditions and 10-day forecast per place | P2 | MOSMIX or Bright Sky | M5 |
-| Hourly forecast chart (temperature, precipitation, wind) | P2 | MOSMIX | M5 |
 | Other map layers: warnings, lightning, temperature, satellite | P3 | DWD GeoServer | M6 |
 | Notifications for warnings and imminent rain | P3 | warnings + nowcast, background service | M6 |
+| Sunrise and sunset for the selected place | P3 | computed locally, no download | M6 |
 | Pollen, UV, health forecasts | P3 | DWD open data | later |
 | Widgets / lock screen | – | not available on Phosh | – |
 
 # Explicitly out of scope
 
+- Current conditions, hourly forecast chart and 10-day forecast per
+  place: GNOME Weather already shows them on Phosh
+  ([decision](decisions/scope-radar-focus.md)).
 - Crowdsourced user reports (WarnWetter "Nutzermeldungen"): needs a
   backend.
 - Push notifications via a server; notifications, if any, are polled

@@ -11,7 +11,7 @@ Change history is in [log.md](log.md).
 
 # Plan
 
-* [Roadmap](roadmap.md) - Goals and exit criteria of the milestones M0–M6; the work items are GitHub issues in those milestones.
+* [Roadmap](roadmap.md) - Goals and exit criteria of the milestones M0–M4 and M6 (no forecast view); the work items are GitHub issues in those milestones.
 * [Feature inventory](features.md) - WarnWetter features, their priority and how they map to Cirro.
 
 # Design
@@ -29,4 +29,4 @@ Change history is in [log.md](log.md).
 
 # Decision records
 
-* [Decisions](decisions/index.md) - Name, language, map widget, radar data source, colour scale, no own backend, smooth playback, movable own-location pin; proposed: warning product, forecast source, DMI radar.
+* [Decisions](decisions/index.md) - Name, language, map widget, radar data source, colour scale, no own backend, smooth playback, movable own-location pin, radar focus without a forecast view; proposed: warning product, DMI radar; rejected: forecast source.

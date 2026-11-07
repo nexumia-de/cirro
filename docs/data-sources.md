@@ -305,7 +305,11 @@ they carry "Source: Deutscher Wetterdienst"; changed warnings must not
 carry the DWD source note.[^dwd-source] Drawing the polygons also uses
 BKG geometry, whose note is in the CAP `LICENSE` code.
 
-# 5. Forecasts (M5) *(live, 2026-10-25/26)*
+# 5. Forecasts *(live, 2026-10-25/26)*
+
+Not used: the forecast view was dropped
+([decision](decisions/scope-radar-focus.md)). The facts stay in case
+the decision is revisited.
 
 ## MOSMIX on open data
 
