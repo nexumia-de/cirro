@@ -7,6 +7,7 @@ import gi
 gi.require_version("Shumate", "1.0")
 from gi.repository import Adw, Gio, GLib, GObject, Gtk, Shumate  # noqa: E402
 
+from cirro.forward_swipe import ForwardSwipe  # noqa: E402
 from cirro.frames import FrameStore  # noqa: E402
 from cirro.legend import Legend  # noqa: E402
 from cirro.location import Location  # noqa: E402
@@ -159,12 +160,19 @@ class Window(Adw.ApplicationWindow):
         sidebar_header.pack_start(Gtk.MenuButton(icon_name="list-add-symbolic",
                                                  tooltip_text="Add Place",
                                                  menu_model=add_menu))
+        # On the phone the list is a page below the map: back to the map
+        # with this button, a right-to-left swipe or Alt+→ (issue #50).
+        to_map = Gtk.Button(icon_name="go-next-symbolic",
+                            tooltip_text="Back to Map", visible=False)
+        to_map.connect("clicked", lambda *_: self.split.set_show_content(True))
+        sidebar_header.pack_end(to_map)
         sidebar_view = Adw.ToolbarView(content=self.sidebar)
         sidebar_view.add_top_bar(sidebar_header)
         self._content = Adw.NavigationPage(title="Weather Radar", child=view)
         self.split = Adw.NavigationSplitView(
             sidebar=Adw.NavigationPage(title="Places", child=sidebar_view),
             content=self._content, show_content=True)
+        self._forward = ForwardSwipe(self.split)
         self.set_content(self.split)
 
         demo = os.environ.get("CIRRO_DEMO_DATA")
@@ -212,12 +220,14 @@ class Window(Adw.ApplicationWindow):
         no_scale = (scale, "visible", False)
         no_chart = (self.nowcast.chart, "visible", False)
         collapsed = (self.split, "collapsed", True)
+        to_map_shown = (to_map, "visible", True)
         breakpoint(f"max-width: {SCALE_MIN_WIDTH}sp", no_scale)
         breakpoint(f"max-height: {CHART_MIN_HEIGHT}sp", no_scale, no_chart)
-        breakpoint(f"max-width: {SIDEBAR_MIN_WIDTH}sp", no_scale, collapsed)
+        breakpoint(f"max-width: {SIDEBAR_MIN_WIDTH}sp",
+                   no_scale, collapsed, to_map_shown)
         breakpoint(f"max-width: {SIDEBAR_MIN_WIDTH}sp and "
                    f"max-height: {CHART_MIN_HEIGHT}sp",
-                   no_scale, no_chart, collapsed)
+                   no_scale, no_chart, collapsed, to_map_shown)
 
         # Start with the default place (issue #40); recorded screenshots
         # keep the view of Germany.

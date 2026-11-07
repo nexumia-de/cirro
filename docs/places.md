@@ -36,8 +36,16 @@ With no place at all, the nowcast row reads "Add a place or search for
 one". The old fallback to the map centre is gone (issue #38).
 
 On the desktop the places are also listed in a sidebar. On the phone
-(below 600 sp) the sidebar is its own page behind the header's back
-button. That list is the keyboard and screen reader route to the places
+(below 600 sp) the sidebar is its own page *below* the map: the map's
+back button or a left-to-right swipe opens the list, and a
+right-to-left swipe, the "Back to Map" button (›) in the list's header
+or Alt+→ go back to the map without changing anything (issue #50).
+`AdwNavigationSplitView` has no forward swipe of its own;
+`cirro/forward_swipe.py` connects `get-next-page` of the navigation
+view the collapsed split view puts inside itself, and connects again
+whenever the split view collapses, because libadwaita makes a new one
+each time. Alt+← / Alt+→ were checked under Xvfb (2026-11-07); the
+touch swipe still has to be checked on the phone. That list is the keyboard and screen reader route to the places
 (issue #18): selecting a row selects the same place as its pin and
 centres the map on it.
 
