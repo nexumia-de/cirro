@@ -129,3 +129,19 @@ class TimeAxis:
 def latest_at(times, now):
     """Index of the last time not after `now` (0 if all are later)."""
     return max(0, bisect.bisect_right(times, now) - 1)
+
+
+def usable(steps, reference_time, lead, every=None):
+    """Steps a forecast sum has data for: `lead` after the model run
+    `reference_time` (ISO text), then every `every`
+    (docs/data-sources.md, section 11)."""
+    if not reference_time or (not lead and not every):
+        return steps
+    run = parse_time(reference_time)
+    out = []
+    for time_ in steps:
+        since = time_ - run
+        if since < lead or (every and since % every):
+            continue
+        out.append(time_)
+    return out

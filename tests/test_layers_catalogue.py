@@ -4,8 +4,7 @@ from datetime import timedelta
 from pathlib import Path
 
 from cirro.layers import catalogue
-from cirro.layers.view import usable
-from cirro.layers.timeaxis import parse_time
+from cirro.layers.timeaxis import parse_time, usable
 
 NAMES = set((Path(__file__).parent / "data" / "wms" / "layer-names.txt")
             .read_text().split())
@@ -53,7 +52,8 @@ def test_forecast_sums_skip_steps_without_data():
     start = parse_time(run)
     steps = [start + timedelta(hours=h) for h in range(0, 31, 3)]
     twelve = catalogue.get("precip-eu").variant(2)
-    assert [(s - start).total_seconds() / 3600 for s in usable(steps, run, twelve)] \
-        == [12, 18, 24, 30]
-    assert usable(steps, run, catalogue.get("precip-eu").variant(0)) == steps
-    assert usable(steps, "", twelve) == steps
+    kept = usable(steps, run, twelve.lead, twelve.every)
+    assert [(s - start).total_seconds() / 3600 for s in kept] == [12, 18, 24, 30]
+    hourly = catalogue.get("precip-eu").variant(0)
+    assert usable(steps, run, hourly.lead, hourly.every) == steps
+    assert usable(steps, "", twelve.lead, twelve.every) == steps

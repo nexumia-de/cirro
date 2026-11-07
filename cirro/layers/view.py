@@ -14,7 +14,7 @@ gi.require_version("Gdk", "4.0")
 from gi.repository import Gdk, GLib, GObject  # noqa: E402
 
 from cirro.layers import wms  # noqa: E402
-from cirro.layers.timeaxis import latest_at, parse_time  # noqa: E402
+from cirro.layers.timeaxis import latest_at, usable  # noqa: E402
 from cirro.radar_layer import RadarLayer  # noqa: E402
 
 log = logging.getLogger(__name__)
@@ -119,7 +119,8 @@ class LayerView(GObject.Object):
             steps = axis.times(first, axis.last or now)
             if not steps and axis.last:
                 steps = axis.times(axis.last - axis.step * 24, axis.last)
-            steps = usable(steps, self.caps.reference_time, self.variant)
+            steps = usable(steps, self.caps.reference_time,
+                           self.variant.lead, self.variant.every)
             steps = [t for t in steps if t not in self._missing]
         if steps != self.steps or not self._known:
             self._known = True
@@ -258,23 +259,6 @@ class LayerView(GObject.Object):
             GLib.source_remove(self._timer)
             self._timer = 0
         self._memory.clear()
-
-
-def usable(steps, reference_time, variant):
-    """Steps a forecast sum has data for: `variant.lead` after the model
-    run, then every `variant.every`."""
-    if not reference_time or (not variant.lead and not variant.every):
-        return steps
-    run = parse_time(reference_time)
-    out = []
-    for time_ in steps:
-        lead = time_ - run
-        if lead < variant.lead:
-            continue
-        if variant.every and lead % variant.every:
-            continue
-        out.append(time_)
-    return out
 
 
 def _load(url, cache):
