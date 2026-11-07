@@ -12,7 +12,7 @@ Change history is in [log.md](log.md).
 # Plan
 
 * [Roadmap](roadmap.md) - Goals and exit criteria of the milestones M0–M4 and M6 (no forecast view); the work items are GitHub issues in those milestones.
-* [Map layers](map-layers.md) - Every DWD GeoServer layer sorted into shown, later and left out; the shared foundation and the issue per layer group.
+* [Map layers](map-layers.md) - Every DWD GeoServer layer sorted into shown and left out; how the layer code works and the issue per layer group.
 * [Feature inventory](features.md) - WarnWetter features, their priority and how they map to Cirro.
 
 # Design

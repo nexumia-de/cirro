@@ -1,0 +1,129 @@
+{
+    "Legend": [
+        {
+            "layerName": "Pollenflug",
+            "title": "Pollenflug-Gefahrenindex",
+            "rules": [
+                {
+                    "name": "keine Belastung",
+                    "filter": "[POLLENINT = '0']",
+                    "symbolizers": [
+                        {
+                            "Polygon": {
+                                "stroke": "#000000",
+                                "stroke-width": "0.26",
+                                "stroke-opacity": "1",
+                                "stroke-linecap": "butt",
+                                "stroke-linejoin": "miter",
+                                "fill": "#37BA29",
+                                "fill-opacity": "1.0"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "keine bis geringe Belastung",
+                    "filter": "[POLLENINT = '1']",
+                    "symbolizers": [
+                        {
+                            "Polygon": {
+                                "stroke": "#000000",
+                                "stroke-width": "0.26",
+                                "stroke-opacity": "1",
+                                "stroke-linecap": "butt",
+                                "stroke-linejoin": "miter",
+                                "fill": "#D6FF9A",
+                                "fill-opacity": "1.0"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "geringe Belastung",
+                    "filter": "[POLLENINT = '2']",
+                    "symbolizers": [
+                        {
+                            "Polygon": {
+                                "stroke": "#000000",
+                                "stroke-width": "0.26",
+                                "stroke-opacity": "1",
+                                "stroke-linecap": "butt",
+                                "stroke-linejoin": "miter",
+                                "fill": "#FFFF00",
+                                "fill-opacity": "1.0"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "geringe bis mittlere Belastung",
+                    "filter": "[POLLENINT = '3']",
+                    "symbolizers": [
+                        {
+                            "Polygon": {
+                                "stroke": "#000000",
+                                "stroke-width": "0.26",
+                                "stroke-opacity": "1",
+                                "stroke-linecap": "butt",
+                                "stroke-linejoin": "miter",
+                                "fill": "#FFD57F",
+                                "fill-opacity": "1.0"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "mittlere Belastung",
+                    "filter": "[POLLENINT = '4']",
+                    "symbolizers": [
+                        {
+                            "Polygon": {
+                                "stroke": "#000000",
+                                "stroke-width": "0.26",
+                                "stroke-opacity": "1",
+                                "stroke-linecap": "butt",
+                                "stroke-linejoin": "miter",
+                                "fill": "#FFAB00",
+                                "fill-opacity": "1.0"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "mittlere bis hohe Belastung",
+                    "filter": "[POLLENINT = '5']",
+                    "symbolizers": [
+                        {
+                            "Polygon": {
+                                "stroke": "#000000",
+                                "stroke-width": "0.26",
+                                "stroke-opacity": "1",
+                                "stroke-linecap": "butt",
+                                "stroke-linejoin": "miter",
+                                "fill": "#FF8080",
+                                "fill-opacity": "1.0"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "hohe Belastung",
+                    "filter": "[POLLENINT = '6']",
+                    "symbolizers": [
+                        {
+                            "Polygon": {
+                                "stroke": "#000000",
+                                "stroke-width": "0.26",
+                                "stroke-opacity": "1",
+                                "stroke-linecap": "butt",
+                                "stroke-linejoin": "miter",
+                                "fill": "#E60000",
+                                "fill-opacity": "1.0"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

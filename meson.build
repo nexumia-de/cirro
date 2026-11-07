@@ -41,6 +41,23 @@ python.install_sources(
   'cirro/window.py',
   subdir: 'cirro',
 )
+python.install_sources(
+  'cirro/layers/__init__.py',
+  'cirro/layers/cache.py',
+  'cirro/layers/catalogue.py',
+  'cirro/layers/control.py',
+  'cirro/layers/geometry.py',
+  'cirro/layers/info.py',
+  'cirro/layers/legend.py',
+  'cirro/layers/legend_data.py',
+  'cirro/layers/manager.py',
+  'cirro/layers/picker.py',
+  'cirro/layers/settings.py',
+  'cirro/layers/timeaxis.py',
+  'cirro/layers/view.py',
+  'cirro/layers/wms.py',
+  subdir: 'cirro/layers',
+)
 # Loaded next to the Python files, also from the source tree.
 install_data('cirro/style.css', install_dir: pythondir / 'cirro')
 
@@ -82,6 +99,8 @@ install_data(metainfo, install_dir: get_option('datadir') / 'metainfo')
 install_data('data/icons' / base_id + '.svg',
   install_dir: get_option('datadir') / 'icons/hicolor/scalable/apps',
   rename: app_id + '.svg')
+install_data('data/icons' / base_id + '-layers-symbolic.svg',
+  install_dir: get_option('datadir') / 'icons/hicolor/symbolic/apps')
 
 desktop_file_validate = find_program('desktop-file-validate', required: false)
 if desktop_file_validate.found()

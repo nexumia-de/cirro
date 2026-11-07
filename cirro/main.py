@@ -46,6 +46,17 @@ class Application(Adw.Application):
         places = Gio.SimpleAction.new("show-places", None)
         places.connect("activate", self._on_show_places)
         self.add_action(places)
+        # app.layers: the layer picker; app.show-layer("id:variant"): show
+        # a map layer (base or overlay, "radar" for the radar), for
+        # screenshots and testing (docs/map-layers.md).
+        layers = Gio.SimpleAction.new("layers", None)
+        layers.connect("activate", lambda *_: self._window_call(
+            lambda w: w.layers.present_picker()))
+        self.add_action(layers)
+        show_layer = Gio.SimpleAction.new("show-layer", GLib.VariantType("s"))
+        show_layer.connect("activate", lambda _, value: self._window_call(
+            lambda w: w.layers.show_layer(value.unpack())))
+        self.add_action(show_layer)
         self.set_accels_for_action("app.quit", ["<Control>q"])
         self.set_accels_for_action("app.preferences", ["<Control>comma"])
         self.set_accels_for_action("app.step-time(1)", ["<Control>Right"])
@@ -77,6 +88,10 @@ class Application(Adw.Application):
                 # libadwaita's striped header bar for development builds.
                 window.add_css_class("devel")
         window.present()
+
+    def _window_call(self, function):
+        if self.props.active_window:
+            function(self.props.active_window)
 
     def _on_step_time(self, action, frames):
         if self.props.active_window:
@@ -125,6 +140,16 @@ class Application(Adw.Application):
             "(Cirro). Licensed "
             "under <a href='https://creativecommons.org/licenses/by/4.0/'>"
             "CC BY 4.0</a>.")
+        dialog.add_legal_section(
+            "Map Layers",
+            "Based on data from Deutscher Wetterdienst",
+            Gtk.License.CUSTOM,
+            "Weather maps from the Deutscher Wetterdienst's map service, "
+            "shown unchanged, under "
+            "<a href='https://creativecommons.org/licenses/by/4.0/'>"
+            "CC BY 4.0</a>. Warning, pollen and health weather areas: "
+            "© GeoBasis-DE / BKG. Satellite images and lightning from "
+            "satellite: © EUMETSAT.")
         dialog.add_legal_section(
             "Map Data", "© OpenStreetMap contributors",
             Gtk.License.CUSTOM,

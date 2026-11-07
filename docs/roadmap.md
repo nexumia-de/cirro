@@ -95,6 +95,10 @@ built on the map-layer foundation (layer catalogue and WMS source,
 layer picker, time bar for layer time steps, legends and tap values;
 [map layers](map-layers.md)).
 
+Implemented: the map-layer foundation and the warning overlay
+(WMS). Still open: the warning product decision and the warnings per
+place.
+
 # M6 – Extras
 
 [Milestone M6](https://github.com/nexumia-de/cirro/milestone/5)
@@ -109,6 +113,10 @@ gusts, pressure, pollen/UV/health, sea state, station measurements); local notif
 imminent rain with measured battery impact; sunrise and sunset
 computed locally and the nearest station's wind for the selected
 place.
+
+Implemented: all WMS layer groups of [map layers](map-layers.md).
+Still open: own wind arrows and station values from WFS, the wind and
+sunrise/sunset for the selected place, notifications.
 
 # Risks
 

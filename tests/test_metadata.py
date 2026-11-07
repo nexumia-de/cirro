@@ -70,6 +70,7 @@ def test_meson_installs_every_module():
     # A module missing from install_sources breaks only the Flatpak:
     # the source tree still imports it.
     meson = (ROOT / "meson.build").read_text()
-    listed = set(re.findall(r"'cirro/([\w]+\.py)'", meson))
-    present = {p.name for p in (ROOT / "cirro").glob("*.py")}
+    listed = set(re.findall(r"'(cirro/[\w/]+\.py)'", meson))
+    present = {p.relative_to(ROOT).as_posix() for p in (ROOT / "cirro").rglob("*.py")
+               if p.name != "config.py"}
     assert present - listed == set()

@@ -107,14 +107,58 @@ def clock(time_):
     return _local(time_).format("%H:%M")
 
 
-def describe(entry, analysis_time):
+def day(time_):
+    """"Sat 7 Nov", for daily layers."""
+    return _local(time_).format("%a %-d %b")
+
+
+def when(time_, now, daily=False):
+    """First line of the label: the clock time, with the weekday when it
+    is not today; the date alone for daily layers."""
+    if daily:
+        return day(time_)
+    local, today = _local(time_), _local(now)
+    if (local.get_year(), local.get_day_of_year()) == \
+            (today.get_year(), today.get_day_of_year()):
+        return clock(time_)
+    return local.format("%a %H:%M")
+
+
+def _span(minutes):
+    minutes = abs(minutes)
+    if minutes < 180:
+        return f"{minutes} min"
+    hours = round(minutes / 60)
+    if hours < 48:
+        return f"{hours} h"
+    return f"{round(hours / 24)} days"
+
+
+def describe(entry, analysis_time, daily=False):
     """Second line of the label: what the selected frame is."""
     minutes = round((entry.valid_time - analysis_time).total_seconds() / 60)
+    if daily:
+        days = round(minutes / 1440)
+        names = {0: "Today", 1: "Tomorrow", -1: "Yesterday"}
+        text = names.get(days, f"In {days} days" if days > 0 else f"{-days} days ago")
+        return f"Forecast, {text.lower()}" if entry.forecast and days > 1 else text
     if entry.forecast:
-        return f"Forecast +{minutes} min"
+        return f"Forecast +{_span(minutes)}"
     if minutes == 0:
         return "Now"
-    return f"{-minutes} min ago"
+    return f"{_span(minutes)} ago"
+
+
+def mark(entry, previous, step_minutes):
+    """Whether the time bar marks this entry: full hours for steps below
+    an hour, midnight for hourly steps, none for daily ones."""
+    local = _local(entry.valid_time)
+    if step_minutes < 60:
+        return local.get_minute() == 0
+    if step_minutes < 1440:
+        return previous is not None and \
+            _local(previous.valid_time).get_day_of_year() != local.get_day_of_year()
+    return False
 
 
 class TimeBar(Gtk.Box):
@@ -140,6 +184,7 @@ class TimeBar(Gtk.Box):
         self._position = 0.0     # playhead in frames, past the end while holding
         self._speed = 1.0
         self._fps = FPS
+        self._daily = False
 
         self._play = Gtk.Button(icon_name="media-playback-start-symbolic",
                                 valign=Gtk.Align.CENTER,
@@ -164,7 +209,7 @@ class TimeBar(Gtk.Box):
                                 show_fill_level=True, has_origin=False,
                                 restrict_to_fill_level=False)
         self._scale.update_property([Gtk.AccessibleProperty.LABEL],
-                                    ["Radar time"])
+                                    ["Time"])
         self._changed = self._adjustment.connect("value-changed",
                                                  self._on_value_changed)
         column.append(self._scale)
@@ -186,9 +231,11 @@ class TimeBar(Gtk.Box):
         """Playback speed factor, 1 = one 5-min step per STEP_SECONDS."""
         self._speed = speed
 
-    def set_frames(self, entries, analysis_time):
+    def set_frames(self, entries, analysis_time, daily=False):
         """New timeline; keeps the selected time if it is still there,
-        otherwise, or if "Now" was selected, selects the current analysis."""
+        otherwise, or if "Now" was selected, selects the current analysis.
+        `daily` labels the entries with dates (daily map layers)."""
+        self._daily = daily
         selected = self._entries[self.index].valid_time if self._entries else None
         if selected == self._analysis_time:
             selected = analysis_time
@@ -200,10 +247,12 @@ class TimeBar(Gtk.Box):
 
         self.set_sensitive(bool(entries))
         self._scale.clear_marks()
+        step = round((times[1] - times[0]).total_seconds() / 60) \
+            if len(times) > 1 else 5
         for i, entry in enumerate(entries):
-            if i == now:
+            if i == now and not daily:
                 self._scale.add_mark(i, Gtk.PositionType.BOTTOM, "Now")
-            elif _local(entry.valid_time).get_minute() == 0:
+            elif mark(entry, entries[i - 1] if i else None, step):
                 self._scale.add_mark(i, Gtk.PositionType.BOTTOM, None)
         # The measured part of the bar is filled, the forecast is not.
         self._scale.set_fill_level(now)
@@ -212,6 +261,16 @@ class TimeBar(Gtk.Box):
             self._adjustment.set_value(index)
         self._position = float(index)
         self._update(emit=True)
+
+    def set_timeless(self, text):
+        """A map layer without time steps (climate maps, warnings only)."""
+        self.set_playing(False)
+        self._entries = []
+        self._analysis_time = None
+        self._scale.clear_marks()
+        self.set_sensitive(False)
+        self._time.set_label("–")
+        self._kind.set_label(text)
 
     def step(self, frames):
         """Select the frame `frames` later (earlier if negative), stopping
@@ -282,10 +341,11 @@ class TimeBar(Gtk.Box):
         if not self._entries:
             return
         entry = self._entries[self.index]
-        text = describe(entry, self._analysis_time)
-        self._time.set_label(clock(entry.valid_time))
+        text = describe(entry, self._analysis_time, self._daily)
+        label = when(entry.valid_time, self._analysis_time, self._daily)
+        self._time.set_label(label)
         self._kind.set_label(text)
         self._scale.update_property([Gtk.AccessibleProperty.VALUE_TEXT],
-                                    [f"{clock(entry.valid_time)}, {text}"])
+                                    [f"{label}, {text}"])
         if emit:
             self.emit("selected", self.index)

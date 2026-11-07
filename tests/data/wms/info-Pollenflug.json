@@ -1,0 +1,18 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "id": "Pollenflug.81.4.2026-11-08 00:00:00",
+            "geometry": null,
+            "properties": {
+                "POLLENINT": 0,
+                "GEN": "Tiefland Sachsen"
+            }
+        }
+    ],
+    "totalFeatures": "unknown",
+    "numberReturned": 1,
+    "timeStamp": "2026-11-07T12:17:05.660Z",
+    "crs": null
+}

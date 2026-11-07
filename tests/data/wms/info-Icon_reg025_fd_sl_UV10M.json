@@ -1,0 +1,21 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "id": "fid_dwd:Icon_reg025_fd_sl_UV10M_0000",
+            "geometry": null,
+            "properties": {
+                "u": -2.0720672607421875,
+                "v": 1.6099929809570312,
+                "TIME": "2026-11-07T12:00:00Z",
+                "ELEVATION": 10,
+                "REFERENCE_TIME": "2026-11-07T06:00:00Z"
+            }
+        }
+    ],
+    "totalFeatures": "unknown",
+    "numberReturned": 1,
+    "timeStamp": "2026-11-07T12:16:37.220Z",
+    "crs": null
+}

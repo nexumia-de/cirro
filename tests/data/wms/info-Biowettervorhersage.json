@@ -1,0 +1,18 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "id": "Biowettervorhersage.fid-4cea3a76_1a1b5f0b990_-5607",
+            "geometry": null,
+            "properties": {
+                "PARAMETER_VALUE": "kein Einfluss",
+                "GEN": "S\u00fcdliches Sachsen-Anhalt, Th\u00fcringen, Sachsen"
+            }
+        }
+    ],
+    "totalFeatures": "unknown",
+    "numberReturned": 1,
+    "timeStamp": "2026-11-07T12:17:06.395Z",
+    "crs": null
+}

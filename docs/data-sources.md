@@ -519,6 +519,27 @@ The plan built on these facts is [map layers](map-layers.md).
 - WMTS (`gwc/service/wmts`): 39 cached layers in `EPSG:900913`, all
   without a time dimension (base maps, warning areas, storm cells of
   the current time). Not usable for animated weather layers.
+- Per-layer capabilities, `<layer>/wms?request=GetCapabilities`, are
+  11–15 KB (3 KB gzipped) instead of 975 KB. Forecast layers name their
+  model runs in `REFERENCE_TIME` (default: the newest); `GetMap` takes
+  `dim_reference_time`, an unknown run returns a `ServiceException`.
+- The advertised time axis promises more than the server has:
+  Blitzdichte advertises 2025-07 onwards but rejects a time two weeks
+  back; forecast sums exist only from their period after the model run
+  and sometimes only every 3 or 6 h (ICON-EU 12 h sum: +12, +18, +24 h;
+  ICON global 6 h sum: +6, +12, +18 h; AICON 6 h sum from +9 h). Other
+  times return "No data available".
+- `GetFeatureInfo` on vector layers sends every polygon along unless
+  `propertyName` names the fields: 2.4 MB (pollen) and 3.9 MB (health
+  weather) without, 1.4 KB with. Pollen: `EC_II` 1–8 is hazel, alder,
+  birch, grasses, rye, mugwort, ragweed, ash; `POLLENINT` 0–6 matches
+  the seven legend classes (assumed from the order; only 0 was seen in
+  November). Health weather: `EC_II` 1–6 as in its abstract.
+- `GetLegendGraphic&format=application/json` returns colour maps
+  (raster: `intervals` with upper bounds as `quantity`, the class range
+  in `label`, a transparent or text-only first entry naming the unit;
+  vector: one rule per class with a German title). Some units come as
+  "?C" for "°C".
 - On a calm November day the thunderstorm, lightning and warning
   layers returned empty images, pollen and UV were uniformly green;
   test those with recorded data.

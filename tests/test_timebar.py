@@ -81,3 +81,36 @@ def test_due_caps_updates_at_30_per_second(hz, every):
     tick_us = 1e6 / hz
     assert not due(tick_us * (every - 1)) or every == 1
     assert due(tick_us * every)
+
+
+@pytest.mark.parametrize("minutes, forecast, text", [
+    (300, True, "Forecast +5 h"),
+    (-600, False, "10 h ago"),
+    (4 * 1440, True, "Forecast +4 days"),
+])
+def test_describe_long_ranges(minutes, forecast, text):
+    assert describe(entry(minutes, forecast), T0) == text
+
+
+@pytest.mark.parametrize("days, forecast, text", [
+    (0, False, "Today"), (1, True, "Tomorrow"), (2, True, "Forecast, in 2 days"),
+])
+def test_describe_daily(days, forecast, text):
+    assert describe(entry(days * 1440, forecast), T0, daily=True) == text
+
+
+def test_when_shows_the_weekday_on_other_days():
+    from cirro.timebar import clock, day, when
+    assert when(T0, T0) == clock(T0)
+    later = T0 + timedelta(days=2)
+    assert when(later, T0) != clock(later) and when(later, T0).endswith(clock(later))
+    assert when(later, T0, daily=True) == day(later)
+
+
+def test_marks():
+    from cirro.timebar import mark
+    hourly = [entry(60 * h, True) for h in range(30)]
+    marked = [i for i, e in enumerate(hourly)
+              if mark(e, hourly[i - 1] if i else None, 60)]
+    assert len(marked) in (1, 2)     # local midnight within 30 h
+    assert not mark(entry(0, False), None, 1440)

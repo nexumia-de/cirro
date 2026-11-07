@@ -1,0 +1,19 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "id": "fid_dwd:Icon_reg025_fd_sl_T2M_0000",
+            "geometry": null,
+            "properties": {
+                "Temperature_height_level_above_ground": 4.819915771484375,
+                "TIME": "2026-11-07T12:00:00Z",
+                "REFERENCE_TIME": "2026-11-07T06:00:00Z"
+            }
+        }
+    ],
+    "totalFeatures": "unknown",
+    "numberReturned": 1,
+    "timeStamp": "2026-11-07T12:16:34.270Z",
+    "crs": null
+}

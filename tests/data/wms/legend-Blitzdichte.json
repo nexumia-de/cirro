@@ -1,0 +1,105 @@
+{
+    "Legend": [
+        {
+            "layerName": "Blitzdichte",
+            "title": "NowCastMIX-Blitzdichte",
+            "rules": [
+                {
+                    "name": "rule1",
+                    "title": "Legende Blitzdichte",
+                    "abstract": "Mapping 0-127 auf Farbskala (mapped from 0-3000)",
+                    "symbolizers": [
+                        {
+                            "Raster": {
+                                "colormap": {
+                                    "entries": [
+                                        {
+                                            "label": "1/min * 100km\u00b2",
+                                            "quantity": "0.0",
+                                            "color": "#7D7D7D",
+                                            "opacity": "0.3"
+                                        },
+                                        {
+                                            "label": "0",
+                                            "quantity": "1.0E-16",
+                                            "color": "#FFFFFF",
+                                            "opacity": "0.0"
+                                        },
+                                        {
+                                            "label": "0,1",
+                                            "quantity": "0.1",
+                                            "color": "#FCFFC1",
+                                            "opacity": "1.0"
+                                        },
+                                        {
+                                            "label": "0,2 - 0,4",
+                                            "quantity": "0.2",
+                                            "color": "#FBFF5C"
+                                        },
+                                        {
+                                            "label": "0,5 - 0,9",
+                                            "quantity": "0.5",
+                                            "color": "#DFFC26"
+                                        },
+                                        {
+                                            "label": "1,0 - 1,9",
+                                            "quantity": "1.0",
+                                            "color": "#A0D626"
+                                        },
+                                        {
+                                            "label": "2,0 - 4,9",
+                                            "quantity": "2.0",
+                                            "color": "#45C379"
+                                        },
+                                        {
+                                            "label": "5,0 - 9,9",
+                                            "quantity": "5.0",
+                                            "color": "#00D6D8"
+                                        },
+                                        {
+                                            "label": "10,0 - 14,9",
+                                            "quantity": "10.0",
+                                            "color": "#11A1D6"
+                                        },
+                                        {
+                                            "label": "15,0 - 24,9",
+                                            "quantity": "15.0",
+                                            "color": "#0702FC"
+                                        },
+                                        {
+                                            "label": "25,0 - 39,9",
+                                            "quantity": "25.0",
+                                            "color": "#9232B7"
+                                        },
+                                        {
+                                            "label": "40,0 - 59,9",
+                                            "quantity": "40.0",
+                                            "color": "#DA28C6"
+                                        },
+                                        {
+                                            "label": "60,0 - 79,0",
+                                            "quantity": "60.0",
+                                            "color": "#E70D0C"
+                                        },
+                                        {
+                                            "label": "80,0 - 99,9",
+                                            "quantity": "80.0",
+                                            "color": "#880E0D"
+                                        },
+                                        {
+                                            "label": "> 100 < 3000",
+                                            "quantity": "127",
+                                            "color": "#4F0E0D"
+                                        }
+                                    ],
+                                    "type": "intervals"
+                                },
+                                "opacity": "1.0"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

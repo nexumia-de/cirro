@@ -1,0 +1,178 @@
+{
+    "Legend": [
+        {
+            "layerName": "Warnungen_Gemeinden_vereinigt",
+            "title": "Wetterwarnungen und Vorabinformationen auf Gemeindeebene (vereinigte Warngebiete)",
+            "rules": [
+                {
+                    "name": "UV-Warnungen",
+                    "title": "UV-Warnungen",
+                    "abstract": "UV-Warnungen",
+                    "filter": "[EC_GROUP = 'UV']",
+                    "symbolizers": [
+                        {
+                            "Polygon": {
+                                "stroke": "#555555",
+                                "stroke-width": "0.5",
+                                "stroke-opacity": "0.7",
+                                "stroke-linecap": "butt",
+                                "stroke-linejoin": "miter",
+                                "fill": "#FE68FE",
+                                "fill-opacity": "0.8"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Warnung vor Hitze",
+                    "title": "Warnung vor Hitze",
+                    "abstract": "Warnung vor Hitze",
+                    "filter": "[EC_GROUP = 'HEAT' AND EC_II = '247']",
+                    "symbolizers": [
+                        {
+                            "Polygon": {
+                                "stroke": "#555555",
+                                "stroke-width": "0.5",
+                                "stroke-opacity": "0.7",
+                                "stroke-linecap": "butt",
+                                "stroke-linejoin": "miter",
+                                "fill": "#CC99FF",
+                                "fill-opacity": "0.8"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Warnung vor extremer Hitze",
+                    "title": "Warnung vor extremer Hitze",
+                    "abstract": "Warnung vor extremer Hitze",
+                    "filter": "[EC_GROUP = 'HEAT' AND EC_II = '248']",
+                    "symbolizers": [
+                        {
+                            "Polygon": {
+                                "stroke": "#555555",
+                                "stroke-width": "0.5",
+                                "stroke-opacity": "0.7",
+                                "stroke-linecap": "butt",
+                                "stroke-linejoin": "miter",
+                                "fill": "#9E46F8",
+                                "fill-opacity": "0.8"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Wetterwarnungen (Stufe 1)",
+                    "title": "Wetterwarnungen (Stufe 1)",
+                    "abstract": "Wetterwarnungen (Stufe 1)",
+                    "filter": "[EC_GROUP <> 'HEAT' AND EC_GROUP <> 'UV' AND URGENCY = 'Immediate' AND SEVERITY = 'Minor']",
+                    "symbolizers": [
+                        {
+                            "Polygon": {
+                                "stroke": "#555555",
+                                "stroke-width": "0.5",
+                                "stroke-opacity": "0.7",
+                                "stroke-linecap": "butt",
+                                "stroke-linejoin": "miter",
+                                "fill": "#FFFF00",
+                                "fill-opacity": "0.8"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Warnungen vor markantem Wetter (Stufe 2)",
+                    "title": "Warnungen vor markantem Wetter (Stufe 2)",
+                    "abstract": "Warnungen vor markantem Wetter (Stufe 2)",
+                    "filter": "[EC_GROUP <> 'HEAT' AND EC_GROUP <> 'UV' AND URGENCY = 'Immediate' AND SEVERITY = 'Moderate']",
+                    "symbolizers": [
+                        {
+                            "Polygon": {
+                                "stroke": "#555555",
+                                "stroke-width": "0.5",
+                                "stroke-opacity": "0.7",
+                                "stroke-linecap": "butt",
+                                "stroke-linejoin": "miter",
+                                "fill": "#FA9600",
+                                "fill-opacity": "0.8"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Unwetterwarnungen (Stufe 3)",
+                    "title": "Unwetterwarnungen (Stufe 3)",
+                    "abstract": "Unwetterwarnungen (Stufe 3)",
+                    "filter": "[EC_GROUP <> 'HEAT' AND EC_GROUP <> 'UV' AND URGENCY = 'Immediate' AND SEVERITY = 'Severe']",
+                    "symbolizers": [
+                        {
+                            "Polygon": {
+                                "stroke": "#555555",
+                                "stroke-width": "0.5",
+                                "stroke-opacity": "0.7",
+                                "stroke-linecap": "butt",
+                                "stroke-linejoin": "miter",
+                                "fill": "#FF0000",
+                                "fill-opacity": "0.8"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Warnungen vor extremem Unwetter (Stufe 4)",
+                    "title": "Warnungen vor extremem Unwetter (Stufe 4)",
+                    "abstract": "Warnungen vor extremem Unwetter (Stufe 4)",
+                    "filter": "[EC_GROUP <> 'HEAT' AND EC_GROUP <> 'UV' AND URGENCY = 'Immediate' AND SEVERITY = 'Extreme']",
+                    "symbolizers": [
+                        {
+                            "Polygon": {
+                                "stroke": "#555555",
+                                "stroke-width": "0.5",
+                                "stroke-opacity": "0.7",
+                                "stroke-linecap": "butt",
+                                "stroke-linejoin": "miter",
+                                "fill": "#AF0064",
+                                "fill-opacity": "0.8"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Vorabinformationen Unwetter",
+                    "title": "Vorabinformationen Unwetter",
+                    "abstract": "Vorabinformationen Unwetter",
+                    "filter": "[URGENCY = 'Future']",
+                    "symbolizers": [
+                        {
+                            "Polygon": {
+                                "stroke": "#555555",
+                                "stroke-width": "0.5",
+                                "stroke-opacity": "0.7",
+                                "stroke-linecap": "butt",
+                                "stroke-linejoin": "miter",
+                                "graphic-fill": {
+                                    "url": "https://maps.dwd.de/geoserver/kml/icon/Warnungen_Landkreise?0.0.0=&npg=true",
+                                    "size": "7",
+                                    "opacity": "1.0",
+                                    "rotation": "0.0",
+                                    "graphics": [
+                                        {
+                                            "mark": "shape://slash",
+                                            "fill": "#808080",
+                                            "fill-opacity": "1.0",
+                                            "stroke": "#DD0000",
+                                            "stroke-width": "1.5",
+                                            "stroke-opacity": "1",
+                                            "stroke-linecap": "butt",
+                                            "stroke-linejoin": "miter"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

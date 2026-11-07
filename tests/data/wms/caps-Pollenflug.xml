@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?><WMS_Capabilities xmlns:inspire_vs="http://inspire.ec.europa.eu/schemas/inspire_vs/1.0" xmlns:inspire_common="http://inspire.ec.europa.eu/schemas/common/1.0" version="1.3.0" updateSequence="29466" xmlns="http://www.opengis.net/wms" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wms https://maps.dwd.de/geoserver/schemas/wms/1.3.0/capabilities_1_3_0.xsd http://inspire.ec.europa.eu/schemas/inspire_vs/1.0 https://inspire.ec.europa.eu/schemas/inspire_vs/1.0/inspire_vs.xsd">
+  <Service>
+    <Name>WMS</Name>
+    <Title>DWD GeoServer WMS</Title>
+    <Abstract>This is the Web Map Server of DWD.</Abstract>
+    <KeywordList>
+      <Keyword>meteorology</Keyword>
+      <Keyword>climatology</Keyword>
+    </KeywordList>
+    <OnlineResource xlink:type="simple" xlink:href="https://maps.dwd.de/geoserver/"/>
+    <ContactInformation>
+      <ContactPersonPrimary>
+        <ContactPerson/>
+        <ContactOrganization>Deutscher Wetterdienst</ContactOrganization>
+      </ContactPersonPrimary>
+      <ContactPosition/>
+      <ContactAddress>
+        <AddressType>postal</AddressType>
+        <Address>Frankfurter Strasse 135</Address>
+        <City>Offenbach</City>
+        <StateOrProvince>Hessen</StateOrProvince>
+        <PostCode>63067</PostCode>
+        <Country>Germany</Country>
+      </ContactAddress>
+      <ContactVoiceTelephone/>
+      <ContactFacsimileTelephone/>
+      <ContactElectronicMailAddress>info@dwd.de</ContactElectronicMailAddress>
+    </ContactInformation>
+    <Fees>none</Fees>
+    <AccessConstraints>https://www.dwd.de/copyright</AccessConstraints>
+  </Service>
+  <Capability>
+    <Request>
+      <GetCapabilities>
+        <Format>text/xml</Format>
+        <DCPType>
+          <HTTP>
+            <Get>
+              <OnlineResource xlink:type="simple" xlink:href="https://maps.dwd.de/geoserver/dwd/Pollenflug/ows?SERVICE=WMS&amp;"/>
+            </Get>
+            <Post>
+              <OnlineResource xlink:type="simple" xlink:href="https://maps.dwd.de/geoserver/dwd/Pollenflug/ows?SERVICE=WMS&amp;"/>
+            </Post>
+          </HTTP>
+        </DCPType>
+      </GetCapabilities>
+      <GetMap>
+        <Format>image/png</Format>
+        <Format>application/atom+xml</Format>
+        <Format>application/json;type=utfgrid</Format>
+        <Format>application/pdf</Format>
+        <Format>application/rss+xml</Format>
+        <Format>application/vnd.google-earth.kml+xml</Format>
+        <Format>application/vnd.google-earth.kml+xml;mode=networklink</Format>
+        <Format>application/vnd.google-earth.kmz</Format>
+        <Format>image/geotiff</Format>
+        <Format>image/geotiff8</Format>
+        <Format>image/gif</Format>
+        <Format>image/jpeg</Format>
+        <Format>image/png; mode=8bit</Format>
+        <Format>image/svg+xml</Format>
+        <Format>image/tiff</Format>
+        <Format>image/tiff8</Format>
+        <Format>image/vnd.jpeg-png</Format>
+        <Format>image/vnd.jpeg-png8</Format>
+        <Format>text/html; subtype=openlayers</Format>
+        <Format>text/html; subtype=openlayers2</Format>
+        <Format>text/html; subtype=openlayers3</Format>
+        <DCPType>
+          <HTTP>
+            <Get>
+              <OnlineResource xlink:type="simple" xlink:href="https://maps.dwd.de/geoserver/dwd/Pollenflug/ows?SERVICE=WMS&amp;"/>
+            </Get>
+          </HTTP>
+        </DCPType>
+      </GetMap>
+      <GetFeatureInfo>
+        <Format>text/plain</Format>
+        <Format>application/vnd.ogc.gml</Format>
+        <Format>text/xml</Format>
+        <Format>application/vnd.ogc.gml/3.1.1</Format>
+        <Format>text/xml; subtype=gml/3.1.1</Format>
+        <Format>text/html</Format>
+        <Format>text/javascript</Format>
+        <Format>application/json</Format>
+        <DCPType>
+          <HTTP>
+            <Get>
+              <OnlineResource xlink:type="simple" xlink:href="https://maps.dwd.de/geoserver/dwd/Pollenflug/ows?SERVICE=WMS&amp;"/>
+            </Get>
+          </HTTP>
+        </DCPType>
+      </GetFeatureInfo>
+    </Request>
+    <Exception>
+      <Format>XML</Format>
+      <Format>INIMAGE</Format>
+      <Format>BLANK</Format>
+      <Format>JSON</Format>
+      <Format>JSONP</Format>
+    </Exception>
+    <inspire_vs:ExtendedCapabilities>
+      <inspire_common:MetadataUrl>
+        <inspire_common:URL>https://gdk.gdi-de.org/gdi-de/srv/eng/csw?request=GetRecordById&amp;version=2.0.2&amp;service=CSW&amp;outputSchema=http://www.isotc211.org/2005/gmd&amp;elementSetName=full&amp;id=de.dwd.services.wms</inspire_common:URL>
+        <inspire_common:MediaType>application/vnd.iso.19139+xml</inspire_common:MediaType>
+      </inspire_common:MetadataUrl>
+      <inspire_common:SupportedLanguages>
+        <inspire_common:DefaultLanguage>
+          <inspire_common:Language>ger</inspire_common:Language>
+        </inspire_common:DefaultLanguage>
+      </inspire_common:SupportedLanguages>
+      <inspire_common:ResponseLanguage>
+        <inspire_common:Language>ger</inspire_common:Language>
+      </inspire_common:ResponseLanguage>
+    </inspire_vs:ExtendedCapabilities>
+    <Layer>
+      <Title>DWD GeoServer WMS</Title>
+      <Abstract>This is the Web Map Server of DWD.</Abstract>
+      <!--Limited list of EPSG projections:-->
+      <CRS>EPSG:3044</CRS>
+      <CRS>EPSG:3045</CRS>
+      <CRS>EPSG:3413</CRS>
+      <CRS>EPSG:3857</CRS>
+      <CRS>EPSG:4258</CRS>
+      <CRS>EPSG:4326</CRS>
+      <CRS>EPSG:4839</CRS>
+      <CRS>EPSG:25832</CRS>
+      <CRS>EPSG:25833</CRS>
+      <CRS>EPSG:31467</CRS>
+      <CRS>EPSG:31468</CRS>
+      <CRS>EPSG:900913</CRS>
+      <CRS>EPSG:1000001</CRS>
+      <EX_GeographicBoundingBox>
+        <westBoundLongitude>5.86599879208438</westBoundLongitude>
+        <eastBoundLongitude>15.0415314196145</eastBoundLongitude>
+        <southBoundLatitude>47.27036232637</southBoundLatitude>
+        <northBoundLatitude>55.0573746941759</northBoundLatitude>
+      </EX_GeographicBoundingBox>
+      <BoundingBox CRS="EPSG:3044" minx="5235211.975231003" miny="262949.5645753752" maxx="6117869.552665622" maxy="956921.4971462832"/>
+      <BoundingBox CRS="EPSG:3045" minx="5235210.048345605" miny="-190667.71769463178" maxx="6139377.105042767" maxy="503141.487306929"/>
+      <BoundingBox CRS="EPSG:3413" minx="3026950.015130704" miny="-3059307.4277924304" maxx="4199641.7284712205" maxy="-1948728.8930500797"/>
+      <BoundingBox CRS="EPSG:3857" minx="652999.998528791" miny="5986316.281688783" maxx="1674415.6183825117" maxy="7373009.34310673"/>
+      <BoundingBox CRS="EPSG:4258" minx="47.27036236881089" miny="5.865998792084379" maxx="55.05737472978982" maxy="15.0415314196145"/>
+      <BoundingBox CRS="EPSG:4326" minx="47.27036232637" miny="5.86599879208438" maxx="55.0573746941759" maxy="15.0415314196145"/>
+      <BoundingBox CRS="EPSG:4839" minx="-414718.65015392273" miny="-350893.2822012848" maxx="460777.7388466105" maxy="343900.3329333753"/>
+      <BoundingBox CRS="EPSG:25832" minx="262949.5645753752" miny="5235211.975231003" maxx="956921.4971462832" maxy="6117869.552665622"/>
+      <BoundingBox CRS="EPSG:25833" minx="-190667.71769463178" miny="5235210.048345605" maxx="503141.487306929" maxy="6139377.105042767"/>
+      <BoundingBox CRS="EPSG:31467" minx="5236863.802374267" miny="3262930.8179485896" maxx="6119883.410589494" maxy="3957184.574186269"/>
+      <BoundingBox CRS="EPSG:31468" minx="5236859.91165584" miny="4036008.669655497" maxx="6120388.794490467" maxy="4730259.945325751"/>
+      <BoundingBox CRS="EPSG:900913" minx="652999.998528791" miny="5986316.281688783" maxx="1674415.6183825117" maxy="7373009.34310673"/>
+      <BoundingBox CRS="EPSG:1000001" minx="-335.2091200732268" miny="-4649.766244919228" maxx="408.62414275647654" maxy="-3726.8321063636704"/>
+      <Layer>
+        <Name>Fachlayer</Name>
+        <Title>Fachlayer</Title>
+        <Layer>
+          <Name>Wetter</Name>
+          <Title>Wetter</Title>
+          <Layer>
+            <Name>Kurzfristvorhersagen</Name>
+            <Title>Kurzfristvorhersagen</Title>
+            <Layer queryable="1" opaque="0">
+              <Name>Pollenflug</Name>
+              <Title>Pollenflug-Gefahrenindex</Title>
+              <Abstract>Vorhersage des Pollenflug-Gefahrenindices der Pollen Hasel, Erle, Esche, Birke, Graeser, Roggen, Beifuss, Ambrosia für das Bundesgebiet, aufgeteilt in 27 Pollenflugbereiche.</Abstract>
+              <KeywordList>
+                <Keyword>Gefahrenindizes für Wetterfühlige</Keyword>
+                <Keyword>Pollenflug-Gefahrenindex Ambrosia</Keyword>
+                <Keyword>Pollenflug-Gefahrenindex Beifuß</Keyword>
+                <Keyword>Pollenflug-Gefahrenindex Birke</Keyword>
+                <Keyword>Pollenflug-Gefahrenindex Erle</Keyword>
+                <Keyword>Pollenflug-Gefahrenindex Esche</Keyword>
+                <Keyword>Pollenflug-Gefahrenindex Gräser</Keyword>
+                <Keyword>Pollenflug-Gefahrenindex Hasel</Keyword>
+                <Keyword>Pollenflug-Gefahrenindex Roggen</Keyword>
+                <Keyword>Staatsgebiet</Keyword>
+                <Keyword>Täglich</Keyword>
+                <Keyword>Vorhersage</Keyword>
+              </KeywordList>
+              <CRS>EPSG:4326</CRS>
+              <BoundingBox CRS="EPSG:4326" minx="47.27036232637" miny="5.86599879208438" maxx="55.0573746941759" maxy="15.0415314196145"/>
+              <BoundingBox CRS="EPSG:3044" minx="5235211.975231003" miny="262949.5645753752" maxx="6117869.552665622" maxy="956921.4971462832"/>
+              <BoundingBox CRS="EPSG:3045" minx="5235210.048345605" miny="-190667.71769463178" maxx="6139377.105042767" maxy="503141.487306929"/>
+              <BoundingBox CRS="EPSG:3413" minx="3026950.015130704" miny="-3059307.4277924304" maxx="4199641.7284712205" maxy="-1948728.8930500797"/>
+              <BoundingBox CRS="EPSG:3857" minx="652999.998528791" miny="5986316.281688783" maxx="1674415.6183825117" maxy="7373009.34310673"/>
+              <BoundingBox CRS="EPSG:4258" minx="47.27036236881089" miny="5.865998792084379" maxx="55.05737472978982" maxy="15.0415314196145"/>
+              <BoundingBox CRS="EPSG:4839" minx="-414718.65015392273" miny="-350893.2822012848" maxx="460777.7388466105" maxy="343900.3329333753"/>
+              <BoundingBox CRS="EPSG:25832" minx="262949.5645753752" miny="5235211.975231003" maxx="956921.4971462832" maxy="6117869.552665622"/>
+              <BoundingBox CRS="EPSG:25833" minx="-190667.71769463178" miny="5235210.048345605" maxx="503141.487306929" maxy="6139377.105042767"/>
+              <BoundingBox CRS="EPSG:31467" minx="5236863.802374267" miny="3262930.8179485896" maxx="6119883.410589494" maxy="3957184.574186269"/>
+              <BoundingBox CRS="EPSG:31468" minx="5236859.91165584" miny="4036008.669655497" maxx="6120388.794490467" maxy="4730259.945325751"/>
+              <BoundingBox CRS="EPSG:900913" minx="652999.998528791" miny="5986316.281688783" maxx="1674415.6183825117" maxy="7373009.34310673"/>
+              <BoundingBox CRS="EPSG:1000001" minx="-335.2091200732268" miny="-4649.766244919228" maxx="408.62414275647654" maxy="-3726.8321063636704"/>
+              <Dimension name="time" default="current" units="ISO8601">2026-11-07T00:00:00.000Z/2026-11-09T00:00:00.000Z/P1D</Dimension>
+              <Style>
+                <Name>Pollenintensitaet</Name>
+                <Title>Pollenintensitaet</Title>
+                <LegendURL width="193" height="140">
+                  <Format>image/png</Format>
+                  <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://maps.dwd.de/geoserver/dwd/Pollenflug/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=Pollenflug"/>
+                </LegendURL>
+              </Style>
+              <Style>
+                <Name>pollenflug_intensitaet_2021</Name>
+                <Title>pollenflug_intensitaet_2021</Title>
+                <LegendURL width="214" height="140">
+                  <Format>image/png</Format>
+                  <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://maps.dwd.de/geoserver/dwd/Pollenflug/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=Pollenflug&amp;style=pollenflug_intensitaet_2021"/>
+                </LegendURL>
+              </Style>
+            </Layer>
+          </Layer>
+        </Layer>
+      </Layer>
+    </Layer>
+  </Capability>
+</WMS_Capabilities>
