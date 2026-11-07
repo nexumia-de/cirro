@@ -28,6 +28,7 @@ python.install_sources(
   'cirro/nowcast_view.py',
   'cirro/pins.py',
   'cirro/places.py',
+  'cirro/place_details.py',
   'cirro/places_view.py',
   'cirro/preferences.py',
   'cirro/projection.py',
@@ -37,8 +38,10 @@ python.install_sources(
   'cirro/renderer.py',
   'cirro/search.py',
   'cirro/source.py',
+  'cirro/sun.py',
   'cirro/timebar.py',
   'cirro/window.py',
+  'cirro/wind.py',
   subdir: 'cirro',
 )
 python.install_sources(
@@ -53,8 +56,11 @@ python.install_sources(
   'cirro/layers/manager.py',
   'cirro/layers/picker.py',
   'cirro/layers/settings.py',
+  'cirro/layers/station_layer.py',
+  'cirro/layers/station_view.py',
   'cirro/layers/timeaxis.py',
   'cirro/layers/view.py',
+  'cirro/layers/wfs.py',
   'cirro/layers/wms.py',
   subdir: 'cirro/layers',
 )

@@ -66,6 +66,8 @@ class Layer:
     legend: dict = field(default_factory=dict)   # German label → English
     unit: str = ""         # legend unit, instead of DWD's German one
     opacity: float | None = None   # default: 0.75 for base, 1 for overlays
+    source: str = "wms"    # "wfs": station values drawn by Cirro
+    field: str = ""        # WFS attribute with the value
 
     @property
     def alpha(self):
@@ -323,20 +325,22 @@ LAYERS = (
           value=Value("number", "m", 1),
           variants=tuple(Variant(label, (f"Ewam_reg005x010_fd_sl_{code}",))
                          for label, code in _CWAM)),
-    # Stations
+    # Stations: drawn by Cirro from WFS (cirro/layers/station_layer.py).
+    Layer("stations-wind", "Measured Wind", "Stations", ("RBSN_FF",),
+          role=OVERLAY, note="72 DWD stations, hourly; Beaufort force, arrow where it blows",
+          past=2 * D, source="wfs", field="SPEED", value=Value("wind")),
     Layer("stations-temperature", "Measured Temperature", "Stations",
           ("RBSN_T2m",), role=OVERLAY, note="72 DWD stations, hourly",
-          past=2 * D),
-    Layer("stations-wind", "Measured Wind", "Stations", ("RBSN_FF",),
-          role=OVERLAY, note="72 DWD stations, hourly", style="RBSN_FF_Pfeile",
-          past=2 * D,
-          variants=(Variant("Barbs"), Variant("Values", style=""))),
+          past=2 * D, source="wfs", field="TEMPERATURE", value=TEMPERATURE),
     Layer("stations-humidity", "Measured Humidity", "Stations", ("RBSN_RH",),
-          role=OVERLAY, note="72 DWD stations, hourly", past=2 * D),
-    Layer("stations-precip", "Measured Precipitation", "Stations",
-          ("RBSN_RR",), role=OVERLAY, note="72 DWD stations, daily", past=7 * D,
-          variants=(Variant("Precipitation"),
-                    Variant("Potential evaporation", ("RBSN_VPGB",)))),
+          role=OVERLAY, note="72 DWD stations, hourly", past=2 * D,
+          source="wfs", field="REL_HUMIDITY", value=Value("number", "%")),
+    Layer("stations-precip", "Measured Precipitation, Stations", "Stations",
+          ("RBSN_RR",), role=OVERLAY, note="DWD stations, daily", past=7 * D,
+          source="wfs", field="PRECIPITATION", value=MM),
+    Layer("stations-evaporation", "Potential Evaporation", "Stations",
+          ("RBSN_VPGB",), role=OVERLAY, note="DWD stations, daily", past=7 * D,
+          source="wfs", field="EVAPOTRANSPIRATION", value=MM),
     # Climate
     Layer("climate", "Climate Maps", "Climate", (_CLIMATE[0][1],),
           note="Long-term means, Germany",

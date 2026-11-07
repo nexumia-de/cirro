@@ -50,3 +50,14 @@ def test_no_value():
                                             (200, "SSW"), (359, "N")])
 def test_compass(degrees, point):
     assert info.compass(degrees) == point
+
+
+def test_station_text():
+    from cirro.layers.wfs import Station
+    stations = [Station("Leipzig", 51.3, 12.4, 7.0, 22)]
+    wind = catalogue.get("stations-wind").value
+    assert info.station_text(wind, stations, 51.31, 12.41) == \
+        "4 Bft (25 km/h) from NNE, Leipzig"
+    assert info.station_text(wind, stations, 48, 8) is None
+    assert info.station_text(catalogue.TEMPERATURE, stations, 51.3, 12.4) == \
+        "7 °C, Leipzig"

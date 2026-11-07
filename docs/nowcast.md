@@ -80,3 +80,19 @@ recorded demo data.
 # Open points
 
 - Sampling time on the phone is not measured yet.
+
+# Sunrise, sunset and wind (issues #54, #59)
+
+Below the chart, a caption line about the selected place
+(`cirro/place_details.py`):
+
+- "Sunrise 07:23 · Sunset 16:54" for today, computed locally from the
+  date and position (`cirro/sun.py`, NOAA solar position equations,
+  within 2 min of published times for Berlin); "No sunset today" or
+  "No sunrise today" beyond the polar circles.
+- "Wind 1 Bft (3 km/h) from S · Offenbach-Wetterpark, 8 km · 13:00":
+  the newest hour of DWD's station measurements (WFS `RBSN_FF`, the
+  time from its capabilities), the nearest station within 50 km,
+  fetched again after 20 min. No line further away or outside Germany.
+  Beaufort and compass points are in `cirro/wind.py`. With recorded demo
+  data the wind is not fetched.

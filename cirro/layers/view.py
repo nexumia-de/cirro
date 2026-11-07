@@ -49,7 +49,7 @@ class LayerView(GObject.Object):
         self.variant = layer.variant(variant_index)
         self._cache = cache
         self._executor = executor
-        self.drawing = RadarLayer(viewport)
+        self.drawing = self._make_drawing(viewport)
         self.drawing.set_opacity(layer.alpha)
         self.caps = None
         self.steps = []
@@ -65,6 +65,19 @@ class LayerView(GObject.Object):
         self._timer = 0
         self._shown_url = None
         self._load_capabilities()
+
+    # What a subclass changes: what is drawn, how it is fetched.
+    needs_view = True
+
+    def _make_drawing(self, viewport):
+        return RadarLayer(viewport)
+
+    def _job(self, url):
+        cache = None if self.timeless else self._cache
+        return lambda: _load(url, cache)
+
+    def _present(self, result, bounds):
+        self.drawing.set_frame(result, bounds)
 
     @property
     def name(self):
@@ -168,7 +181,7 @@ class LayerView(GObject.Object):
 
     def _wanted(self):
         """URL of the image to show now, or None."""
-        if self.caps is None or self._view is None:
+        if self.caps is None or (self._view is None and self.needs_view):
             return None
         if not self.timeless and self._time is None:
             return None
@@ -189,17 +202,18 @@ class LayerView(GObject.Object):
             self._memory.move_to_end(url)
             if url != self._shown_url:
                 self._shown_url = url
-                self.drawing.set_frame(hit[0], hit[1])
+                self._present(hit[0], hit[1])
             return
         self._request(url, self._view)
 
     def ready(self, time_):
-        if self.caps is None or self._view is None:
+        if self.caps is None or (self._view is None and self.needs_view):
             return False
         return self._url(time_, self._view) in self._memory
 
     def prefetch(self, times):
-        if self.caps is None or self._view is None or self.timeless:
+        if self.caps is None or (self._view is None and self.needs_view) \
+                or self.timeless:
             return
         for time_ in times:
             url = self._url(time_, self._view)
@@ -210,8 +224,7 @@ class LayerView(GObject.Object):
         if url in self._pending:
             return
         self._pending.add(url)
-        cacheable = not self.timeless
-        future = self._executor.submit(_load, url, self._cache if cacheable else None)
+        future = self._executor.submit(self._job(url))
         future.add_done_callback(
             lambda f: GLib.idle_add(self._on_image, url, view, f))
 
@@ -233,7 +246,8 @@ class LayerView(GObject.Object):
                 self._fail(str(error))
             return GLib.SOURCE_REMOVE
         self._failed = False
-        self._memory[url] = (texture, view.bounds, datetime.now(timezone.utc))
+        bounds = view.bounds if view is not None else None
+        self._memory[url] = (texture, bounds, datetime.now(timezone.utc))
         while len(self._memory) > MEMORY:
             self._memory.popitem(last=False)
         if url == self._wanted():
