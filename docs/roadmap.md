@@ -114,9 +114,9 @@ imminent rain with measured battery impact; sunrise and sunset
 computed locally and the nearest station's wind for the selected
 place.
 
-Implemented: all WMS layer groups of [map layers](map-layers.md).
-Still open: own wind arrows and station values from WFS, the wind and
-sunrise/sunset for the selected place, notifications.
+Implemented: all layer groups of [map layers](map-layers.md), wind
+arrows and station values drawn from WFS, sunrise, sunset and wind
+for the selected place. Still open: notifications.
 
 # Risks
 

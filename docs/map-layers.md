@@ -41,6 +41,7 @@ issues below decide which ones and how they are presented.
 | `view.py` | One shown layer: its steps (refreshed every 5 min for nowcasts, 30 min otherwise), textures for the view and time (48 in memory), prefetching, dropping steps the server has no data for. |
 | `manager.py` | Base layer plus overlays, overlays following the base layer's time (nearest own step within half a step, at least 10 min), the map's source note with extra credits, the base layer's legend, tap values. |
 | `control.py` | The window side: layers button at the end of the time bar, the time bar's entries for a DWD base layer, legend, failure toast, tap → toast. |
+| `wfs.py`, `station_view.py`, `station_layer.py` | Station layers (`source="wfs"`): time steps from the layer's WMS capabilities, one GeoJSON per step for all 72 stations, drawn by Cirro: wind as an arrow pointing where it blows with the Beaufort force, other values as numbers, in OSD pills; labels that would come closer than 10 px are left out. A tap names the nearest station within 30 km. |
 | `picker.py`, `legend.py`, `settings.py` | The picker dialog, the legend widget, the saved choice (`settings.ini`, `[layers]`). |
 
 - The radar stays its own base layer with its own timeline and
@@ -67,12 +68,12 @@ issues below decide which ones and how they are presented.
 | Satellite | `Satellite_meteosat_1km_euat_rgb_day_hrv_and_night_ir108_3h`, `Satellite_worldmosaic_3km_world_ir108_3h` | [#64](https://github.com/nexumia-de/cirro/issues/64) | M6 |
 | Temperature | `Icon_reg025_fd_sl_T2M`, `Aicon_reg025_fd_sl_T`, `Icon-eu_reg00625_fd_gl_T`, `GefuehlteTemp*`, `RBSN_T2m` | [#65](https://github.com/nexumia-de/cirro/issues/65) | M6 |
 | Precipitation forecast and totals | `Icon-eu_…_TOTPREC01H/03H/12H/24H`, `Icon_…_TOTPREC06H/12H/24H`, `Icon-eps_…_TOTPREC24H`, the accumulated `…_TOTPREC` of ICON, ICON-EU and AICON (`Aicon_…_TOTPREC`, `…06H`); `RADOLAN-RW/SQ/D3/W1–W4/SM/SJ/SY`, `RADOLAN-prozJ/M/Y/Z`, `SF-Produkt`, `SF-Produkt_(0-24)`, `RBSN_RR` | [#66](https://github.com/nexumia-de/cirro/issues/66) | M6 |
-| Wind arrows, wind at a place | WFS `RBSN_FF` | [#58](https://github.com/nexumia-de/cirro/issues/58), [#59](https://github.com/nexumia-de/cirro/issues/59) | M6 |
+| Wind arrows, wind at a place | WFS `RBSN_FF` (own drawing) | [#58](https://github.com/nexumia-de/cirro/issues/58), [#59](https://github.com/nexumia-de/cirro/issues/59) | M6 |
 | Gusts, severe weather probabilities | `Icon-eps_…_VMAX10M12H`, `icon-d2-eps_ecwarn_…_pVMAX10MgtX`, `icon-eu-eps_ecwarn_…`, `…_FP`, `…_FPW`, `Icon_…_UV10M`, `Aicon_…_UV10M` | [#67](https://github.com/nexumia-de/cirro/issues/67) | M6 |
 | Air pressure | `Icon-eu_…_QFF` (isobars), `Icon_…_PMSL`, `Aicon_…_PMSL`, `Icon-eps_…_PMSL` | [#68](https://github.com/nexumia-de/cirro/issues/68) | M6 |
 | Pollen, UV, health weather | `Pollenflug`, `Biowettervorhersage`, `UVIndex`, `UVZeit`, `UVZeit_Global_CL`, `UVI_*`, `UV_Dosis_*` | [#69](https://github.com/nexumia-de/cirro/issues/69) | M6 |
 | Sea state | `Cwam_…_*`, `Ewam_…_*` (wave height, period, direction) | [#70](https://github.com/nexumia-de/cirro/issues/70) | M6 |
-| Station measurements | `RBSN_T2m`, `RBSN_RH`, `RBSN_RR`, `RBSN_VPGB` (WFS) | [#71](https://github.com/nexumia-de/cirro/issues/71) | M6 |
+| Station measurements | `RBSN_T2m`, `RBSN_RH`, `RBSN_RR`, `RBSN_VPGB` (WFS, own drawing) | [#71](https://github.com/nexumia-de/cirro/issues/71) | M6 |
 | Climate maps (30-year means) | `TAMM/TADNMM/TADXMM_…`, `RSMS_…`, `SDMS_…`, `SISMM_…`, `*days_annual_map_normals_*`, `BRD_1km_winddaten_*` | [#72](https://github.com/nexumia-de/cirro/issues/72) | backlog |
 
 # Left out, and why
@@ -120,3 +121,9 @@ can still add any of them later.
 - Bandwidth: one image per view and time step (2–130 KB at 230×300 px
   on 2026-11-07), cached on disk; measure on the phone with the first
   layers.
+
+# Pitfall
+
+`Gdk.RGBA(red=…, alpha=…)` ignores its arguments in PyGObject (a
+`DeprecationWarning` says so) and gives a fully transparent colour: the
+first station layer drew nothing. Use `Gdk.RGBA()` and `parse()`.

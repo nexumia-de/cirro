@@ -1,0 +1,1821 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.102.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    8.1275,
+                    53.8633
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 102,
+                "NAME": "Leuchtturm Alte Weser",
+                "SPEED": 5,
+                "DIRECTION": 160,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                8.1275,
+                53.8633,
+                8.1275,
+                53.8633
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.164.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    13.9908,
+                    53.0316
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 164,
+                "NAME": "Angerm\u00fcnde",
+                "SPEED": 3.1,
+                "DIRECTION": 120,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                13.9908,
+                53.0316,
+                13.9908,
+                53.0316
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.183.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    13.4344,
+                    54.6791
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 183,
+                "NAME": "Arkona",
+                "SPEED": 5.9,
+                "DIRECTION": 120,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                13.4344,
+                54.6791,
+                13.4344,
+                54.6791
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.232.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    10.9417,
+                    48.4253
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 232,
+                "NAME": "Augsburg",
+                "SPEED": 1.5,
+                "DIRECTION": 70,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                10.9417,
+                48.4253,
+                10.9417,
+                48.4253
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.282.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    10.9206,
+                    49.8743
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 282,
+                "NAME": "Bamberg",
+                "SPEED": 3.3,
+                "DIRECTION": 150,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                10.9206,
+                49.8743,
+                10.9206,
+                49.8743
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.403.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    13.3017,
+                    52.4537
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 403,
+                "NAME": "Berlin-Dahlem (FU)",
+                "SPEED": 3,
+                "DIRECTION": 140,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                13.3017,
+                52.4537,
+                13.3017,
+                52.4537
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.433.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    13.402,
+                    52.4676
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 433,
+                "NAME": "Berlin-Tempelhof",
+                "SPEED": 3.9,
+                "DIRECTION": 140,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                13.402,
+                52.4676,
+                13.402,
+                52.4676
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.691.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    8.7981,
+                    53.0451
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 691,
+                "NAME": "Bremen",
+                "SPEED": 4.6,
+                "DIRECTION": 150,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                8.7981,
+                53.0451,
+                8.7981,
+                53.0451
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.722.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    10.6183,
+                    51.7986
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 722,
+                "NAME": "Brocken",
+                "SPEED": 5.8,
+                "DIRECTION": 190,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                10.6183,
+                51.7986,
+                10.6183,
+                51.7986
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.880.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    14.3168,
+                    51.7759
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 880,
+                "NAME": "Cottbus",
+                "SPEED": 2.8,
+                "DIRECTION": 90,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                14.3168,
+                51.7759,
+                14.3168,
+                51.7759
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.891.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    8.706,
+                    53.8713
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 891,
+                "NAME": "Cuxhaven",
+                "SPEED": 4.1,
+                "DIRECTION": 140,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                8.706,
+                53.8713,
+                8.706,
+                53.8713
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.1048.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    13.7543,
+                    51.1278
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 1048,
+                "NAME": "Dresden-Klotzsche",
+                "SPEED": 7,
+                "DIRECTION": 160,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                13.7543,
+                51.1278,
+                13.7543,
+                51.1278
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.1078.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    6.7686,
+                    51.296
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 1078,
+                "NAME": "D\u00fcsseldorf",
+                "SPEED": 1.9,
+                "DIRECTION": 190,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                6.7686,
+                51.296,
+                6.7686,
+                51.296
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.1262.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    11.8134,
+                    48.3477
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 1262,
+                "NAME": "M\u00fcnchen-Flughafen",
+                "SPEED": 3.3,
+                "DIRECTION": 100,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                11.8134,
+                48.3477,
+                11.8134,
+                48.3477
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.1270.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    10.9608,
+                    50.9829
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 1270,
+                "NAME": "Erfurt-Weimar",
+                "SPEED": 1.5,
+                "DIRECTION": 60,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                10.9608,
+                50.9829,
+                10.9608,
+                50.9829
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.1303.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    6.9677,
+                    51.4041
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 1303,
+                "NAME": "Essen-Bredeney",
+                "SPEED": 1.8,
+                "DIRECTION": 150,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                6.9677,
+                51.4041,
+                6.9677,
+                51.4041
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.1346.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    8.0038,
+                    47.8748
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 1346,
+                "NAME": "Feldberg/Schwarzwald",
+                "SPEED": 2.1,
+                "DIRECTION": 200,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                8.0038,
+                47.8748,
+                8.0038,
+                47.8748
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.1358.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    12.9536,
+                    50.4283
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 1358,
+                "NAME": "Fichtelberg",
+                "SPEED": 7.8,
+                "DIRECTION": 170,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                12.9536,
+                50.4283,
+                12.9536,
+                50.4283
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.1420.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    8.5213,
+                    50.0259
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 1420,
+                "NAME": "Frankfurt/Main",
+                "SPEED": 0.6,
+                "DIRECTION": 270,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                8.5213,
+                50.0259,
+                8.5213,
+                50.0259
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.1468.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    8.409,
+                    48.4538
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 1468,
+                "NAME": "Freudenstadt",
+                "SPEED": 2.6,
+                "DIRECTION": 260,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                8.409,
+                48.4538,
+                8.409,
+                48.4538
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.1504.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    9.2799,
+                    51.119
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 1504,
+                "NAME": "Fritzlar/Eder",
+                "SPEED": 1,
+                "DIRECTION": 0,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                9.2799,
+                51.119,
+                9.2799,
+                51.119
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.1612.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    12.1289,
+                    50.8812
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 1612,
+                "NAME": "Gera-Leumnitz",
+                "SPEED": 4.5,
+                "DIRECTION": 180,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                12.1289,
+                50.8812,
+                12.1289,
+                50.8812
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.1639.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    8.6439,
+                    50.6017
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 1639,
+                "NAME": "Gie\u00dfen/Wettenberg",
+                "SPEED": 0.6,
+                "DIRECTION": 350,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                8.6439,
+                50.6017,
+                8.6439,
+                50.6017
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.1684.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    14.9506,
+                    51.1621
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 1684,
+                "NAME": "G\u00f6rlitz",
+                "SPEED": 2.1,
+                "DIRECTION": 40,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                14.9506,
+                51.1621,
+                14.9506,
+                51.1621
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.1757.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    13.4056,
+                    54.0967
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 1757,
+                "NAME": "Greifswald",
+                "SPEED": 4.9,
+                "DIRECTION": 130,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                13.4056,
+                54.0967,
+                13.4056,
+                54.0967
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.1766.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    7.6969,
+                    52.1344
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 1766,
+                "NAME": "M\u00fcnster/Osnabr\u00fcck",
+                "SPEED": 2,
+                "DIRECTION": 90,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                7.6969,
+                52.1344,
+                7.6969,
+                52.1344
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.1832.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    13.1338,
+                    49.1129
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 1832,
+                "NAME": "Gro\u00dfer Arber",
+                "SPEED": 4.9,
+                "DIRECTION": 150,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                13.1338,
+                49.1129,
+                13.1338,
+                49.1129
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.1975.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    9.9881,
+                    53.6332
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 1975,
+                "NAME": "Hamburg-Fuhlsb\u00fcttel",
+                "SPEED": 3.5,
+                "DIRECTION": 100,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                9.9881,
+                53.6332,
+                9.9881,
+                53.6332
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.2014.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    9.6779,
+                    52.4644
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 2014,
+                "NAME": "Hannover",
+                "SPEED": 4.3,
+                "DIRECTION": 140,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                9.6779,
+                52.4644,
+                9.6779,
+                52.4644
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.2115.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    7.892,
+                    54.175
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 2115,
+                "NAME": "Helgoland",
+                "SPEED": 6.5,
+                "DIRECTION": 110,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                7.892,
+                54.175,
+                7.892,
+                54.175
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.2261.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    11.876,
+                    50.3123
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 2261,
+                "NAME": "Hof",
+                "SPEED": 3.5,
+                "DIRECTION": 130,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                11.876,
+                50.3123,
+                11.876,
+                50.3123
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.2290.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    11.0108,
+                    47.8009
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 2290,
+                "NAME": "Hohenpei\u00dfenberg",
+                "SPEED": 1,
+                "DIRECTION": 260,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                11.0108,
+                47.8009,
+                11.0108,
+                47.8009
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.2483.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    8.4891,
+                    51.1803
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 2483,
+                "NAME": "Kahler Asten",
+                "SPEED": 2.6,
+                "DIRECTION": 170,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                8.4891,
+                51.1803,
+                8.4891,
+                51.1803
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.2559.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    10.3348,
+                    47.7233
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 2559,
+                "NAME": "Kempten",
+                "SPEED": 1.4,
+                "DIRECTION": 40,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                10.3348,
+                47.7233,
+                10.3348,
+                47.7233
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.2564.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    10.1424,
+                    54.3776
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 2564,
+                "NAME": "Kiel-Holtenau",
+                "SPEED": 4.4,
+                "DIRECTION": 120,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                10.1424,
+                54.3776,
+                10.1424,
+                54.3776
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.2667.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    7.1575,
+                    50.8645
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 2667,
+                "NAME": "K\u00f6ln/Bonn",
+                "SPEED": 2.6,
+                "DIRECTION": 130,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                7.1575,
+                50.8645,
+                7.1575,
+                50.8645
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.2712.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    9.1307,
+                    47.6952
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 2712,
+                "NAME": "Konstanz",
+                "SPEED": 2.3,
+                "DIRECTION": 290,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                9.1307,
+                47.6952,
+                9.1307,
+                47.6952
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.2812.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    7.828,
+                    48.3647
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 2812,
+                "NAME": "Lahr",
+                "SPEED": 1.1,
+                "DIRECTION": 20,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                7.828,
+                48.3647,
+                7.828,
+                48.3647
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.2932.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    12.2396,
+                    51.4347
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 2932,
+                "NAME": "Leipzig/Halle",
+                "SPEED": 3.9,
+                "DIRECTION": 170,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                12.2396,
+                51.4347,
+                12.2396,
+                51.4347
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.3015.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    14.118,
+                    52.2085
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 3015,
+                "NAME": "Lindenberg",
+                "SPEED": 2.9,
+                "DIRECTION": 120,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                14.118,
+                52.2085,
+                14.118,
+                52.2085
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.3028.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    8.8388,
+                    51.7854
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 3028,
+                "NAME": "Lippspringe, Bad",
+                "SPEED": 2.8,
+                "DIRECTION": 160,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                8.8388,
+                51.7854,
+                8.8388,
+                51.7854
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.3032.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    8.4125,
+                    55.011
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 3032,
+                "NAME": "List auf Sylt",
+                "SPEED": 6.6,
+                "DIRECTION": 110,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                8.4125,
+                55.011,
+                8.4125,
+                55.011
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.3093.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    11.1374,
+                    52.9724
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 3093,
+                "NAME": "L\u00fcchow",
+                "SPEED": 2.2,
+                "DIRECTION": 140,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                11.1374,
+                52.9724,
+                11.1374,
+                52.9724
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.3126.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    11.5827,
+                    52.1029
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 3126,
+                "NAME": "Magdeburg",
+                "SPEED": 2.1,
+                "DIRECTION": 120,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                11.5827,
+                52.1029,
+                11.5827,
+                52.1029
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.3196.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    11.9321,
+                    53.3222
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 3196,
+                "NAME": "Marnitz",
+                "SPEED": 2.3,
+                "DIRECTION": 160,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                11.9321,
+                53.3222,
+                11.9321,
+                53.3222
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.3231.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    10.3771,
+                    50.5611
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 3231,
+                "NAME": "Meiningen",
+                "SPEED": 3.1,
+                "DIRECTION": 160,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                10.3771,
+                50.5611,
+                10.3771,
+                50.5611
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.3631.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    7.1519,
+                    53.7123
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 3631,
+                "NAME": "Norderney",
+                "SPEED": 2.7,
+                "DIRECTION": 140,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                7.1519,
+                53.7123,
+                7.1519,
+                53.7123
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.3730.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    10.2759,
+                    47.3984
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 3730,
+                "NAME": "Oberstdorf",
+                "SPEED": 1.2,
+                "DIRECTION": 320,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                10.2759,
+                47.3984,
+                10.2759,
+                47.3984
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.3761.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    9.5176,
+                    49.207
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 3761,
+                "NAME": "\u00d6hringen",
+                "SPEED": 0.7,
+                "DIRECTION": 260,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                9.5176,
+                49.207,
+                9.5176,
+                49.207
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.3987.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    13.0622,
+                    52.3812
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 3987,
+                "NAME": "Potsdam",
+                "SPEED": 1.8,
+                "DIRECTION": 130,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                13.0622,
+                52.3812,
+                13.0622,
+                52.3812
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.4104.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    12.1019,
+                    49.0425
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 4104,
+                "NAME": "Regensburg",
+                "SPEED": 2.7,
+                "DIRECTION": 120,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                12.1019,
+                49.0425,
+                12.1019,
+                49.0425
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.4177.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    8.3301,
+                    48.9726
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 4177,
+                "NAME": "Rheinstetten",
+                "SPEED": 1.1,
+                "DIRECTION": 70,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                8.3301,
+                48.9726,
+                8.3301,
+                48.9726
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.4271.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    12.0808,
+                    54.1803
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 4271,
+                "NAME": "Rostock-Warnem\u00fcnde",
+                "SPEED": 5.2,
+                "DIRECTION": 140,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                12.0808,
+                54.1803,
+                12.0808,
+                54.1803
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.4336.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    7.1077,
+                    49.2128
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 4336,
+                "NAME": "Saarbr\u00fccken-Ensheim",
+                "SPEED": 1,
+                "DIRECTION": 220,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                7.1077,
+                49.2128,
+                7.1077,
+                49.2128
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.4466.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    9.5487,
+                    54.5275
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 4466,
+                "NAME": "Schleswig",
+                "SPEED": 4.3,
+                "DIRECTION": 100,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                9.5487,
+                54.5275,
+                9.5487,
+                54.5275
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.4625.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    11.3871,
+                    53.6424
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 4625,
+                "NAME": "Schwerin",
+                "SPEED": 1.7,
+                "DIRECTION": 130,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                11.3871,
+                53.6424,
+                11.3871,
+                53.6424
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.5100.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    6.6583,
+                    49.7479
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 5100,
+                "NAME": "Trier-Petrisberg",
+                "SPEED": 1.6,
+                "DIRECTION": 220,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                6.6583,
+                49.7479,
+                6.6583,
+                49.7479
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.5349.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    12.6654,
+                    53.5196
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 5349,
+                "NAME": "Waren (M\u00fcritz)",
+                "SPEED": 2.5,
+                "DIRECTION": 150,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                12.6654,
+                53.5196,
+                12.6654,
+                53.5196
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.5371.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    9.9427,
+                    50.4973
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 5371,
+                "NAME": "Wasserkuppe",
+                "SPEED": 5.2,
+                "DIRECTION": 160,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                9.9427,
+                50.4973,
+                9.9427,
+                50.4973
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.5397.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    12.1844,
+                    49.6662
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 5397,
+                "NAME": "Weiden",
+                "SPEED": 1.3,
+                "DIRECTION": 180,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                12.1844,
+                49.6662,
+                12.1844,
+                49.6662
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.5516.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    11.0606,
+                    54.5283
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 5516,
+                "NAME": "Fehmarn",
+                "SPEED": 6.7,
+                "DIRECTION": 130,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                11.0606,
+                54.5283,
+                11.0606,
+                54.5283
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.5705.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    9.9576,
+                    49.7704
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 5705,
+                "NAME": "W\u00fcrzburg",
+                "SPEED": 4,
+                "DIRECTION": 210,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                9.9576,
+                49.7704,
+                9.9576,
+                49.7704
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.5792.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    10.9848,
+                    47.421
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 5792,
+                "NAME": "Zugspitze",
+                "SPEED": 0.6,
+                "DIRECTION": 160,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                10.9848,
+                47.421,
+                10.9848,
+                47.421
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.5839.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    7.2287,
+                    53.3881
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 5839,
+                "NAME": "Emden",
+                "SPEED": 2.8,
+                "DIRECTION": 130,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                7.2287,
+                53.3881,
+                7.2287,
+                53.3881
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.5856.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    13.3532,
+                    48.5451
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 5856,
+                "NAME": "F\u00fcrstenzell",
+                "SPEED": 1.7,
+                "DIRECTION": 70,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                13.3532,
+                48.5451,
+                13.3532,
+                48.5451
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.5871.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    7.2645,
+                    49.9463
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 5871,
+                "NAME": "Hahn",
+                "SPEED": 3.2,
+                "DIRECTION": 140,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                7.2645,
+                49.9463,
+                7.2645,
+                49.9463
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.5906.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    8.5584,
+                    49.5063
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 5906,
+                "NAME": "Mannheim",
+                "SPEED": 0.7,
+                "DIRECTION": 310,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                8.5584,
+                49.5063,
+                8.5584,
+                49.5063
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.7341.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    8.7862,
+                    50.09
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 7341,
+                "NAME": "Offenbach-Wetterpark",
+                "SPEED": 0.8,
+                "DIRECTION": 170,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                8.7862,
+                50.09,
+                8.7862,
+                50.09
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.15000.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    6.0244,
+                    50.7983
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 15000,
+                "NAME": "Aachen-Orsbach",
+                "SPEED": 2.2,
+                "DIRECTION": 240,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                6.0244,
+                50.7983,
+                6.0244,
+                50.7983
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.4931.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    9.2235,
+                    48.6883
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 4931,
+                "NAME": "Stuttgart-Echterdingen",
+                "SPEED": 0.7,
+                "DIRECTION": 70,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                9.2235,
+                48.6883,
+                9.2235,
+                48.6883
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.4887.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    9.8648,
+                    48.6656
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 4887,
+                "NAME": "St\u00f6tten",
+                "SPEED": 1.2,
+                "DIRECTION": 240,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                9.8648,
+                48.6656,
+                9.8648,
+                48.6656
+            ]
+        },
+        {
+            "type": "Feature",
+            "id": "RBSN_FF.4911.07.11.26 12:00:00,000000",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    12.5597,
+                    48.8275
+                ]
+            },
+            "geometry_name": "THE_GEOM",
+            "properties": {
+                "ID": 4911,
+                "NAME": "Straubing",
+                "SPEED": 3.4,
+                "DIRECTION": 110,
+                "M_DATE": "2026-11-07T12:00:00Z"
+            },
+            "bbox": [
+                12.5597,
+                48.8275,
+                12.5597,
+                48.8275
+            ]
+        }
+    ],
+    "totalFeatures": 72,
+    "numberMatched": 72,
+    "numberReturned": 72,
+    "timeStamp": "2026-11-07T12:29:12.284Z",
+    "crs": {
+        "type": "name",
+        "properties": {
+            "name": "urn:ogc:def:crs:EPSG::4326"
+        }
+    },
+    "bbox": [
+        6.0244,
+        47.3984,
+        14.9506,
+        55.011
+    ]
+}

@@ -129,6 +129,40 @@ def sample(data, latitude, longitude):
         return (value * float(what["gain"]) + float(what["offset"])) * 12
 
 
+def sample_points(data, points):
+    """Rain rates in mm/h at several (latitude, longitude) points of one
+    member (NaN outside the coverage). The member is opened and its
+    chunk decompressed once for all points (the places list, #56)."""
+    with _open(data) as f:
+        what = f["dataset1/data1/what"].attrs
+        if _str(what["quantity"]) != "ACRR":
+            raise ValueError(f"unexpected quantity {_str(what['quantity'])!r}")
+        grid = _grid(f)
+        dataset = f["dataset1/data1/data"]
+        nodata, undetect = int(what["nodata"]), int(what["undetect"])
+        gain, offset = float(what["gain"]), float(what["offset"])
+        cells = [cell(grid, lat, lon) for lat, lon in points]
+        inside = [c for c in cells if c is not None]
+        values = {}
+        if inside:
+            rows = [r for r, _ in inside]
+            cols = [c for _, c in inside]
+            # One read of the bounding block: a single decompression.
+            block = dataset[min(rows):max(rows) + 1, min(cols):max(cols) + 1]
+            for r, c in inside:
+                values[(r, c)] = int(block[r - min(rows), c - min(cols)])
+        rates = []
+        for where in cells:
+            value = values.get(where) if where is not None else None
+            if value is None or value == nodata:
+                rates.append(float("nan"))
+            elif value == undetect:
+                rates.append(0.0)
+            else:
+                rates.append((value * gain + offset) * 12)
+        return rates
+
+
 def peek(data):
     """(analysis time, valid time, forecast flag) of a member without
     decompressing its data, for the frame timeline."""

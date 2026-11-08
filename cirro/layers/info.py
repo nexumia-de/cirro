@@ -2,6 +2,7 @@
 from GetFeatureInfo features (docs/map-layers.md)."""
 import math
 
+from cirro import wind
 from cirro.layers.catalogue import POLLEN_LEVELS
 
 _SKIP = {"TIME", "REFERENCE_TIME", "ELEVATION", "ENSEMBLE_PRODUCT"}
@@ -10,12 +11,7 @@ _SEVERITY = {"Minor": "level 1", "Moderate": "level 2", "Severe": "level 3",
 _HEALTH = {"positiver Einfluss": "positive effect",
            "kein Einfluss": "no effect",
            "geringe Gefährdung": "low risk", "hohe Gefährdung": "high risk"}
-_COMPASS = ("N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE",
-            "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW")
-
-
-def compass(degrees):
-    return _COMPASS[round(degrees / 22.5) % 16]
+compass = wind.compass
 
 
 def _numbers(properties):
@@ -102,3 +98,17 @@ def describe(value, features):
     if value.kind == "health":
         return _health(features)
     return None
+
+
+def station_text(value, stations, latitude, longitude, within_km=30):
+    """Text of the nearest station within `within_km` (station layers),
+    or None."""
+    from cirro.layers.wfs import nearest
+    station, _ = nearest(stations, latitude, longitude, within_km)
+    if station is None:
+        return None
+    if value.kind == "wind":
+        text = wind.describe(station.value, station.direction)
+    else:
+        text = f"{station.value:.{value.decimals}f} {value.unit}".strip()
+    return f"{text}, {station.name}"

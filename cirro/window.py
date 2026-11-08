@@ -16,6 +16,8 @@ from cirro.namer import Namer  # noqa: E402
 from cirro.nowcast_view import NowcastView  # noqa: E402
 from cirro.pins import PLACE_ICON, PinLayer, status  # noqa: E402
 from cirro.places import PlaceStore  # noqa: E402
+from cirro.place_details import PlaceDetails  # noqa: E402
+from cirro.places_rain import PlacesRain  # noqa: E402
 from cirro.places_view import PlacesView  # noqa: E402
 from cirro.radar_layer import RadarLayer  # noqa: E402
 from cirro import radar_source  # noqa: E402
@@ -160,6 +162,7 @@ class Window(Adw.ApplicationWindow):
 
         # Sidebar with the list of places (issue #18).
         self.sidebar = PlacesView(self.places)
+        self.places_rain = PlacesRain(self.places, self.sidebar.set_rain)
         self.sidebar.connect("activated",
                              lambda _, place_id: self._select(place_id, centre=True))
         sidebar_header = Adw.HeaderBar()
@@ -220,6 +223,9 @@ class Window(Adw.ApplicationWindow):
             css_classes=["flat"], tooltip_text="Place Actions")
         self.nowcast = NowcastView(self._place_actions)
         bottom.prepend(self.nowcast)
+        # Sunrise, sunset and wind at the place (issues #54, #59).
+        self.details = PlaceDetails(live=not os.environ.get("CIRRO_DEMO_DATA"))
+        self.nowcast.append(self.details)
 
         # Breakpoints: only the last matching one applies.
         def breakpoint(condition, *setters):
@@ -274,6 +280,7 @@ class Window(Adw.ApplicationWindow):
         if self.layers.radar:
             self.timebar.set_frames(self._entries, t0)
         self.nowcast.set_frames(self._entries, t0)
+        self.places_rain.set_frames(self._entries, t0)
         self._update_banner()
 
     def _is_rendered(self, index):
@@ -435,6 +442,7 @@ class Window(Adw.ApplicationWindow):
         self._title.set_title(title)
         self._content.set_title(title)
         self.nowcast.set_place(position, label)
+        self.details.set_place(position)
 
     # Place actions
 
