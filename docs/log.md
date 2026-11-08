@@ -1,5 +1,8 @@
 # Directory Update Log
 
+## 2026-11-08
+* **Update**: `AGENTS.md` imports `agents/core.md` and `agents/gtk-app.md` from phosh-toolkit instead of its whole `AGENTS.md`; repeated shared rules removed (toolkit decision "lean agent rules", to use fewer tokens per session).
+
 ## 2026-11-07
 * **Update**: [Places](places.md) list rows start with each place's rain status ("Rain in 35 min", "Dry for 2 h"; issue #56), all places sampled in one pass over the frames (`radar.sample_points()`, `nowcast.series_many()`, `cirro/places_rain.py`).
 * **Update**: Station layers drawn by Cirro from WFS (issues #58, #71): wind arrows with Beaufort force and temperature, humidity, precipitation and evaporation values in OSD pills, thinned out where they would overlap ([map layers](map-layers.md)). Below the nowcast a line with sunrise and sunset (computed locally) and the wind at the nearest station within 50 km (issues #54, #59, [point nowcast](nowcast.md)). Pitfall recorded: `Gdk.RGBA(red=…)` ignores its arguments in PyGObject.
