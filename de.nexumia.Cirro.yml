@@ -144,10 +144,10 @@ modules:
       - /bin
     sources:
       - type: archive
-        url: https://github.com/HDFGroup/hdf5/releases/download/2.0.0/hdf5-2.0.0.tar.gz
+        url: https://github.com/HDFGroup/hdf5/releases/download/2.2.0/hdf5-2.2.0.tar.gz
         # The paths start with ./hdf5-2.0.0/.
         strip-components: 2
-        sha256: f4c2edc5668fb846627182708dbe1e16c60c467e63177a75b0b9f12c19d7efed
+        sha256: 1a1ab8209b35586fbc1aa279ba76d102130b95badcb20ca329587219112d8c16
         x-checker-data:
           type: json
           url: https://api.github.com/repos/HDFGroup/hdf5/releases/latest
