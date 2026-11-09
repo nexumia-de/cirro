@@ -50,22 +50,33 @@
   <screenshots>
     <screenshot type="default">
       <caption>Rain radar for Germany with the past hour</caption>
-      <image>https://github.com/nexumia-de/cirro/releases/download/v0.3.0/radar-phone-light.png</image>
+      <image>https://github.com/nexumia-de/cirro/releases/download/v0.4.0/radar-phone-light.png</image>
     </screenshot>
     <screenshot>
       <caption>Rain radar for Germany with the past hour</caption>
-      <image>https://github.com/nexumia-de/cirro/releases/download/v0.3.0/radar-desktop-light.png</image>
+      <image>https://github.com/nexumia-de/cirro/releases/download/v0.4.0/radar-desktop-light.png</image>
     </screenshot>
     <screenshot>
       <caption>Rain forecast one hour ahead</caption>
-      <image>https://github.com/nexumia-de/cirro/releases/download/v0.3.0/forecast-phone-light.png</image>
+      <image>https://github.com/nexumia-de/cirro/releases/download/v0.4.0/forecast-phone-light.png</image>
     </screenshot>
     <screenshot>
       <caption>Rain forecast one hour ahead</caption>
-      <image>https://github.com/nexumia-de/cirro/releases/download/v0.3.0/forecast-desktop-light.png</image>
+      <image>https://github.com/nexumia-de/cirro/releases/download/v0.4.0/forecast-desktop-light.png</image>
     </screenshot>
   </screenshots>
   <releases>
+    <release version="0.4.0" date="2026-11-09">
+      <description>
+        <ul>
+          <li>Choose from all weather maps of the Deutscher Wetterdienst with the new layers button: warnings, lightning, satellite images, temperature, precipitation forecasts and totals, gusts, pollen, UV index, waves and more, and tap the map to read the value at a point.</li>
+          <li>The places list shows for every place whether and when rain is coming, such as “Rain in 35 min” or “Dry for 2 h”.</li>
+          <li>Wind arrows and measured values from DWD stations on the map, and below the rain forecast the sunrise, sunset and the wind at the nearest station.</li>
+          <li>On the phone, swipe from right to left or tap the arrow in the places list to go back to the map.</li>
+          <li>The app is now called Weather Radar.</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.3.0" date="2026-11-02">
       <description>
         <ul>
