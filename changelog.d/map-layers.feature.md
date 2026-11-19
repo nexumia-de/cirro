@@ -1,1 +1,0 @@
-Choose from all weather maps of the Deutscher Wetterdienst with the new layers button: warnings, lightning, satellite images, temperature, precipitation forecasts and totals, gusts, pollen, UV index, waves and more, and tap the map to read the value at a point.
