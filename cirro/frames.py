@@ -41,7 +41,10 @@ class Entry:
 
 
 class FrameStore:
-    def __init__(self, cache_dir=None):
+    def __init__(self, cache_dir=None, names=_NAME):
+        """`names`: pattern of valid member names (DWD's RV by default;
+        cirro/dmi_source.py passes DMI's file names)."""
+        self._names = names
         self._lock = threading.Lock()
         self._entries = {}  # valid time → Entry
         self._analysis_time = None
@@ -55,7 +58,7 @@ class FrameStore:
     def add(self, name, data, save=True):
         """Add one downloaded member. A newer analysis replaces what an
         older one forecast for the same time."""
-        if not _NAME.fullmatch(name):
+        if not self._names.fullmatch(name):
             raise ValueError(f"unexpected member name {name!r}")
         analysis, valid, forecast = radar.peek(data)
         entry = Entry(name, analysis, valid, forecast, data)
@@ -134,7 +137,7 @@ class FrameStore:
         if not self._cache_dir or not self._cache_dir.is_dir():
             return
         for path in sorted(self._cache_dir.iterdir()):
-            if not _NAME.fullmatch(path.name):
+            if not self._names.fullmatch(path.name):
                 path.unlink(missing_ok=True)
                 continue
             try:

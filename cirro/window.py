@@ -8,7 +8,8 @@ gi.require_version("Shumate", "1.0")
 from gi.repository import Adw, Gio, GLib, GObject, Gtk, Shumate  # noqa: E402
 from phosh_toolkit.location import Location  # noqa: E402
 
-from cirro import radar_source  # noqa: E402
+from cirro import provider, radar_source  # noqa: E402
+from cirro.dmi_source import DmiSource  # noqa: E402
 from cirro.forward_swipe import ForwardSwipe  # noqa: E402
 from cirro.frames import FrameStore  # noqa: E402
 from cirro.layers.control import LayerControl  # noqa: E402
@@ -25,6 +26,7 @@ from cirro.radar_layer import RadarLayer  # noqa: E402
 from cirro.radar_source import RadarSource  # noqa: E402
 from cirro.renderer import CAPACITY, FrameRenderer  # noqa: E402
 from cirro.search import SearchDialog  # noqa: E402
+from cirro.source_switch import ATTRIBUTION, SourceSwitch  # noqa: E402
 from cirro.timebar import TimeBar, clock  # noqa: E402
 from cirro.warnings import cap  # noqa: E402
 from cirro.warnings.text import now as local_now  # noqa: E402
@@ -233,7 +235,9 @@ class Window(Adw.ApplicationWindow):
             self.maximize()
         else:
             cache = Path(GLib.get_user_cache_dir()) / "cirro" / "frames"
-            self.source = RadarSource(FrameStore(cache))
+            # DWD, or DMI for places in Denmark (issue #11).
+            self.source = SourceSwitch({"dwd": RadarSource(FrameStore(cache)), "dmi": DmiSource})
+            self.source.connect("notify::provider", self._on_provider)
         self.source.connect("changed", self._on_frames_changed)
         self.source.connect("failed", self._on_failed)
         self.source.connect("notify::stale", self._update_banner)
@@ -326,6 +330,9 @@ class Window(Adw.ApplicationWindow):
         self.warnings.hold("window", False)
         self.source.set_active(False)
         self.location.stop()
+
+    def _on_provider(self, source, _):
+        self.map.get_license().set_extra_text(ATTRIBUTION[source.provider])
 
     def _on_data_saver(self, *_):
         saving = self.data_saver.saving
@@ -515,6 +522,8 @@ class Window(Adw.ApplicationWindow):
         self._content.set_title(title)
         self.nowcast.set_place(position, label)
         self.details.set_place(position)
+        if position and isinstance(self.source, SourceSwitch):
+            self.source.set_provider(provider.for_point(*position))
         self._position = position
         self._update_warnings()
 

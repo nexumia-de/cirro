@@ -21,8 +21,8 @@ The app and its development need outbound HTTPS to:
 | `operations.osmfoundation.org`, `osmfoundation.org` | Nominatim usage policy and OSM attribution guidelines (docs only); proxy `403` on 2026-10-26, no connection on 2026-11-22 |
 | `nominatim.org` | Nominatim API documentation (docs only); proxy `403` on 2026-10-26 |
 | `wiki.osmfoundation.org`, `www.openstreetmap.org` | OSM attribution guidelines and copyright page (docs only); proxy `403` on 2026-10-26 |
-| `opendataapi.dmi.dk` | DMI radar API and downloads ([DMI decision](decisions/dmi-radar.md)); proxy `403` on 2026-10-26, no connection on 2026-11-22 |
-| `www.dmi.dk` | DMI open data documentation and terms; proxy `403` on 2026-10-26 |
+| `opendataapi.dmi.dk` | DMI radar API and downloads ([DMI decision](decisions/dmi-radar.md)); allowed and answering since 2026-11-22 |
+| `www.dmi.dk` | DMI open data documentation and terms; answering since 2026-11-22 |
 | `nexumia.de` | Only Flathub's linter (`appid-url-not-reachable`, excepted in CI); the cloud proxy refused it (`403`, 2026-10-25) |
 
 Plus the toolkit's needs (Flathub, apt, GitHub). In a fresh container,

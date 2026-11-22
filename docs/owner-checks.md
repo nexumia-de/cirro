@@ -65,16 +65,6 @@ portal and notification call ([notifications](notifications.md)).
 - [ ] Wait for a level-2 warning or rain at the default place: a notification shows; tapping it opens the app.
 - [ ] Battery: with notifications on and the app closed, compare the battery drain over a few hours with notifications off; record it in [notifications](notifications.md).
 
-# #11 DMI radar for Denmark (blocked hosts)
-
-The [decision](decisions/dmi-radar.md) is accepted; no code yet,
-because nothing about DMI's data could be verified or recorded: every
-DMI host was unreachable from the cloud environment (2026-10-26,
-2026-11-22).
-
-- [ ] Allow `opendataapi.dmi.dk` and `www.dmi.dk` in the cloud environment's network settings.
-- [ ] Then ask an agent to verify [data sources](data-sources.md) section 8 live, record one composite in `tests/data/`, and build the provider as the decision describes.
-
 # #43 Required check "lint" (repository settings)
 
 - [ ] Re-import `.github/rulesets/main.json` in the repository's rulesets, so the new `lint` job is a required check.

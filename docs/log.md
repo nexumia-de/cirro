@@ -1,6 +1,7 @@
 # Directory Update Log
 
 ## 2026-11-22
+* **Update**: DMI radar for Denmark built (issue #11, [decision](decisions/dmi-radar.md)): DMI facts verified live and recorded ([data sources](data-sources.md) section 8, including DMI's terms for mobile apps), oblique stereographic projection, DBZH → rain rate with the file's Z–R relation, full-range scans fetched only on start, return and Reload, provider chosen by the selected place. Checked live with a place in Copenhagen at 360×720.
 * **Update**: [Dependencies](dependencies.md): Cirro uses phosh-toolkit v0.7.1 (issue #49; v0.7.1 makes the toolkit's Flathub linter and release jobs check out submodules), also for the reusable workflows: `toolkit/` submodule with `flatpak/libshumate.yml`, a `phosh-toolkit` module, `phosh_toolkit.location.Location(200)`; `cirro/location.py` removed; tests and source runs use `toolkit/lib`. mypy baseline 26.
 * **Update**: [Places](places.md): a long press or right click on the map opens "Add Place Here" / "Show Rain Here" at that spot (issue #51, `cirro/map_press.py`). Checked at 360×720 and with a driver script for both items.
 * **Update**: [Dependencies](dependencies.md): moving libshumate, protobuf-c and the location wrapper to phosh-toolkit (issue #49) waits for the toolkit tag v0.7.0 (nexumia-de/phosh-toolkit#59, unmerged); the exact steps are an [owner check](owner-checks.md).
