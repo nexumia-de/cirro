@@ -45,3 +45,12 @@ Built and checked under Broadway with live warnings ([warnings](warnings.md)).
 Built with tests on a fake network monitor ([decision](decisions/metered-polling.md)).
 
 - [ ] On the phone on mobile data, run `CIRRO_DEBUG=1 flatpak run de.nexumia.Cirro` for 30 min: the log shows a radar download about every 15 min; note the MB/h in [radar architecture](radar-architecture.md).
+
+# #33 Main thread cost while playing (on device)
+
+`CIRRO_FPS` lets the update rate change without a build
+([radar architecture](radar-architecture.md), measurements). Not
+measured by an agent: the dev container has no Vulkan renderer.
+
+- [ ] On the phone, play at Normal for 60 s with `CIRRO_DEBUG=1 flatpak run --env=CIRRO_FPS=30 de.nexumia.Cirro` and again with `CIRRO_FPS=20`; note the main thread's CPU (per-thread `/proc/<pid>/task/*/stat`, as on 2026-10-26) and whether 20 looks as smooth.
+- [ ] Record both in the "Phone" table of [radar architecture](radar-architecture.md); if 20 is as smooth and clearly cheaper, ask an agent to set `timebar.FPS = 20`.

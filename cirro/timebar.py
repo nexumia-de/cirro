@@ -6,6 +6,7 @@ map crossfades between the two frames on either side of it
 (docs/decisions/smooth-playback.md)."""
 import logging
 import math
+import os
 from pathlib import Path
 
 import gi
@@ -28,6 +29,16 @@ FPS = 30
 # blended by the CPU, so update less often (docs/radar-architecture.md,
 # measurements).
 SOFTWARE_FPS = 10
+
+
+def fps_override(environ=os.environ):
+    """`CIRRO_FPS=<n>` (1–60) sets the update rate for measurements on
+    the phone (issue #33); None without a valid value."""
+    try:
+        value = int(environ.get("CIRRO_FPS", ""))
+    except ValueError:
+        return None
+    return value if 1 <= value <= 60 else None
 # A longer gap between two frame clock ticks (a stall, a hidden window)
 # does not make the playhead jump.
 MAX_TICK_SECONDS = 0.1
@@ -289,7 +300,8 @@ class TimeBar(Gtk.Box):
                 self._adjustment.set_value(0)
             self._last_tick = 0
             renderer = self.get_native().get_renderer() if self.get_native() else None
-            self._fps = SOFTWARE_FPS if isinstance(renderer, Gsk.CairoRenderer) else FPS
+            self._fps = fps_override() or (
+                SOFTWARE_FPS if isinstance(renderer, Gsk.CairoRenderer) else FPS)
             log.debug("playing at up to %d updates/s (%s)", self._fps,
                       type(renderer).__name__)
             # Driven by the frame clock, at most self._fps updates per second.

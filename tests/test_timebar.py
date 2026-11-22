@@ -114,3 +114,11 @@ def test_marks():
               if mark(e, hourly[i - 1] if i else None, 60)]
     assert len(marked) in (1, 2)     # local midnight within 30 h
     assert not mark(entry(0, False), None, 1440)
+
+
+def test_fps_override():
+    from cirro.timebar import fps_override
+    assert fps_override({}) is None
+    assert fps_override({"CIRRO_FPS": "20"}) == 20
+    assert fps_override({"CIRRO_FPS": "0"}) is None
+    assert fps_override({"CIRRO_FPS": "fast"}) is None

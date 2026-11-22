@@ -295,6 +295,15 @@ RSS and CPU time; starting playback logs the GSK renderer in use and
 the update rate chosen for it ("playing at up to 30 updates/s
 (VulkanRenderer)").
 
+`CIRRO_FPS=<1–60>` overrides that rate (issue #33), so the main
+thread's ≈ 0.5 core can be compared at 20 and 30 updates/s on the
+phone without a new build; the steps are an
+[owner check](owner-checks.md). If 20 looks as smooth and costs
+clearly less, `timebar.FPS` becomes 20 and the
+[smooth playback decision](decisions/smooth-playback.md) records the
+numbers; otherwise the next step is a profile of the main thread while
+playing.
+
 # Fallback
 
 If decoding RV turns out impractical (see the
