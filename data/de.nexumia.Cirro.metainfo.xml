@@ -50,22 +50,40 @@
   <screenshots>
     <screenshot type="default">
       <caption>Rain radar for Germany with the past hour</caption>
-      <image>https://github.com/nexumia-de/cirro/releases/download/v0.4.0/radar-phone-light.png</image>
+      <image>https://github.com/nexumia-de/cirro/releases/download/v0.5.0/radar-phone-light.png</image>
     </screenshot>
     <screenshot>
       <caption>Rain radar for Germany with the past hour</caption>
-      <image>https://github.com/nexumia-de/cirro/releases/download/v0.4.0/radar-desktop-light.png</image>
+      <image>https://github.com/nexumia-de/cirro/releases/download/v0.5.0/radar-desktop-light.png</image>
     </screenshot>
     <screenshot>
       <caption>Rain forecast one hour ahead</caption>
-      <image>https://github.com/nexumia-de/cirro/releases/download/v0.4.0/forecast-phone-light.png</image>
+      <image>https://github.com/nexumia-de/cirro/releases/download/v0.5.0/forecast-phone-light.png</image>
     </screenshot>
     <screenshot>
       <caption>Rain forecast one hour ahead</caption>
-      <image>https://github.com/nexumia-de/cirro/releases/download/v0.4.0/forecast-desktop-light.png</image>
+      <image>https://github.com/nexumia-de/cirro/releases/download/v0.5.0/forecast-desktop-light.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Temperature forecast and other weather maps</caption>
+      <image>https://github.com/nexumia-de/cirro/releases/download/v0.5.0/temperature-phone-light.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Temperature forecast and other weather maps</caption>
+      <image>https://github.com/nexumia-de/cirro/releases/download/v0.5.0/temperature-desktop-light.png</image>
     </screenshot>
   </screenshots>
   <releases>
+    <release version="0.5.0" date="2026-11-22">
+      <description>
+        <ul>
+          <li>Long-press or right-click the map to add a place there or to see the rain at that spot.</li>
+          <li>Optional notifications about new weather warnings and rain starting soon at your default place, also when the app is closed.</li>
+          <li>On mobile data the radar updates every 15 minutes to save data; turn this off in the preferences.</li>
+          <li>Official weather warnings for every place, with a detail page for each warning.</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.4.0" date="2026-11-19">
       <description>
         <ul>
