@@ -23,6 +23,7 @@ python.install_sources(
   'cirro/legend.py',
   'cirro/location.py',
   'cirro/main.py',
+  'cirro/map_press.py',
   'cirro/metainfo.py',
   'cirro/namer.py',
   'cirro/nowcast.py',

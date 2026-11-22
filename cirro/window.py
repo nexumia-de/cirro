@@ -13,6 +13,7 @@ from cirro.frames import FrameStore  # noqa: E402
 from cirro.layers.control import LayerControl  # noqa: E402
 from cirro.legend import Legend  # noqa: E402
 from cirro.location import Location  # noqa: E402
+from cirro.map_press import MapPress  # noqa: E402
 from cirro.namer import Namer  # noqa: E402
 from cirro.nowcast_view import NowcastView  # noqa: E402
 from cirro.pins import PLACE_ICON, PinLayer, status  # noqa: E402
@@ -138,6 +139,11 @@ class Window(Adw.ApplicationWindow):
         self.pins = PinLayer(viewport, self.places)
         self.pins.connect("activated", lambda _, place_id: self._select(place_id))
         self.map.add_overlay_layer(self.pins)
+        # Long press or right click: add a place there, or show its rain
+        # (issue #51).
+        self._press = MapPress(self.map.get_map(), viewport, lambda: not self._picking)
+        self._press.connect("add", lambda _, lat, lon: self._add_at(lat, lon))
+        self._press.connect("show", lambda _, lat, lon: self._show_point(None, lat, lon))
         # The fixed pin for choosing a place, at the centre of the map.
         # Styled like the selected pin, so it stands out from the saved ones.
         self._crosshair = Gtk.Button(
@@ -527,6 +533,11 @@ class Window(Adw.ApplicationWindow):
         place = self.places.add(latitude, longitude, default_name=name)
         if not name:
             self.namer.request(place)
+        self._select(place.id)
+
+    def _add_at(self, latitude, longitude):
+        place = self.places.add(latitude, longitude)
+        self.namer.request(place)
         self._select(place.id)
 
     def _search(self, _=None, title="Search Places", chosen=None):

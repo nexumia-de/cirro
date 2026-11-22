@@ -88,3 +88,10 @@ Waits for nexumia-de/phosh-toolkit#59 and the tag **v0.7.0**
 
 - [ ] Merge nexumia-de/phosh-toolkit#59 and run the toolkit's *Tag release* workflow with version `0.7.0`.
 - [ ] Ask an agent to: add the toolkit as submodule `toolkit` at `v0.7.0`; replace the `protobuf-c` and `libshumate` modules of `de.nexumia.Cirro.yml` with `toolkit/flatpak/libshumate.yml`; add the `phosh-toolkit` module (tag `v0.7.0` and its commit); use `Location(DISTANCE_M)` from `phosh_toolkit.location` and delete `cirro/location.py`; set `PYTHONPATH=../phosh-toolkit/lib` for the tests; update `docs/dependencies.md` and the toolkit's "used by" list.
+
+# #51 Long press on the map (on device)
+
+Checked with the right click's code path under Broadway and a driver
+script ([places](places.md)).
+
+- [ ] On the phone, long-press an empty spot of the map: the menu opens there; "Add Place Here" adds a named place, "Show Rain Here" shows the nowcast for that spot. A short tap and panning still only move the map.

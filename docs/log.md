@@ -1,6 +1,7 @@
 # Directory Update Log
 
 ## 2026-11-22
+* **Update**: [Places](places.md): a long press or right click on the map opens "Add Place Here" / "Show Rain Here" at that spot (issue #51, `cirro/map_press.py`). Checked at 360×720 and with a driver script for both items.
 * **Update**: [Dependencies](dependencies.md): moving libshumate, protobuf-c and the location wrapper to phosh-toolkit (issue #49) waits for the toolkit tag v0.7.0 (nexumia-de/phosh-toolkit#59, unmerged); the exact steps are an [owner check](owner-checks.md).
 * **Update**: [Development environment](dev-environment.md) code quality (issue #43): Ruff lint and format (`pyproject.toml`, the code formatted once), mypy with a ratchet (`build-aux/mypy_ratchet.py`, baseline of 27), pinned in `requirements-dev.txt` with a Dependabot `pip` entry; new CI job `lint`, added to the required checks in `.github/rulesets/main.json` (the owner re-imports the ruleset).
 * **Update**: Decision [DMI as second radar source](decisions/dmi-radar.md) accepted (issue #11): a second provider chosen by location, past frames only for Denmark; the DMI hosts were still unreachable, so verifying, recording a composite and allowing the hosts are [owner checks](owner-checks.md) before any code.

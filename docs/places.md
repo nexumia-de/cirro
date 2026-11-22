@@ -29,6 +29,13 @@ New places come from the "+" menu of the places list ("Add Place"):
   the map under the pin; "Save" adds a place at the map centre and
   selects it. Pins and rows don't change the selection meanwhile.
 
+A **long press** (touch) or a **right click** (mouse) on the map opens
+a small menu at that spot (issue #51, `cirro/map_press.py`): "Add
+Place Here" saves a place there, names it from Nominatim and selects
+it; "Show Rain Here" shows the nowcast there as an unsaved point ("Not
+saved", with "Add Place" in its menu), like a search result. A plain
+tap still only pans. Not offered while choosing a place on the map.
+
 Places can't be moved. To change a spot, add a new place and delete
 the old one.
 
