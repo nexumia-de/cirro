@@ -55,6 +55,16 @@ Flathub requires for bundled dependencies (phosh-toolkit
 | `hdf5` | 2.0.0 | BSD-3-Clause[^hdf5] | – (zlib from the runtime; no szip) | GitHub releases (JSON checker) |
 | `python3-h5py` | 3.16.0 | BSD-3-Clause[^h5py] | – (links the `hdf5` module) | PyPI sdist |
 
+# Planned: shared modules from phosh-toolkit
+
+`libshumate`, `protobuf-c` and `cirro/location.py` move to phosh-toolkit
+(issue #49, nexumia-de/phosh-toolkit#59: `flatpak/libshumate.yml` with
+the same versions as here, 1.7.0 and 1.5.2, and
+`phosh_toolkit.location.Location(distance_m)`, the same code as
+`cirro/location.py` with the 200 m distance as an argument). Cirro may
+only pin a toolkit tag; the first tag with both is **v0.7.0**, not yet
+created on 2026-11-22. The switch is an [owner check](owner-checks.md).
+
 # Licence texts in the bundle
 
 All under `/app/share/licenses/de.nexumia.Cirro/<module>/`:
