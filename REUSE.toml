@@ -31,6 +31,13 @@ precedence = "override"
 SPDX-FileCopyrightText = ["Deutscher Wetterdienst", "GeoBasis-DE / BKG 2021"]
 SPDX-License-Identifier = "CC-BY-4.0"
 
+# Our own description of the recorded layer answers next to them.
+[[annotations]]
+path = "tests/data/demo/layers/recorded.json"
+precedence = "override"
+SPDX-FileCopyrightText = "2026 suitably"
+SPDX-License-Identifier = "AGPL-3.0-or-later"
+
 # Nominatim answers recorded for tests: OpenStreetMap data (ODbL 1.0).
 [[annotations]]
 path = "tests/data/nominatim/**"

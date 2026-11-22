@@ -42,6 +42,7 @@ issues below decide which ones and how they are presented.
 | `manager.py` | Base layer plus overlays, overlays following the base layer's time (nearest own step within half a step, at least 10 min), the map's source note with extra credits, the base layer's legend, tap values. |
 | `control.py` | The window side: layers button at the end of the time bar, the time bar's entries for a DWD base layer, legend, failure toast, tap → toast. |
 | `wfs.py`, `station_view.py`, `station_layer.py` | Station layers (`source="wfs"`): time steps from the layer's WMS capabilities, one GeoJSON per step for all 72 stations, drawn by Cirro: wind as an arrow pointing where it blows with the Beaufort force, other values as numbers, in OSD pills; labels that would come closer than 10 px are left out. A tap names the nearest station within 30 km. |
+| `demo.py` | Demo mode for store screenshots: with `CIRRO_DEMO_DATA` and its `layers/` directory every WMS request is answered from recorded files, "now" is the recording time and images cover the recorded area. |
 | `picker.py`, `legend.py`, `settings.py` | The picker dialog, the legend widget, the saved choice (`settings.ini`, `[layers]`). |
 
 - The radar stays its own base layer with its own timeline and
@@ -54,6 +55,14 @@ issues below decide which ones and how they are presented.
 - `app.layers` opens the picker, `app.show-layer("id:variant")` shows a
   layer (for screenshots and tests). In demo mode the choice is neither
   read nor saved.
+- Store screenshot of a layer (issue #74): `tests/data/demo/layers/`
+  holds the temperature layer (`Icon-eu_reg00625_fd_gl_T`) as recorded
+  on 2026-11-22 04:53 UTC: its capabilities, legend JSON and three
+  `GetMap` images (04:00, 05:00, 06:00 UTC, 813×800 px over 46.5–56 °N,
+  2.5–18 °E), plus `recorded.json` with the time and area.
+  `release.toml` shows it with `app.show-layer('temperature')`. To
+  record another layer, fetch its answers with `wms.get()` and save
+  them under the names `demo.file_for(url)` gives; never edit them.
 - Checked on 2026-11-07: every catalogue entry and variant (137) loads
   its capabilities, an image and its legend from the live server;
   screenshots at 360×720 (light and dark) and 1000×700.

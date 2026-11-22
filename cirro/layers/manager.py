@@ -9,7 +9,7 @@ from datetime import datetime, timedelta, timezone
 
 from gi.repository import GLib, GObject
 
-from cirro.layers import catalogue, geometry, info, legend_data, settings, wms
+from cirro.layers import catalogue, demo, geometry, info, legend_data, settings, wms
 from cirro.layers.cache import ImageCache
 from cirro.layers.station_view import StationView
 from cirro.layers.view import LayerView
@@ -145,7 +145,7 @@ class LayerManager(GObject.Object):
         """(time bar entries, the "now" time) of the DWD base layer."""
         if self.base is None or not self.base.steps:
             return [], None
-        now = datetime.now(timezone.utc)
+        now = demo.now()
         steps = [Step(t, t > now) for t in self.base.steps]
         return steps, self.base.steps[self.base.now_index(now)]
 

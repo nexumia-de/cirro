@@ -13,6 +13,7 @@ import xml.etree.ElementTree as ET
 from dataclasses import dataclass
 
 from cirro import USER_AGENT
+from cirro.layers import demo
 from cirro.layers.timeaxis import TimeAxis, format_time, parse_time
 
 BASE_URL = "https://maps.dwd.de/geoserver/dwd/"
@@ -22,7 +23,10 @@ log = logging.getLogger(__name__)
 
 
 def get(url, timeout=30):
-    """GET `url` → (bytes, content type). Raises on HTTP errors."""
+    """GET `url` → (bytes, content type). Raises on HTTP errors. In demo
+    mode the answer is a recorded file (cirro/layers/demo.py)."""
+    if demo.active():
+        return demo.get(url)
     request = urllib.request.Request(url, headers={
         "User-Agent": USER_AGENT, "Accept-Encoding": "gzip"})
     started = time.monotonic()

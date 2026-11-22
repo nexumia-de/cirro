@@ -1,0 +1,71 @@
+{"Legend": [{
+  "layerName": "Icon-eu_reg00625_fd_gl_T",
+  "title": "Temperatur auf Höhen über Grund in m aus ICON-EU",
+  "rules": [  {
+    "name": "style for temperature 2m in ICAO standard atmosphere, data in celsius, labeled in celsius",
+    "title": "style for temperature 2m in ICAO standard atmosphere, data in celsius, labeled in celsius",
+    "symbolizers": [{"Raster":     {
+      "colormap":       {
+        "entries":         [
+                    {
+            "label": "< -7.5 °C",
+            "quantity": "-7.5",
+            "color": "#9167A3"
+          },
+                    {
+            "label": "-5",
+            "quantity": "-2.5",
+            "color": "#8172A8"
+          },
+                    {
+            "label": "0",
+            "quantity": "2.5",
+            "color": "#8292BD"
+          },
+                    {
+            "label": "5",
+            "quantity": "7.5",
+            "color": "#86B1D1"
+          },
+                    {
+            "label": "10",
+            "quantity": "12.5",
+            "color": "#96C6E3"
+          },
+                    {
+            "label": "15",
+            "quantity": "17.5",
+            "color": "#E6E6E6"
+          },
+                    {
+            "label": "20",
+            "quantity": "22.5",
+            "color": "#F7D640"
+          },
+                    {
+            "label": "25",
+            "quantity": "27.5",
+            "color": "#F0AE66"
+          },
+                    {
+            "label": "30",
+            "quantity": "32.5",
+            "color": "#ED9C67"
+          },
+                    {
+            "label": "35",
+            "quantity": "37.5",
+            "color": "#EB8963"
+          },
+                    {
+            "label": "> 37.5",
+            "quantity": "90",
+            "color": "#E87C66"
+          }
+        ],
+        "type": "intervals"
+      },
+      "opacity": "1.0"
+    }}]
+  }]
+}]}

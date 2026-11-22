@@ -13,7 +13,7 @@ import gi
 gi.require_version("Gdk", "4.0")
 from gi.repository import Gdk, GLib, GObject  # noqa: E402
 
-from cirro.layers import wms  # noqa: E402
+from cirro.layers import demo, wms  # noqa: E402
 from cirro.layers.timeaxis import latest_at, usable  # noqa: E402
 from cirro.radar_layer import RadarLayer  # noqa: E402
 
@@ -123,7 +123,7 @@ class LayerView(GObject.Object):
         return GLib.SOURCE_REMOVE
 
     def _update_steps(self, now=None):
-        now = now or datetime.now(timezone.utc)
+        now = now or demo.now()
         axis = self.caps.axis
         if axis is None:
             steps = []
@@ -141,7 +141,7 @@ class LayerView(GObject.Object):
             self.emit("steps-changed")
 
     def now_index(self, now=None):
-        return latest_at(self.steps, now or datetime.now(timezone.utc))
+        return latest_at(self.steps, now or demo.now())
 
     def nearest(self, time_):
         """The step to show for a time of the base layer: the nearest one,
@@ -167,7 +167,8 @@ class LayerView(GObject.Object):
         self._show()
 
     def set_view(self, view):
-        self._view = view
+        # Recorded images cover one fixed area (store screenshots).
+        self._view = demo.view() if demo.active() and view is not None else view
         self._show()
 
     def _url(self, time_, view):

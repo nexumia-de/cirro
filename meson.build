@@ -50,6 +50,7 @@ python.install_sources(
   'cirro/layers/cache.py',
   'cirro/layers/catalogue.py',
   'cirro/layers/control.py',
+  'cirro/layers/demo.py',
   'cirro/layers/geometry.py',
   'cirro/layers/info.py',
   'cirro/layers/legend.py',
