@@ -7,6 +7,7 @@ from the immutable timestamped tar; past analyses are the first member
 of older tars, fetched with two range requests each
 (docs/data-sources.md, section 1). No GTK, so it runs in worker threads.
 """
+
 import io
 import logging
 import re
@@ -16,7 +17,7 @@ import time
 import urllib.error
 import urllib.request
 from dataclasses import dataclass
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 from cirro import USER_AGENT
 
@@ -37,11 +38,11 @@ def received_bytes():
 
 def stamp(time_):
     """UTC datetime → the `YYYYMMDD_HHMM` part of DWD file names."""
-    return time_.astimezone(timezone.utc).strftime(_STAMP)
+    return time_.astimezone(UTC).strftime(_STAMP)
 
 
 def parse_stamp(text):
-    return datetime.strptime(text, _STAMP).replace(tzinfo=timezone.utc)
+    return datetime.strptime(text, _STAMP).replace(tzinfo=UTC)
 
 
 def tar_url(analysis_time, base_url=BASE_URL):
@@ -72,11 +73,10 @@ def _get(url, first=None, last=None, etag=None, timeout=30):
     global _received
     with _received_lock:
         _received += len(body)
-    log.debug("%s: %d, %d bytes in %.2f s", url, status, len(body),
-              time.monotonic() - started)
+    log.debug("%s: %d, %d bytes in %.2f s", url, status, len(body), time.monotonic() - started)
     if first is not None and status != 206:
         # Server ignored the range: cut the requested part out ourselves.
-        body = body[first:last + 1]
+        body = body[first : last + 1]
     return body, tag
 
 
@@ -109,8 +109,11 @@ def fetch_tar(analysis_time, base_url=BASE_URL):
     analysis itself and its forecasts up to +120 min."""
     data, _ = _get(tar_url(analysis_time, base_url))
     with tarfile.open(fileobj=io.BytesIO(data)) as tar:
-        return [(member.name, tar.extractfile(member).read())
-                for member in tar.getmembers() if member.isfile()]
+        return [
+            (member.name, tar.extractfile(member).read())
+            for member in tar.getmembers()
+            if member.isfile()
+        ]
 
 
 def fetch_analysis(analysis_time, base_url=BASE_URL):
@@ -135,12 +138,22 @@ RETRY = timedelta(minutes=1)
 # How long to retry every minute when a new analysis is late.
 RETRY_FOR = timedelta(minutes=10)
 POLL = timedelta(minutes=5)
+# On a metered connection with "Save Mobile Data" on (issue #34): one
+# analysis in three, a third of the bandwidth (docs/radar-architecture.md).
+METERED_STEP = timedelta(minutes=15)
 # Older data is not shown as current (stale guard).
 STALE_AFTER = timedelta(minutes=30)
 
 
-def next_poll(analysis_time, now):
-    """Delay until the next poll, given the newest analysis we have."""
+def next_poll(analysis_time, now, metered=False):
+    """Delay until the next poll, given the newest analysis we have.
+    `metered`: wait for the analysis 15 min later and retry every 5 min
+    instead of every minute."""
+    if metered:
+        if analysis_time is None:
+            return POLL
+        due = analysis_time + METERED_STEP + PUBLISH_DELAY
+        return due - now if due - now >= RETRY else POLL
     if analysis_time is None:
         return POLL
     due = analysis_time + STEP + PUBLISH_DELAY

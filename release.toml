@@ -20,3 +20,8 @@ caption = "Rain radar for Germany with the past hour"
 name = "forecast"
 caption = "Rain forecast one hour ahead"
 actions = ["app.step-time(12)"]
+
+[[screenshots.shot]]
+name = "temperature"
+caption = "Temperature forecast and other weather maps"
+actions = ["app.show-layer('temperature')"]

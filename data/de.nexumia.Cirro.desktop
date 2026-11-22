@@ -9,4 +9,5 @@ Terminal=false
 Categories=GTK;Utility;
 Keywords=cirro;weather;rain;radar;forecast;nowcast;Wetterblick;
 StartupNotify=true
+X-GNOME-UsesNotifications=true
 X-Purism-FormFactor=Workstation;Mobile;

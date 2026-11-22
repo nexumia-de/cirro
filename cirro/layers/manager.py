@@ -2,14 +2,15 @@
 layer with its own time steps) and any number of overlays, which follow
 the base layer's time. Keeps the map's source note in step with them
 and remembers the choice (docs/map-layers.md)."""
+
 import logging
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 
 from gi.repository import GLib, GObject
 
-from cirro.layers import catalogue, geometry, info, legend_data, settings, wms
+from cirro.layers import catalogue, demo, geometry, info, legend_data, settings, wms
 from cirro.layers.cache import ImageCache
 from cirro.layers.station_view import StationView
 from cirro.layers.view import LayerView
@@ -27,6 +28,7 @@ PREFETCH = 4
 @dataclass(frozen=True)
 class Step:
     """A time bar entry of a DWD base layer (cirro/timebar.py)."""
+
     valid_time: datetime
     forecast: bool
 
@@ -53,16 +55,16 @@ class LayerManager(GObject.Object):
         self._viewport = simple_map.get_viewport()
         self._radar_layer = radar_layer
         self._pins = pins
-        self._executor = ThreadPoolExecutor(max_workers=4,
-                                            thread_name_prefix="layers")
+        self._executor = ThreadPoolExecutor(max_workers=4, thread_name_prefix="layers")
         self._cache = ImageCache()
         self._legends = {}
         self._debounce = 0
         self._persist = persist
-        self.base_id, self.base_variant, overlays = \
+        self.base_id, self.base_variant, overlays = (
             settings.load() if persist else (catalogue.RADAR, 0, {})
-        self.base = None          # LayerView of a DWD base layer
-        self.overlays = {}        # id → LayerView
+        )
+        self.base = None  # LayerView of a DWD base layer
+        self.overlays = {}  # id → LayerView
         self._time = None
         for prop in ("latitude", "longitude", "zoom-level", "rotation"):
             self._viewport.connect(f"notify::{prop}", self._on_moved)
@@ -117,13 +119,13 @@ class LayerManager(GObject.Object):
     def _save(self):
         if not self._persist:
             return
-        settings.save(self.base_id, self.base_variant,
-                      {k: v.variant_index for k, v in self.overlays.items()})
+        settings.save(
+            self.base_id, self.base_variant, {k: v.variant_index for k, v in self.overlays.items()}
+        )
 
     def _add(self, layer, variant, behind):
         kind = StationView if layer.source == "wfs" else LayerView
-        view = kind(layer, variant, self._viewport, self._cache,
-                    self._executor)
+        view = kind(layer, variant, self._viewport, self._cache, self._executor)
         self._map.insert_layer_behind(view.drawing, behind)
         view.connect("failed", lambda v, message: self.emit("failed", v.layer.title))
         view.connect("image", lambda *_: self.emit("ready"))
@@ -145,7 +147,7 @@ class LayerManager(GObject.Object):
         """(time bar entries, the "now" time) of the DWD base layer."""
         if self.base is None or not self.base.steps:
             return [], None
-        now = datetime.now(timezone.utc)
+        now = demo.now()
         steps = [Step(t, t > now) for t in self.base.steps]
         return steps, self.base.steps[self.base.now_index(now)]
 
@@ -160,7 +162,7 @@ class LayerManager(GObject.Object):
             return
         index = min(max(index, 0), len(self.base.steps) - 1)
         self.base.set_time(self.base.steps[index])
-        self.base.prefetch(self.base.steps[index + 1:index + 1 + PREFETCH])
+        self.base.prefetch(self.base.steps[index + 1 : index + 1 + PREFETCH])
         self.follow(self.base.steps[index])
 
     def ready(self, index):
@@ -191,11 +193,15 @@ class LayerManager(GObject.Object):
         width, height = self._map.get_width(), self._map.get_height()
         if width <= 1 or height <= 1:
             return None
-        return geometry.view(self._viewport.get_latitude(),
-                             self._viewport.get_longitude(),
-                             self._viewport.get_zoom_level(), width, height,
-                             self._map.get_scale_factor(),
-                             self._viewport.get_rotation())
+        return geometry.view(
+            self._viewport.get_latitude(),
+            self._viewport.get_longitude(),
+            self._viewport.get_zoom_level(),
+            width,
+            height,
+            self._map.get_scale_factor(),
+            self._viewport.get_rotation(),
+        )
 
     def _on_moved(self, *_):
         if self._debounce:
@@ -238,8 +244,7 @@ class LayerManager(GObject.Object):
             self.emit("legend", self._legends[key])
             return
         self.emit("legend", None)
-        future = self._executor.submit(wms.fetch_legend, variant.wms[0],
-                                       variant.style)
+        future = self._executor.submit(wms.fetch_legend, variant.wms[0], variant.style)
 
         def done(f):
             try:
@@ -253,6 +258,7 @@ class LayerManager(GObject.Object):
             if self.base is not None and self.base.variant == variant:
                 self.emit("legend", legend)
             return GLib.SOURCE_REMOVE
+
         future.add_done_callback(lambda f: GLib.idle_add(done, f))
 
     def value_at(self, latitude, longitude, callback, limit=2):
@@ -270,20 +276,32 @@ class LayerManager(GObject.Object):
                 if text:
                     asked += 1
                     when = f" · {clock(view.time)}" if view.time else ""
-                    GLib.idle_add(lambda t=f"{view.layer.title}: {text}{when}":
-                                  (callback(t), GLib.SOURCE_REMOVE)[1])
+                    GLib.idle_add(
+                        lambda t=f"{view.layer.title}: {text}{when}": (
+                            callback(t),
+                            GLib.SOURCE_REMOVE,
+                        )[1]
+                    )
                 continue
             time_ = None if view.timeless else view.time
             if not view.timeless and time_ is None:
                 continue
-            url = wms.feature_info_url(view.variant.wms, latitude, longitude,
-                                       time_, view.variant.cql,
-                                       view.caps.reference_time,
-                                       view.layer.value.fields,
-                                       view.variant.dims)
+            url = wms.feature_info_url(
+                view.variant.wms,
+                latitude,
+                longitude,
+                time_,
+                view.variant.cql,
+                view.caps.reference_time,
+                view.layer.value.fields,
+                view.variant.dims,
+            )
             future = self._executor.submit(wms.fetch_feature_info, url)
-            future.add_done_callback(lambda f, layer=view.layer, t=time_: GLib.idle_add(
-                self._value_done, f, layer, t, callback))
+            future.add_done_callback(
+                lambda f, layer=view.layer, t=time_: GLib.idle_add(
+                    self._value_done, f, layer, t, callback
+                )
+            )
             asked += 1
         return asked > 0
 

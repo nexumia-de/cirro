@@ -10,3 +10,8 @@
 .cirro-legend-chip {
   min-width: 10px;
 }
+
+/* Warnings line under the nowcast: a full-width button. */
+.cirro-warnings {
+  padding: 4px 6px;
+}

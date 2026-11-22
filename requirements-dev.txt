@@ -1,0 +1,11 @@
+# Development tools for the "lint" job in .github/workflows/tests.yml and
+# local checks (docs/dev-environment.md, code quality). Not bundled.
+# Exact pins; Dependabot (pip) proposes updates.
+ruff==0.17.6
+mypy==2.4.1
+# mypy's dependencies
+ast_serialize==0.13.1
+librt==0.17.0
+mypy_extensions==1.2.0
+pathspec==1.1.1
+typing_extensions==4.16.0

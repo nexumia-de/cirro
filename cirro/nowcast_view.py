@@ -1,5 +1,6 @@
 """Point nowcast below the map: a sentence and a 2-hour bar chart of the
 rain rate at the selected place (docs/nowcast.md)."""
+
 import threading
 
 import gi
@@ -32,11 +33,12 @@ class NowcastChart(Gtk.Widget):
     HEIGHT = 72
 
     def __init__(self):
-        super().__init__(hexpand=True, accessible_role=Gtk.AccessibleRole.IMG,
-                         css_classes=["caption", "numeric"])
+        super().__init__(
+            hexpand=True, accessible_role=Gtk.AccessibleRole.IMG, css_classes=["caption", "numeric"]
+        )
         self.update_property(
-            [Gtk.AccessibleProperty.LABEL],
-            ["Rain rate from one hour ago to two hours ahead"])
+            [Gtk.AccessibleProperty.LABEL], ["Rain rate from one hour ago to two hours ahead"]
+        )
         self._values = []
 
     def set_values(self, values):
@@ -82,7 +84,7 @@ class NowcastChart(Gtk.Widget):
         def x_of(minutes):
             return gutter + (minutes - FIRST) / STEP * slot
 
-        for (layout, _, h), rate in zip(labels, GUIDES):
+        for (layout, _, h), rate in zip(labels, GUIDES, strict=False):
             y = round(bottom - nowcast.bar_height(rate) * plot)
             rect(ink(0.15), gutter, y, width - gutter, 1)
             text(layout, ink(0.55), 0, y - h / 2)
@@ -104,12 +106,11 @@ class NowcastChart(Gtk.Widget):
         ticks = [(now_x, "Now")]
         for value in self._values:
             if value.minutes != 0 and value.valid_time.astimezone().minute == 0:
-                ticks.append((x_of(value.minutes) + slot / 2,
-                              clock(value.valid_time)))
+                ticks.append((x_of(value.minutes) + slot / 2, clock(value.valid_time)))
         for x, label in ticks:
             layout, w, _ = self._layout(label)
             left = min(max(x - w / 2, gutter), width - w)
-            if any(left < r + 6 and left + w + 6 > l for l, r in taken):
+            if any(left < end + 6 and left + w + 6 > start for start, end in taken):
                 continue
             taken.append((left, left + w))
             if label != "Now":
@@ -123,13 +124,18 @@ class NowcastView(Gtk.Box):
     shown next to the place, e.g. its menu."""
 
     def __init__(self, actions=None):
-        super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=6,
-                         margin_start=12, margin_end=12, margin_top=6)
+        super().__init__(
+            orientation=Gtk.Orientation.VERTICAL,
+            spacing=6,
+            margin_start=12,
+            margin_end=12,
+            margin_top=6,
+        )
         row = Gtk.Box(spacing=6)
-        self._sentence = Gtk.Label(xalign=0, hexpand=True, wrap=True,
-                                   css_classes=["heading"])
-        self._place = Gtk.Label(xalign=1, valign=Gtk.Align.BASELINE,
-                                css_classes=["caption", "dim-label"])
+        self._sentence = Gtk.Label(xalign=0, hexpand=True, wrap=True, css_classes=["heading"])
+        self._place = Gtk.Label(
+            xalign=1, valign=Gtk.Align.BASELINE, css_classes=["caption", "dim-label"]
+        )
         row.append(self._sentence)
         row.append(self._place)
         if actions:
@@ -139,8 +145,7 @@ class NowcastView(Gtk.Box):
         # The window's breakpoint hides the chart itself; this box hides
         # it while there is nothing to show.
         self.chart = NowcastChart()
-        self._chart_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL,
-                                  visible=False)
+        self._chart_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, visible=False)
         self._chart_box.append(self.chart)
         self.append(self._chart_box)
 
@@ -155,8 +160,7 @@ class NowcastView(Gtk.Box):
         self._entries = list(entries)
         self._analysis_time = analysis_time
         names = {e.name for e in self._entries}
-        self._cache = {k: v for k, v in list(self._cache.items())
-                       if k[0] in names}
+        self._cache = {k: v for k, v in list(self._cache.items()) if k[0] in names}
         self._start()
 
     def set_place(self, position, label=""):
@@ -186,8 +190,13 @@ class NowcastView(Gtk.Box):
 
         def work():
             values = nowcast.series(
-                entries, analysis_time, latitude, longitude, cache,
-                cancelled=lambda: generation != self._generation)
+                entries,
+                analysis_time,
+                latitude,
+                longitude,
+                cache,
+                cancelled=lambda: generation != self._generation,
+            )
             if values is not None:
                 GLib.idle_add(self._show, generation, values)
 

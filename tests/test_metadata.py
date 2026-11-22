@@ -20,8 +20,7 @@ def test_version_matches_meson_and_metainfo():
 def test_desktop_file_is_shown_in_phosh_mobile_mode():
     desktop = (ROOT / "data" / f"{APP_ID}.desktop").read_text()
     # Phosh matches the substring "mobile;" case-insensitively.
-    assert re.search(r"^X-Purism-FormFactor=.*mobile;", desktop,
-                     re.IGNORECASE | re.MULTILINE)
+    assert re.search(r"^X-Purism-FormFactor=.*mobile;", desktop, re.IGNORECASE | re.MULTILINE)
 
 
 def test_metainfo_declares_phone_support():
@@ -40,20 +39,20 @@ def test_metainfo_donation_url_matches_about_dialog():
 
 
 def test_user_agent():
-    assert cirro.USER_AGENT == (
-        f"Cirro/{cirro.VERSION} (+https://github.com/nexumia-de/cirro)")
+    assert (f"Cirro/{cirro.VERSION} (+https://github.com/nexumia-de/cirro)") == cirro.USER_AGENT
 
 
 def test_nightly_variant_of_desktop_file_and_metainfo():
     sys.path.insert(0, str(ROOT / "build-aux"))
     from nightly import nightly
+
     nightly_id = f"{APP_ID}.Devel"
-    desktop = nightly((ROOT / "data" / f"{APP_ID}.desktop").read_text(),
-                      nightly_id)
+    desktop = nightly((ROOT / "data" / f"{APP_ID}.desktop").read_text(), nightly_id)
     assert "\nName=Weather Radar (Nightly)\n" in desktop
     assert f"\nIcon={nightly_id}\n" in desktop
-    root = ET.fromstring(nightly(
-        (ROOT / "data" / f"{APP_ID}.metainfo.xml").read_text(), nightly_id))
+    root = ET.fromstring(
+        nightly((ROOT / "data" / f"{APP_ID}.metainfo.xml").read_text(), nightly_id)
+    )
     assert root.findtext("id") == nightly_id
     assert root.findtext("name") == "Weather Radar (Nightly)"
     assert root.findtext("launchable") == f"{nightly_id}.desktop"
@@ -71,6 +70,9 @@ def test_meson_installs_every_module():
     # the source tree still imports it.
     meson = (ROOT / "meson.build").read_text()
     listed = set(re.findall(r"'(cirro/[\w/]+\.py)'", meson))
-    present = {p.relative_to(ROOT).as_posix() for p in (ROOT / "cirro").rglob("*.py")
-               if p.name != "config.py"}
+    present = {
+        p.relative_to(ROOT).as_posix()
+        for p in (ROOT / "cirro").rglob("*.py")
+        if p.name != "config.py"
+    }
     assert present - listed == set()

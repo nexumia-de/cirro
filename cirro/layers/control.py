@@ -2,6 +2,7 @@
 bar while a DWD base layer is shown, the legend below the map and the
 value under a tap. The window keeps the radar; this switches between
 the radar's timeline and a layer's (docs/map-layers.md)."""
+
 import gi
 
 gi.require_version("Adw", "1")
@@ -17,9 +18,19 @@ LAYERS_ICON = "de.nexumia.Cirro-layers-symbolic"
 
 
 class LayerControl:
-    def __init__(self, window, simple_map, radar_layer, pins,
-                 timebar, radar_legend, legend_box, toasts, radar_timeline,
-                 persist=True):
+    def __init__(
+        self,
+        window,
+        simple_map,
+        radar_layer,
+        pins,
+        timebar,
+        radar_legend,
+        legend_box,
+        toasts,
+        radar_timeline,
+        persist=True,
+    ):
         """`radar_timeline()` gives (entries, analysis time) of the radar,
         to put back on the time bar when the radar is chosen again."""
         self._window = window
@@ -35,15 +46,18 @@ class LayerControl:
         self.manager.connect("failed", self._on_failed)
         self.legend = LayerLegend()
         legend_box.append(self.legend)
-        for prop in ("default-width", "default-height", "maximized",
-                     "fullscreened"):
+        for prop in ("default-width", "default-height", "maximized", "fullscreened"):
             window.connect(f"notify::{prop}", self.manager.resized)
         window.connect("map", lambda *_: self.manager.resized())
 
         # Thumb reach: at the end of the time bar, in the bottom bar.
-        button = Gtk.Button(icon_name=LAYERS_ICON, tooltip_text="Map Layers",
-                            css_classes=["circular", "flat"],
-                            valign=Gtk.Align.CENTER, action_name="win.layers")
+        button = Gtk.Button(
+            icon_name=LAYERS_ICON,
+            tooltip_text="Map Layers",
+            css_classes=["circular", "flat"],
+            valign=Gtk.Align.CENTER,
+            action_name="win.layers",
+        )
         button.update_property([Gtk.AccessibleProperty.LABEL], ["Map Layers"])
         timebar.append(button)
 
@@ -105,8 +119,12 @@ class LayerControl:
     def _on_failed(self, manager, title):
         if self._failed_toast is not None:
             return
-        toast = Adw.Toast(title=f"Map layer “{title}” could not be loaded",
-                          button_label="_Retry", timeout=0, use_markup=False)
+        toast = Adw.Toast(
+            title=f"Map layer “{title}” could not be loaded",
+            button_label="_Retry",
+            timeout=0,
+            use_markup=False,
+        )
         toast.connect("button-clicked", lambda *_: self.manager.retry())
         toast.connect("dismissed", lambda *_: setattr(self, "_failed_toast", None))
         self._failed_toast = toast
@@ -121,6 +139,6 @@ class LayerControl:
 
         def show(text):
             if text:
-                self._toasts.add_toast(Adw.Toast(title=text, timeout=4,
-                                                 use_markup=False))
+                self._toasts.add_toast(Adw.Toast(title=text, timeout=4, use_markup=False))
+
         self.manager.value_at(latitude, longitude, show)

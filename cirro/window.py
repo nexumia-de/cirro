@@ -7,24 +7,28 @@ import gi
 gi.require_version("Shumate", "1.0")
 from gi.repository import Adw, Gio, GLib, GObject, Gtk, Shumate  # noqa: E402
 
+from cirro import radar_source  # noqa: E402
 from cirro.forward_swipe import ForwardSwipe  # noqa: E402
 from cirro.frames import FrameStore  # noqa: E402
 from cirro.layers.control import LayerControl  # noqa: E402
 from cirro.legend import Legend  # noqa: E402
 from cirro.location import Location  # noqa: E402
+from cirro.map_press import MapPress  # noqa: E402
 from cirro.namer import Namer  # noqa: E402
 from cirro.nowcast_view import NowcastView  # noqa: E402
 from cirro.pins import PLACE_ICON, PinLayer, status  # noqa: E402
-from cirro.places import PlaceStore  # noqa: E402
 from cirro.place_details import PlaceDetails  # noqa: E402
+from cirro.places import PlaceStore  # noqa: E402
 from cirro.places_rain import PlacesRain  # noqa: E402
 from cirro.places_view import PlacesView  # noqa: E402
 from cirro.radar_layer import RadarLayer  # noqa: E402
-from cirro import radar_source  # noqa: E402
 from cirro.radar_source import RadarSource  # noqa: E402
 from cirro.renderer import CAPACITY, FrameRenderer  # noqa: E402
 from cirro.search import SearchDialog  # noqa: E402
 from cirro.timebar import TimeBar, clock  # noqa: E402
+from cirro.warnings import cap  # noqa: E402
+from cirro.warnings.text import now as local_now  # noqa: E402
+from cirro.warnings.view import WarningsButton  # noqa: E402
 
 log = logging.getLogger(__name__)
 
@@ -49,11 +53,12 @@ class Window(Adw.ApplicationWindow):
         self.set_size_request(360, 294)
         self._entries = []
         self._centre_on_fix = False
-        self._selected = None      # id of the selected place
-        self._point = None         # unsaved point: (name, latitude, longitude)
-        self._picking = False      # choosing a new place on the map
-        self._add_on_fix = False   # "Current Location" waits for a fix
-        self._live = False         # own location has a fix from this session
+        self._selected = None  # id of the selected place
+        self._point = None  # unsaved point: (name, latitude, longitude)
+        self._picking = False  # choosing a new place on the map
+        self._add_on_fix = False  # "Current Location" waits for a fix
+        self._live = False  # own location has a fix from this session
+        self._position = None  # (latitude, longitude) of the selection
 
         # Places (docs/places.md). Recorded places for screenshots are
         # read only and never looked up.
@@ -64,6 +69,7 @@ class Window(Adw.ApplicationWindow):
             self.places = PlaceStore()
         self.namer = Namer(self.places, enabled=not demo_places)
         self.places.connect("changed", self._on_places_changed)
+        self.connect("destroy", self._on_destroy)
         self._install_actions()
 
         menu = Gio.Menu()
@@ -73,30 +79,38 @@ class Window(Adw.ApplicationWindow):
         menu.append("_About Weather Radar", "app.about")
         self._title = Adw.WindowTitle(title="Weather Radar")
         header = Adw.HeaderBar(title_widget=self._title)
-        header.pack_end(Gtk.MenuButton(
-            icon_name="open-menu-symbolic", menu_model=menu,
-            primary=True, tooltip_text="Main Menu"))
-        locate = Gtk.Button(icon_name="find-location-symbolic",
-                            tooltip_text="Show My Location")
+        header.pack_end(
+            Gtk.MenuButton(
+                icon_name="open-menu-symbolic",
+                menu_model=menu,
+                primary=True,
+                tooltip_text="Main Menu",
+            )
+        )
+        locate = Gtk.Button(icon_name="find-location-symbolic", tooltip_text="Show My Location")
         locate.connect("clicked", self._on_locate)
         header.pack_start(locate)
-        header.pack_start(Gtk.Button(icon_name="system-search-symbolic",
-                                     tooltip_text="Search Places",
-                                     action_name="win.search"))
+        header.pack_start(
+            Gtk.Button(
+                icon_name="system-search-symbolic",
+                tooltip_text="Search Places",
+                action_name="win.search",
+            )
+        )
         self._header = header
 
         # Header while a new place is chosen on the map: the map pans
         # under a fixed pin.
         cancel = Gtk.Button(label="_Cancel", use_underline=True)
         cancel.connect("clicked", lambda *_: self._end_pick())
-        save = Gtk.Button(label="_Save", use_underline=True,
-                          css_classes=["suggested-action"])
+        save = Gtk.Button(label="_Save", use_underline=True, css_classes=["suggested-action"])
         save.connect("clicked", lambda *_: self._finish_pick())
         self._pick_header = Adw.HeaderBar(
-            title_widget=Adw.WindowTitle(title="Add Place",
-                                         subtitle="Pan the map"),
-            show_start_title_buttons=False, show_end_title_buttons=False,
-            visible=False)
+            title_widget=Adw.WindowTitle(title="Add Place", subtitle="Pan the map"),
+            show_start_title_buttons=False,
+            show_end_title_buttons=False,
+            visible=False,
+        )
         self._pick_header.pack_start(cancel)
         self._pick_header.pack_end(save)
 
@@ -108,8 +122,7 @@ class Window(Adw.ApplicationWindow):
         self.map.set_map_source(registry.get_by_id(Shumate.MAP_SOURCE_OSM_MAPNIK))
         # DWD source note at the data; the full alteration note is in the
         # About dialog (docs/data-sources.md, licences and attribution).
-        self.map.get_license().set_extra_text(
-            "Based on data from Deutscher Wetterdienst")
+        self.map.get_license().set_extra_text("Based on data from Deutscher Wetterdienst")
         # Kilometres only (Germany). Narrow maps have no room for the
         # scale next to the attribution, which has to stay readable, so
         # it is hidden there (breakpoints below).
@@ -126,15 +139,23 @@ class Window(Adw.ApplicationWindow):
         self.pins = PinLayer(viewport, self.places)
         self.pins.connect("activated", lambda _, place_id: self._select(place_id))
         self.map.add_overlay_layer(self.pins)
+        # Long press or right click: add a place there, or show its rain
+        # (issue #51).
+        self._press = MapPress(self.map.get_map(), viewport, lambda: not self._picking)
+        self._press.connect("add", lambda _, lat, lon: self._add_at(lat, lon))
+        self._press.connect("show", lambda _, lat, lon: self._show_point(None, lat, lon))
         # The fixed pin for choosing a place, at the centre of the map.
         # Styled like the selected pin, so it stands out from the saved ones.
         self._crosshair = Gtk.Button(
-            icon_name=PLACE_ICON, can_focus=False,
+            icon_name=PLACE_ICON,
+            can_focus=False,
             css_classes=["circular", "suggested-action", "cirro-pin"],
-            halign=Gtk.Align.CENTER, valign=Gtk.Align.CENTER,
-            can_target=False, visible=False)
-        self._crosshair.update_property([Gtk.AccessibleProperty.LABEL],
-                                        ["New place"])
+            halign=Gtk.Align.CENTER,
+            valign=Gtk.Align.CENTER,
+            can_target=False,
+            visible=False,
+        )
+        self._crosshair.update_property([Gtk.AccessibleProperty.LABEL], ["New place"])
         overlay = Gtk.Overlay(child=self.map)
         overlay.add_overlay(self._crosshair)
 
@@ -149,11 +170,20 @@ class Window(Adw.ApplicationWindow):
         self._toasts = Adw.ToastOverlay(child=overlay)
         # DWD map layers besides the radar (docs/map-layers.md).
         self.layers = LayerControl(
-            self, self.map, self.radar_layer, self.pins,
-            self.timebar, radar_legend, bottom, self._toasts,
-            lambda: (self._entries, self.source.store.analysis_time
-                     if hasattr(self, "source") else None),
-            persist=not os.environ.get("CIRRO_DEMO_DATA"))
+            self,
+            self.map,
+            self.radar_layer,
+            self.pins,
+            self.timebar,
+            radar_legend,
+            bottom,
+            self._toasts,
+            lambda: (
+                self._entries,
+                self.source.store.analysis_time if hasattr(self, "source") else None,
+            ),
+            persist=not os.environ.get("CIRRO_DEMO_DATA"),
+        )
         view = Adw.ToolbarView(content=self._toasts)
         view.add_top_bar(header)
         view.add_top_bar(self._pick_header)
@@ -163,20 +193,20 @@ class Window(Adw.ApplicationWindow):
         # Sidebar with the list of places (issue #18).
         self.sidebar = PlacesView(self.places)
         self.places_rain = PlacesRain(self.places, self.sidebar.set_rain)
-        self.sidebar.connect("activated",
-                             lambda _, place_id: self._select(place_id, centre=True))
+        self.sidebar.connect("activated", lambda _, place_id: self._select(place_id, centre=True))
         sidebar_header = Adw.HeaderBar()
         add_menu = Gio.Menu()
         add_menu.append("_Search…", "win.add-place-search")
         add_menu.append("_Current Location", "win.add-current-location")
         add_menu.append("Choose on _Map", "win.add-place-on-map")
-        sidebar_header.pack_start(Gtk.MenuButton(icon_name="list-add-symbolic",
-                                                 tooltip_text="Add Place",
-                                                 menu_model=add_menu))
+        sidebar_header.pack_start(
+            Gtk.MenuButton(
+                icon_name="list-add-symbolic", tooltip_text="Add Place", menu_model=add_menu
+            )
+        )
         # On the phone the list is a page below the map: back to the map
         # with this button, a right-to-left swipe or Alt+→ (issue #50).
-        to_map = Gtk.Button(icon_name="go-next-symbolic",
-                            tooltip_text="Back to Map", visible=False)
+        to_map = Gtk.Button(icon_name="go-next-symbolic", tooltip_text="Back to Map", visible=False)
         to_map.connect("clicked", lambda *_: self.split.set_show_content(True))
         sidebar_header.pack_end(to_map)
         sidebar_view = Adw.ToolbarView(content=self.sidebar)
@@ -184,7 +214,9 @@ class Window(Adw.ApplicationWindow):
         self._content = Adw.NavigationPage(title="Weather Radar", child=view)
         self.split = Adw.NavigationSplitView(
             sidebar=Adw.NavigationPage(title="Places", child=sidebar_view),
-            content=self._content, show_content=True)
+            content=self._content,
+            show_content=True,
+        )
         self._forward = ForwardSwipe(self.split)
         self.set_content(self.split)
 
@@ -205,8 +237,11 @@ class Window(Adw.ApplicationWindow):
         # Reload is in the main menu: the header has no room for it on
         # the phone next to the places' buttons.
         self.source.bind_property(
-            "loading", self.lookup_action("reload"), "enabled",
-            GObject.BindingFlags.SYNC_CREATE | GObject.BindingFlags.INVERT_BOOLEAN)
+            "loading",
+            self.lookup_action("reload"),
+            "enabled",
+            GObject.BindingFlags.SYNC_CREATE | GObject.BindingFlags.INVERT_BOOLEAN,
+        )
         self.renderer = FrameRenderer(self._on_rendered)
 
         self.location = Location()
@@ -219,13 +254,27 @@ class Window(Adw.ApplicationWindow):
         # Point nowcast at the selected place, with its actions.
         self._place_menu = Gio.Menu()
         self._place_actions = Gtk.MenuButton(
-            icon_name="view-more-symbolic", menu_model=self._place_menu,
-            css_classes=["flat"], tooltip_text="Place Actions")
+            icon_name="view-more-symbolic",
+            menu_model=self._place_menu,
+            css_classes=["flat"],
+            tooltip_text="Place Actions",
+        )
         self.nowcast = NowcastView(self._place_actions)
         bottom.prepend(self.nowcast)
         # Sunrise, sunset and wind at the place (issues #54, #59).
         self.details = PlaceDetails(live=not os.environ.get("CIRRO_DEMO_DATA"))
         self.nowcast.append(self.details)
+        # Official warnings at the place (issue #21, docs/warnings.md).
+        self.warning_line = WarningsButton()
+        self.nowcast.append(self.warning_line)
+        self.warnings = app.warnings
+        self._warnings_handler = self.warnings.connect(
+            "changed", lambda *_: self._update_warnings()
+        )
+        # Poll less often on a metered connection (issue #34).
+        self.data_saver = app.data_saver
+        self._saver_handler = self.data_saver.connect("notify::saving", self._on_data_saver)
+        self._on_data_saver()
 
         # Breakpoints: only the last matching one applies.
         def breakpoint(condition, *setters):
@@ -233,17 +282,21 @@ class Window(Adw.ApplicationWindow):
             for widget, name, value in setters:
                 point.add_setter(widget, name, value)
             self.add_breakpoint(point)
+
         no_scale = (scale, "visible", False)
         no_chart = (self.nowcast.chart, "visible", False)
         collapsed = (self.split, "collapsed", True)
         to_map_shown = (to_map, "visible", True)
         breakpoint(f"max-width: {SCALE_MIN_WIDTH}sp", no_scale)
         breakpoint(f"max-height: {CHART_MIN_HEIGHT}sp", no_scale, no_chart)
-        breakpoint(f"max-width: {SIDEBAR_MIN_WIDTH}sp",
-                   no_scale, collapsed, to_map_shown)
-        breakpoint(f"max-width: {SIDEBAR_MIN_WIDTH}sp and "
-                   f"max-height: {CHART_MIN_HEIGHT}sp",
-                   no_scale, no_chart, collapsed, to_map_shown)
+        breakpoint(f"max-width: {SIDEBAR_MIN_WIDTH}sp", no_scale, collapsed, to_map_shown)
+        breakpoint(
+            f"max-width: {SIDEBAR_MIN_WIDTH}sp and max-height: {CHART_MIN_HEIGHT}sp",
+            no_scale,
+            no_chart,
+            collapsed,
+            to_map_shown,
+        )
 
         # Start with the default place (issue #40); recorded screenshots
         # keep the view of Germany.
@@ -262,9 +315,24 @@ class Window(Adw.ApplicationWindow):
         self.connect("unmap", self._update_active)
         self.source.start()
 
+    def _on_destroy(self, *_):
+        # The warnings and the data saver belong to the application and
+        # outlive the window (notifications, issue #25).
+        self.warnings.disconnect(self._warnings_handler)
+        self.data_saver.disconnect(self._saver_handler)
+        self.warnings.hold("window", False)
+        self.source.set_active(False)
+        self.location.stop()
+
+    def _on_data_saver(self, *_):
+        saving = self.data_saver.saving
+        self.source.set_metered(saving)
+        self.warnings.set_metered(saving)
+
     def _update_active(self, *_):
         active = self.get_mapped() and not self.get_property("suspended")
         self.source.set_active(active)
+        self.warnings.hold("window", active)
         if not active:
             self.timebar.set_playing(False)
             self.location.stop()
@@ -314,12 +382,12 @@ class Window(Adw.ApplicationWindow):
             following = self.renderer.get(self._entries[index + 1])
         if following and following.bounds != rendered.bounds:
             following = None
-        self.radar_layer.set_frame(rendered.texture, rendered.bounds,
-                                   following and following.texture, fraction)
+        self.radar_layer.set_frame(
+            rendered.texture, rendered.bounds, following and following.texture, fraction
+        )
 
     def _on_rendered(self, name):
-        if self.layers.radar and self._entries and \
-                self._entries[self.timebar.index].name == name:
+        if self.layers.radar and self._entries and self._entries[self.timebar.index].name == name:
             rendered = self.renderer.get(self._entries[self.timebar.index])
             self.radar_layer.set_frame(rendered.texture, rendered.bounds)
         return GLib.SOURCE_REMOVE
@@ -331,11 +399,13 @@ class Window(Adw.ApplicationWindow):
         if t0:
             self._banner.set_title(f"Radar data from {clock(t0)} is out of date")
 
+    def show_toast(self, title):
+        self._toasts.add_toast(Adw.Toast(title=title))
+
     def _on_failed(self, source, message, show):
         if not show:
             return
-        toast = Adw.Toast(title="Radar data could not be loaded",
-                          button_label="Retry", timeout=0)
+        toast = Adw.Toast(title="Radar data could not be loaded", button_label="Retry", timeout=0)
         toast.connect("button-clicked", lambda *_: self.source.refresh())
         self._toasts.add_toast(toast)
 
@@ -343,10 +413,10 @@ class Window(Adw.ApplicationWindow):
 
     def _install_actions(self):
         def add(name, callback, parameter="s"):
-            action = Gio.SimpleAction.new(
-                name, GLib.VariantType(parameter) if parameter else None)
-            action.connect("activate", lambda _, value: callback(
-                value.unpack() if value is not None else None))
+            action = Gio.SimpleAction.new(name, GLib.VariantType(parameter) if parameter else None)
+            action.connect(
+                "activate", lambda _, value: callback(value.unpack() if value is not None else None)
+            )
             self.add_action(action)
 
         add("select-place", lambda place_id: self._select(place_id, centre=True))
@@ -418,8 +488,7 @@ class Window(Adw.ApplicationWindow):
         place = self._place(self._selected)
         if self._point:
             name, latitude, longitude = self._point
-            title, label, position = name or "Selected Point", "Not saved", \
-                (latitude, longitude)
+            title, label, position = name or "Selected Point", "Not saved", (latitude, longitude)
             menu.append("_Add Place", "win.add-place")
         elif place:
             title, position = place.title, place.position
@@ -443,6 +512,17 @@ class Window(Adw.ApplicationWindow):
         self._content.set_title(title)
         self.nowcast.set_place(position, label)
         self.details.set_place(position)
+        self._position = position
+        self._update_warnings()
+
+    def _update_warnings(self):
+        """Warnings at the selected position and in the places list."""
+        if not hasattr(self, "warnings"):
+            return
+        now = local_now()
+        found = cap.at_point(self.warnings.warnings, *self._position, now) if self._position else []
+        self.warning_line.set_warnings(found, self._position)
+        self.sidebar.set_warnings(cap.per_place(self.warnings.warnings, self.places, now))
 
     # Place actions
 
@@ -455,16 +535,24 @@ class Window(Adw.ApplicationWindow):
             self.namer.request(place)
         self._select(place.id)
 
+    def _add_at(self, latitude, longitude):
+        place = self.places.add(latitude, longitude)
+        self.namer.request(place)
+        self._select(place.id)
+
     def _search(self, _=None, title="Search Places", chosen=None):
         dialog = SearchDialog(title)
-        dialog.connect("chosen", chosen or (
-            lambda _, name, lat, lon: self._show_point(name, lat, lon, centre=True)))
+        dialog.connect(
+            "chosen",
+            chosen or (lambda _, name, lat, lon: self._show_point(name, lat, lon, centre=True)),
+        )
         dialog.present(self)
 
     def _add_from_search(self, _):
         def chosen(dialog, name, latitude, longitude):
             place = self.places.add(latitude, longitude, default_name=name)
             self._select(place.id, centre=True)
+
         self._search(title="Add Place", chosen=chosen)
 
     def _add_current_location(self, _):
@@ -479,8 +567,7 @@ class Window(Adw.ApplicationWindow):
 
     def _add_own_position(self):
         own = self.places.own
-        place = self.places.add(own.latitude, own.longitude,
-                                default_name=own.default_name)
+        place = self.places.add(own.latitude, own.longitude, default_name=own.default_name)
         if not place.default_name:
             self.namer.request(place)
         self._select(place.id, centre=True)
@@ -512,22 +599,23 @@ class Window(Adw.ApplicationWindow):
         place = self._place(place_id)
         if place is None:
             return
-        entry = Adw.EntryRow(title="Name", text=place.custom_name or place.title,
-                             activates_default=True)
-        names = Gtk.ListBox(css_classes=["boxed-list"],
-                            selection_mode=Gtk.SelectionMode.NONE)
+        entry = Adw.EntryRow(
+            title="Name", text=place.custom_name or place.title, activates_default=True
+        )
+        names = Gtk.ListBox(css_classes=["boxed-list"], selection_mode=Gtk.SelectionMode.NONE)
         names.append(entry)
-        dialog = Adw.AlertDialog(heading="Rename Place", extra_child=names,
-                                 default_response="rename",
-                                 close_response="cancel")
+        dialog = Adw.AlertDialog(
+            heading="Rename Place",
+            extra_child=names,
+            default_response="rename",
+            close_response="cancel",
+        )
         dialog.add_response("cancel", "_Cancel")
         if place.custom_name:
             dialog.add_response("reset", "_Use Default Name")
         dialog.add_response("rename", "_Rename")
-        dialog.set_response_appearance("rename",
-                                       Adw.ResponseAppearance.SUGGESTED)
-        dialog.connect("response", lambda _, response:
-                       self._renamed(place, response, entry))
+        dialog.set_response_appearance("rename", Adw.ResponseAppearance.SUGGESTED)
+        dialog.connect("response", lambda _, response: self._renamed(place, response, entry))
         dialog.present(self)
         entry.grab_focus()
 
@@ -545,10 +633,8 @@ class Window(Adw.ApplicationWindow):
             return
         title = place.title
         position = self.places.remove(place)
-        toast = Adw.Toast(title=f"“{title}” deleted", button_label="_Undo",
-                          use_markup=False)
-        toast.connect("button-clicked",
-                      lambda *_: self.places.restore(place, position))
+        toast = Adw.Toast(title=f"“{title}” deleted", button_label="_Undo", use_markup=False)
+        toast.connect("button-clicked", lambda *_: self.places.restore(place, position))
         self._toasts.add_toast(toast)
 
     def _set_default(self, place_id):

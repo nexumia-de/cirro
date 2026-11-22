@@ -23,6 +23,21 @@ precedence = "override"
 SPDX-FileCopyrightText = "Deutscher Wetterdienst"
 SPDX-License-Identifier = "CC-BY-4.0"
 
+# DWD's CAP warning status recorded for tests (CC BY 4.0, unchanged; the
+# polygons are based on © GeoBasis-DE / BKG 2021, Daten modifiziert).
+[[annotations]]
+path = "tests/data/cap/**"
+precedence = "override"
+SPDX-FileCopyrightText = ["Deutscher Wetterdienst", "GeoBasis-DE / BKG 2021"]
+SPDX-License-Identifier = "CC-BY-4.0"
+
+# Our own description of the recorded layer answers next to them.
+[[annotations]]
+path = "tests/data/demo/layers/recorded.json"
+precedence = "override"
+SPDX-FileCopyrightText = "2026 suitably"
+SPDX-License-Identifier = "AGPL-3.0-or-later"
+
 # Nominatim answers recorded for tests: OpenStreetMap data (ODbL 1.0).
 [[annotations]]
 path = "tests/data/nominatim/**"

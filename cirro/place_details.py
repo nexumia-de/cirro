@@ -1,9 +1,10 @@
 """A line below the nowcast about the selected place: sunrise and
 sunset (computed locally, issue #54) and the wind measured at the
 nearest DWD station within 50 km (issue #59)."""
+
 import logging
 import threading
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 import gi
 
@@ -49,19 +50,21 @@ def latest_wind():
 class PlaceDetails(Gtk.Label):
     def __init__(self, live=True):
         """`live`: fetch the wind (not with recorded demo data)."""
-        super().__init__(xalign=0, wrap=True, css_classes=["caption", "dim-label"],
-                         visible=False)
+        super().__init__(xalign=0, wrap=True, css_classes=["caption", "dim-label"], visible=False)
         self._live = live
         self._position = None
-        self._wind = None          # (stations, measured, fetched at)
+        self._wind = None  # (stations, measured, fetched at)
         self._loading = False
 
     def set_place(self, position):
         self._position = position
         self._update()
-        if self._live and position and not self._loading and (
-                self._wind is None
-                or datetime.now(timezone.utc) - self._wind[2] > REFRESH):
+        if (
+            self._live
+            and position
+            and not self._loading
+            and (self._wind is None or datetime.now(UTC) - self._wind[2] > REFRESH)
+        ):
             self._load()
 
     def _load(self):
@@ -70,11 +73,12 @@ class PlaceDetails(Gtk.Label):
         def work():
             try:
                 stations, measured = latest_wind()
-                result = (stations, measured, datetime.now(timezone.utc))
-            except Exception as error:   # network, server
+                result = (stations, measured, datetime.now(UTC))
+            except Exception as error:  # network, server
                 log.warning("wind: %s", error)
                 result = None
             GLib.idle_add(self._loaded, result)
+
         threading.Thread(target=work, name="wind", daemon=True).start()
 
     def _loaded(self, result):

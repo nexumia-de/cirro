@@ -188,6 +188,16 @@ over Germany, analysis plus forecast up to +2 h, refreshed every
   reprojection of the same frame; its yellow class starts at about
   3 mm/h (M1 alignment check in [radar architecture](radar-architecture.md)).
 
+- `GetFeatureInfo` (`info_format=application/json`) at one point with
+  `time=<analysis>/<analysis + 120 min>` and `dim_reference_time`
+  returns all 25 steps in one answer (≈ 5 KB), property `RV_ANALYSIS`
+  in mm per 5 min (×12 = mm/h), about `-0.001` where dry. Checked live
+  on 2026-11-22 04:50 UTC against the RV tar of the same analysis at
+  five rainy cells and over a whole series: equal to the decoded values
+  (one step differed by one cell at a grid edge). Recorded in
+  `tests/data/wms/info-rv-series.json`; used for notifications
+  ([notifications](notifications.md)).
+
 This is the fallback radar source and the source for extra map layers
 (warnings, lightning) in M6.
 
@@ -229,7 +239,7 @@ for a day on 2026-10-01).[^breezy-3010]
 - No `ETag`, `Last-Modified` or `Cache-Control` headers: the app has
   to cache by its own rules.
 
-# 4. Warnings (M4) *(live, 2026-10-25 20:45 UTC)*
+# 4. Warnings (M4) *(live, 2026-10-25 20:45 UTC; CAP rechecked 2026-11-22 04:45 UTC)*
 
 DWD publishes its official warnings as CAP 1.2 XML on open data, as WMS
 and WFS layers of the GeoServer, and as a JSON file.[^dwd-warn-overview]
@@ -266,11 +276,21 @@ and WFS layers of the GeoServer, and as a JSON file.[^dwd-warn-overview]
   `AREA_COLOR` (DWD's RGB, e.g. `251 140 0`), `PROFILE_VERSION`
   `2.1.14` and `LICENSE` `© GeoBasis-DE / BKG 2021 (Daten modifiziert)`
   (the geometry's licence).[^dwd-cap-profile][^dwd-warn-codes]
-- Each `<area>` carries a `<polygon>` (lat,lon pairs), `<geocode>`
-  `WARNCELLID` (e.g. `809272121`), `<altitude>`/`<ceiling>` in feet
-  (e.g. warnings above 1000 m only). Warning a saved place therefore
-  needs only a point-in-polygon test on the CAP itself; no extra
-  geometry download.
+- Areas, as found on 2026-11-22 (`EN` status, 50 warnings, 394 KB zip,
+  3.98 MB unpacked, `ETag` and `304` confirmed): each land warning has
+  one or more `<area>`s with `<areaDesc>` "polygonal event area", a
+  `<polygon>` (lat,lon pairs, first point repeated at the end) and, for
+  17 of 48, `<geocode>` `EXCLUDE_POLYGON` whose value is a hole in the
+  same lat,lon format. Next to them are the warn cell areas (14 141 in
+  that file): `<areaDesc>` with the municipality name and `<geocode>`
+  `WARNCELLID` (e.g. `716051104`), no polygon. Every area has
+  `<altitude>`/`<ceiling>` in feet (e.g. warnings above 1000 m only;
+  `0.0`/`9842.5197` = all heights). The two sea warnings (sender "DWD /
+  Seewetterdienst Hamburg") had only a warn cell area, no polygon and no
+  `<expires>`. Warning a saved place therefore needs only a
+  point-in-polygon test on the CAP itself; no extra geometry download.
+  Times carry the offset (`2026-11-22T04:24:00+01:00`). Recorded in
+  `tests/data/cap/`.
 - The warn cell list `cap_warncellids_csv.csv` (11 828 cells: id, name,
   short name, state) and shapefiles for municipalities, districts,
   coast and sea are on DWD's open data help page.
@@ -376,7 +396,7 @@ problem, switch to another tile provider; the tile URL is a setting.
 - Recorded DWD sample data in `tests/data/` is marked `CC-BY-4.0`,
   copyright Deutscher Wetterdienst, in `REUSE.toml`.
 
-# 8. DMI radar (Denmark) *(not verified live)*
+# 8. DMI radar (Denmark) *(not verified live; hosts still blocked on 2026-11-22)*
 
 All DMI hosts (`opendataapi.dmi.dk`, `dmigw.govcloud.dk`, `www.dmi.dk`,
 `opendatadocs.dmi.govcloud.dk`) were blocked in the cloud environment
@@ -455,6 +475,16 @@ second across all threads, `Cirro/<version> (+repo URL)`, names cached
 in the place store, search results cached per session, search only on
 Enter, attribution in the search dialog and the About dialog). Check
 the page from a network that can reach it and update this section.
+
+Tried again on 2026-11-22: `operations.osmfoundation.org`,
+`osmfoundation.org` and `wiki.openstreetmap.org` still did not answer
+from the cloud container (no connection through the proxy), and a web
+fetch outside the container failed with a DNS error for both OSMF
+hosts. The code still matches the list above (`geocode.MIN_INTERVAL`
+1 s with a lock, `USER_AGENT`, `_search_cache`, search on Enter,
+`geocode.ATTRIBUTION` in the search dialog, the ODbL credit with the
+copyright link in the About dialog). The comparison with the live page
+is an [owner check](owner-checks.md).
 
 
 # 10. Wind *(live, 2026-11-07 11:20 UTC)*

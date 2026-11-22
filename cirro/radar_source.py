@@ -1,12 +1,13 @@
 """Keeps the FrameStore current: loads the disk cache, polls DWD while the
 window is visible and fetches missing past frames
 (docs/radar-architecture.md, RadarSource)."""
+
 import logging
 import os
 import threading
 import time
 import urllib.error
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 from gi.repository import GLib, GObject
@@ -18,7 +19,7 @@ log = logging.getLogger(__name__)
 
 
 def _now():
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 def _rss_mb():
@@ -51,8 +52,9 @@ class RadarSource(GObject.Object):
         self._etag = None
         self._active = False
         self._timer = 0
-        self._due = None           # monotonic time of the next poll
+        self._due = None  # monotonic time of the next poll
         self._unavailable = set()  # past analyses the server does not have
+        self._metered = False  # poll less often (issue #34)
 
     def start(self):
         """Load the disk cache, then poll."""
@@ -67,6 +69,16 @@ class RadarSource(GObject.Object):
             self._cancel_timer()
         elif self._due is not None and not self.loading:
             self._schedule_at(self._due)
+
+    def set_metered(self, metered):
+        """Poll less often on a metered connection; back to every 5 min
+        at once when it is not metered any more."""
+        if metered == self._metered:
+            return
+        self._metered = metered
+        if not self.loading and self._due is not None:
+            delay = source.next_poll(self.store.analysis_time, self._now(), metered)
+            self._schedule_at(GLib.get_monotonic_time() / 1e6 + delay.total_seconds())
 
     def refresh(self):
         """Poll now (the reload button)."""
@@ -85,8 +97,7 @@ class RadarSource(GObject.Object):
         if not self._active:
             return
         delay = max(0, due - GLib.get_monotonic_time() / 1e6)
-        self._timer = GLib.timeout_add_seconds(max(1, round(delay)),
-                                               self._on_timer)
+        self._timer = GLib.timeout_add_seconds(max(1, round(delay)), self._on_timer)
 
     def _on_timer(self):
         self._timer = 0
@@ -117,8 +128,7 @@ class RadarSource(GObject.Object):
         try:
             latest = source.poll_latest(self._etag, self._base_url)
             if latest and latest.analysis_time != self.store.analysis_time:
-                for name, data in source.fetch_tar(latest.analysis_time,
-                                                   self._base_url):
+                for name, data in source.fetch_tar(latest.analysis_time, self._base_url):
                     self.store.add(name, data)
                 self.store.prune()
                 GLib.idle_add(self.emit, "changed")
@@ -152,12 +162,16 @@ class RadarSource(GObject.Object):
     def _finished(self, error, manual):
         self.loading = False
         if log.isEnabledFor(logging.DEBUG):
-            log.debug("%d frames; %.1f MB received, RSS %.0f MB, CPU %.1f s",
-                      len(self.store.timeline()), source.received_bytes() / 1e6,
-                      _rss_mb(), time.process_time())
+            log.debug(
+                "%d frames; %.1f MB received, RSS %.0f MB, CPU %.1f s",
+                len(self.store.timeline()),
+                source.received_bytes() / 1e6,
+                _rss_mb(),
+                time.process_time(),
+            )
         now = self._now()
         self.stale = source.is_stale(self.store.analysis_time, now)
-        delay = source.next_poll(self.store.analysis_time, now)
+        delay = source.next_poll(self.store.analysis_time, now, self._metered)
         self._schedule_at(GLib.get_monotonic_time() / 1e6 + delay.total_seconds())
         if error:
             # Background failures only show up through the stale guard.

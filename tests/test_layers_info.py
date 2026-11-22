@@ -1,4 +1,5 @@
 """Values under a tap (GetFeatureInfo answers recorded 2026-11-07)."""
+
 import json
 from pathlib import Path
 
@@ -19,21 +20,26 @@ def test_number():
 
 
 def test_wind_from_u_and_v():
-    assert info.describe(catalogue.Value("wind"), [{"properties": {"u": 0, "v": -5}}]) \
+    assert (
+        info.describe(catalogue.Value("wind"), [{"properties": {"u": 0, "v": -5}}])
         == "5.0 m/s from N"
-    assert "m/s from" in info.describe(catalogue.Value("wind"),
-                                       features("Icon_reg025_fd_sl_UV10M"))
+    )
+    assert "m/s from" in info.describe(catalogue.Value("wind"), features("Icon_reg025_fd_sl_UV10M"))
 
 
 def test_warning():
-    assert info.describe(catalogue.Value("warning"),
-                         features("Warnungen_Gemeinden_vereinigt")) == "Frost, level 1"
+    assert (
+        info.describe(catalogue.Value("warning"), features("Warnungen_Gemeinden_vereinigt"))
+        == "Frost, level 1"
+    )
     assert info.describe(catalogue.Value("warning"), []) == "No warning"
 
 
 def test_pollen():
-    assert info.describe(catalogue.Value("pollen"), features("Pollenflug")) == \
-        "None · Tiefland Sachsen"
+    assert (
+        info.describe(catalogue.Value("pollen"), features("Pollenflug"))
+        == "None · Tiefland Sachsen"
+    )
 
 
 def test_health():
@@ -46,18 +52,18 @@ def test_no_value():
     assert info.describe(None, []) is None
 
 
-@pytest.mark.parametrize("degrees, point", [(0, "N"), (22, "NNE"), (90, "E"),
-                                            (200, "SSW"), (359, "N")])
+@pytest.mark.parametrize(
+    "degrees, point", [(0, "N"), (22, "NNE"), (90, "E"), (200, "SSW"), (359, "N")]
+)
 def test_compass(degrees, point):
     assert info.compass(degrees) == point
 
 
 def test_station_text():
     from cirro.layers.wfs import Station
+
     stations = [Station("Leipzig", 51.3, 12.4, 7.0, 22)]
     wind = catalogue.get("stations-wind").value
-    assert info.station_text(wind, stations, 51.31, 12.41) == \
-        "4 Bft (25 km/h) from NNE, Leipzig"
+    assert info.station_text(wind, stations, 51.31, 12.41) == "4 Bft (25 km/h) from NNE, Leipzig"
     assert info.station_text(wind, stations, 48, 8) is None
-    assert info.station_text(catalogue.TEMPERATURE, stations, 51.3, 12.4) == \
-        "7 °C, Leipzig"
+    assert info.station_text(catalogue.TEMPERATURE, stations, 51.3, 12.4) == "7 °C, Leipzig"

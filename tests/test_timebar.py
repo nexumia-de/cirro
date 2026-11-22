@@ -1,4 +1,5 @@
 """Labels and playback timing of the time bar."""
+
 from datetime import timedelta
 
 import pytest
@@ -7,11 +8,19 @@ pytest.importorskip("h5py")
 gi = pytest.importorskip("gi")
 gi.require_version("Gtk", "4.0")
 
-from cirro.frames import Entry  # noqa: E402
-from cirro.timebar import (END_PAUSE_FRAMES, MAX_TICK_SECONDS,  # noqa: E402
-                           STEP_SECONDS, advance, blend, describe, due,
-                           step_frames)
 from test_frames import T0  # noqa: E402
+
+from cirro.frames import Entry  # noqa: E402
+from cirro.timebar import (  # noqa: E402
+    END_PAUSE_FRAMES,
+    MAX_TICK_SECONDS,
+    STEP_SECONDS,
+    advance,
+    blend,
+    describe,
+    due,
+    step_frames,
+)
 
 
 def entry(minutes, forecast):
@@ -19,11 +28,14 @@ def entry(minutes, forecast):
     return Entry("x", T0 if forecast else valid, valid, forecast, b"")
 
 
-@pytest.mark.parametrize("minutes, forecast, text", [
-    (-35, False, "35 min ago"),
-    (0, False, "Now"),
-    (40, True, "Forecast +40 min"),
-])
+@pytest.mark.parametrize(
+    "minutes, forecast, text",
+    [
+        (-35, False, "35 min ago"),
+        (0, False, "Now"),
+        (40, True, "Forecast +40 min"),
+    ],
+)
 def test_describe(minutes, forecast, text):
     assert describe(entry(minutes, forecast), T0) == text
 
@@ -59,9 +71,16 @@ def test_advance_holds_the_last_frame_then_loops():
     assert advance(last + END_PAUSE_FRAMES - 0.1, 0.2, 10, all_ready) == 0.0
 
 
-@pytest.mark.parametrize("position, index, fraction", [
-    (0.0, 0, 0.0), (3.25, 3, 0.25), (8.5, 8, 0.5), (9.0, 9, 0.0), (10.5, 9, 0.0),
-])
+@pytest.mark.parametrize(
+    "position, index, fraction",
+    [
+        (0.0, 0, 0.0),
+        (3.25, 3, 0.25),
+        (8.5, 8, 0.5),
+        (9.0, 9, 0.0),
+        (10.5, 9, 0.0),
+    ],
+)
 def test_blend(position, index, fraction):
     got = blend(position, 10)
     assert got[0] == index
@@ -83,24 +102,33 @@ def test_due_caps_updates_at_30_per_second(hz, every):
     assert due(tick_us * every)
 
 
-@pytest.mark.parametrize("minutes, forecast, text", [
-    (300, True, "Forecast +5 h"),
-    (-600, False, "10 h ago"),
-    (4 * 1440, True, "Forecast +4 days"),
-])
+@pytest.mark.parametrize(
+    "minutes, forecast, text",
+    [
+        (300, True, "Forecast +5 h"),
+        (-600, False, "10 h ago"),
+        (4 * 1440, True, "Forecast +4 days"),
+    ],
+)
 def test_describe_long_ranges(minutes, forecast, text):
     assert describe(entry(minutes, forecast), T0) == text
 
 
-@pytest.mark.parametrize("days, forecast, text", [
-    (0, False, "Today"), (1, True, "Tomorrow"), (2, True, "Forecast, in 2 days"),
-])
+@pytest.mark.parametrize(
+    "days, forecast, text",
+    [
+        (0, False, "Today"),
+        (1, True, "Tomorrow"),
+        (2, True, "Forecast, in 2 days"),
+    ],
+)
 def test_describe_daily(days, forecast, text):
     assert describe(entry(days * 1440, forecast), T0, daily=True) == text
 
 
 def test_when_shows_the_weekday_on_other_days():
     from cirro.timebar import clock, day, when
+
     assert when(T0, T0) == clock(T0)
     later = T0 + timedelta(days=2)
     assert when(later, T0) != clock(later) and when(later, T0).endswith(clock(later))
@@ -109,8 +137,17 @@ def test_when_shows_the_weekday_on_other_days():
 
 def test_marks():
     from cirro.timebar import mark
+
     hourly = [entry(60 * h, True) for h in range(30)]
-    marked = [i for i, e in enumerate(hourly)
-              if mark(e, hourly[i - 1] if i else None, 60)]
-    assert len(marked) in (1, 2)     # local midnight within 30 h
+    marked = [i for i, e in enumerate(hourly) if mark(e, hourly[i - 1] if i else None, 60)]
+    assert len(marked) in (1, 2)  # local midnight within 30 h
     assert not mark(entry(0, False), None, 1440)
+
+
+def test_fps_override():
+    from cirro.timebar import fps_override
+
+    assert fps_override({}) is None
+    assert fps_override({"CIRRO_FPS": "20"}) == 20
+    assert fps_override({"CIRRO_FPS": "0"}) is None
+    assert fps_override({"CIRRO_FPS": "fast"}) is None

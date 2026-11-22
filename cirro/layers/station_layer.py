@@ -2,6 +2,7 @@
 wind as an arrow pointing where the wind blows, with its Beaufort
 force; other values as a number. OSD style (light text on a dark
 pill), like the pins; labels that would overlap are left out."""
+
 import math
 
 import gi
@@ -15,7 +16,6 @@ from gi.repository import Gdk, Graphene, Gsk, Shumate  # noqa: E402
 from cirro import wind  # noqa: E402
 
 
-
 def _rgba(text):
     # Gdk.RGBA(red=…) silently ignores its arguments in PyGObject.
     colour = Gdk.RGBA()
@@ -26,7 +26,7 @@ def _rgba(text):
 PILL = _rgba("rgba(0, 0, 0, 0.65)")
 INK = _rgba("white")
 PAD = 3
-ARROW = 11    # half length of the arrow in px
+ARROW = 11  # half length of the arrow in px
 
 
 # Free space kept around each label, so the map stays readable.
@@ -36,8 +36,9 @@ GAP = 10
 def _overlaps(box, boxes):
     x, y, w, h = box
     x, y, w, h = x - GAP, y - GAP, w + 2 * GAP, h + 2 * GAP
-    return any(x < bx + bw and bx < x + w and y < by + bh and by < y + h
-               for bx, by, bw, bh in boxes)
+    return any(
+        x < bx + bw and bx < x + w and y < by + bh and by < y + h for bx, by, bw, bh in boxes
+    )
 
 
 class StationLayer(Shumate.Layer):
@@ -67,14 +68,16 @@ class StationLayer(Shumate.Layer):
         width, height = self.get_width(), self.get_height()
         placed = []
         for station in self._stations:
-            x, y = viewport.location_to_widget_coords(
-                self, station.latitude, station.longitude)
+            x, y = viewport.location_to_widget_coords(self, station.latitude, station.longitude)
             if not (-20 <= x <= width + 20 and -20 <= y <= height + 20):
                 continue
             layout = self.create_pango_layout(self._text(station))
             tw, th = layout.get_pixel_size()
-            arrow = self._kind == "wind" and station.direction is not None \
+            arrow = (
+                self._kind == "wind"
+                and station.direction is not None
                 and wind.beaufort(station.value) > 0
+            )
             w = tw + 2 * PAD + (2 * ARROW + 2 if arrow else 0)
             h = max(th, 2 * ARROW if arrow else 0) + 2 * PAD
             box = (x - w / 2, y - h / 2, w, h)

@@ -1,16 +1,20 @@
 ---
 type: Decision Record
 title: DMI as second radar source for Denmark
-description: Proposed - add DMI's radar composite behind a radar provider interface after M3, chosen by location; past frames only, no forecast for Denmark.
+description: Accepted, waiting for host access - add DMI's radar composite behind a radar provider interface after M3, chosen by location; past frames only, no forecast for Denmark.
 tags: [decision, radar, dmi, denmark, data, architecture]
 generated: { by: claude-code/2.1.310, at: 2026-10-26T06:30:00Z }
 ---
 
 # Status
 
-Proposed (2026-10-26) for issue
-[#11](https://github.com/nexumia-de/cirro/issues/11) (backlog, no
-milestone). The owner decides. **DMI facts are not verified live**:
+Accepted (2026-11-22) for issue
+[#11](https://github.com/nexumia-de/cirro/issues/11), by best practice
+on the owner's standing instruction: option 2 below. Proposed on
+2026-10-26. Implementation waits until the DMI hosts are reachable from
+the development environment and the facts below are verified and a
+composite is recorded: that needs the owner
+([owner checks](../owner-checks.md)); still blocked on 2026-11-22. **DMI facts are not verified live**:
 every DMI host was blocked in the cloud environment on 2026-10-26
 ([data sources](../data-sources.md), section 8;
 [dev environment](../dev-environment.md)). Verify them before accepting.

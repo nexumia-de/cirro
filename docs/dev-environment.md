@@ -18,10 +18,10 @@ The app and its development need outbound HTTPS to:
 | `api.brightsky.dev`, `brightsky.dev` | Bright Sky API and docs |
 | `tile.openstreetmap.org` | Base map tiles |
 | `nominatim.openstreetmap.org` | Place names and place search (M3); answered on 2026-10-26 |
-| `operations.osmfoundation.org` | Nominatim usage policy (docs only); proxy `403` on 2026-10-26 |
+| `operations.osmfoundation.org`, `osmfoundation.org` | Nominatim usage policy and OSM attribution guidelines (docs only); proxy `403` on 2026-10-26, no connection on 2026-11-22 |
 | `nominatim.org` | Nominatim API documentation (docs only); proxy `403` on 2026-10-26 |
 | `wiki.osmfoundation.org`, `www.openstreetmap.org` | OSM attribution guidelines and copyright page (docs only); proxy `403` on 2026-10-26 |
-| `opendataapi.dmi.dk` | DMI radar API and downloads ([DMI decision](decisions/dmi-radar.md)); proxy `403` on 2026-10-26 |
+| `opendataapi.dmi.dk` | DMI radar API and downloads ([DMI decision](decisions/dmi-radar.md)); proxy `403` on 2026-10-26, no connection on 2026-11-22 |
 | `www.dmi.dk` | DMI open data documentation and terms; proxy `403` on 2026-10-26 |
 | `nexumia.de` | Only Flathub's linter (`appid-url-not-reachable`, excepted in CI); the cloud proxy refused it (`403`, 2026-10-25) |
 
@@ -102,6 +102,34 @@ The dev container has no location portal: "Show My Location" shows
 "Location unavailable" there. To check the marker and the map
 animation, call the `Location` object's `_on_updated()` with a fixed
 position from a small driver script.
+
+# Code quality
+
+Ruff (lint and format) and mypy run in the `lint` job of
+`.github/workflows/tests.yml`, with the exact versions of
+`requirements-dev.txt` in a venv (dev tools, not bundled; Dependabot's
+`pip` entry updates them). Locally:
+
+```sh
+python3 -m venv /tmp/lint && /tmp/lint/bin/pip install -r requirements-dev.txt
+```
+
+```sh
+/tmp/lint/bin/ruff check . && /tmp/lint/bin/ruff format --check .
+```
+
+```sh
+PATH=/tmp/lint/bin:$PATH python3 build-aux/mypy_ratchet.py
+```
+
+The ratchet runs mypy (`check_untyped_defs`, settings in
+`pyproject.toml`) and compares its errors, without line numbers, with
+`build-aux/mypy-baseline.txt` (27 on 2026-11-22): a new error fails;
+a fixed one also fails until `--update` shrinks the baseline, which is
+committed with the fix. `--update` never adds errors. PyGObject has no
+usable stubs here (`pygobject-stubs` builds PyGObject from source and
+needs `girepository-2.0`), so `gi`, `numpy` and `h5py` are untyped
+(`ignore_missing_imports`).
 
 # Flatpak
 

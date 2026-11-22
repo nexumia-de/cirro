@@ -2,6 +2,7 @@
 (docs/places.md, names). Only when a place is created or moved, never per
 frame or pan; offline it retries later, and the place shows its
 coordinates meanwhile."""
+
 import logging
 import queue
 import threading
@@ -31,8 +32,7 @@ class Namer:
         self._pending.add(place)
         self._queue.put((place, place.position))
         if self._thread is None:
-            self._thread = threading.Thread(target=self._work, name="namer",
-                                            daemon=True)
+            self._thread = threading.Thread(target=self._work, name="namer", daemon=True)
             self._thread.start()
 
     def request_unnamed(self):

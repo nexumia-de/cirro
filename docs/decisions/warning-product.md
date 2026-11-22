@@ -1,17 +1,21 @@
 ---
 type: Decision Record
 title: CAP open data as warning source
-description: Proposed - warnings per place come from DWD's CAP status files on open data; the WMS warning layer is only the optional map overlay.
+description: Accepted - warnings per place come from DWD's CAP status files on open data; the WMS warning layer is only the optional map overlay.
 tags: [decision, warnings, dwd, cap, wms, data]
 generated: { by: claude-code/2.1.310, at: 2026-10-26T06:30:00Z }
 ---
 
 # Status
 
-Proposed (2026-10-26) for M4, issue
-[#20](https://github.com/nexumia-de/cirro/issues/20). The owner decides.
-Facts were checked against the live services on 2026-10-25
-([data sources](../data-sources.md), section 4).
+Accepted (2026-11-22) for M4, issue
+[#20](https://github.com/nexumia-de/cirro/issues/20), by best practice
+on the owner's standing instruction to decide open questions: one
+cached official file in a standard format covers every place, works
+offline and needs no third party. Proposed on 2026-10-26; facts checked
+against the live services on 2026-10-25 and again on 2026-11-22
+([data sources](../data-sources.md), section 4). The WMS overlay
+(option 2) was already built with the map layers.
 
 # Context
 
@@ -31,7 +35,10 @@ unchanged warnings keep the DWD source note, changed ones must not.
      parameters, DWD colour; in German, English, French and Spanish.
    - \+ Polygons and warn cell ids are in the file: a point-in-polygon
      test finds the warnings of any saved place without another
-     download, and the same polygons can draw the map overlay.
+     download, and the same polygons can draw the map overlay. (Checked
+     2026-11-22: the polygons are in the "polygonal event area" areas,
+     with holes as `EXCLUDE_POLYGON` geocodes; the warn cell areas carry
+     names only; sea warnings have no polygon.)
    - \+ One file for all places; `ETag` + `If-None-Match` (`304`) make
      an unchanged poll nearly free; works offline from the cached file.
    - \+ Standard format (CAP 1.2) with a documented profile; DWD's
@@ -64,7 +71,7 @@ unchanged warnings keep the DWD source note, changed ones must not.
 Option 1, `COMMUNEUNION_DWD_STAT` in the UI language (`EN` or `DE`,
 others as available), polled with `If-None-Match` while the app is open
 (every 10–15 min; the M6 background service may use the `DIFF` files).
-Match saved places by point-in-polygon on the CAP areas, honour
+Match saved places by point-in-polygon on the CAP polygons (minus their `EXCLUDE_POLYGON` holes), honour
 `<altitude>`/`<ceiling>` in the detail text ("above 1000 m"). Use the
 CAP `severity` for the colour class and show it in words too, so colour
 is never the only carrier.

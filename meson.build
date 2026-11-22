@@ -16,12 +16,14 @@ python.install_sources(
   'cirro/__init__.py',
   'cirro/__main__.py',
   'cirro/colors.py',
+  'cirro/data_saver.py',
   'cirro/forward_swipe.py',
   'cirro/frames.py',
   'cirro/geocode.py',
   'cirro/legend.py',
   'cirro/location.py',
   'cirro/main.py',
+  'cirro/map_press.py',
   'cirro/metainfo.py',
   'cirro/namer.py',
   'cirro/nowcast.py',
@@ -38,6 +40,7 @@ python.install_sources(
   'cirro/radar_source.py',
   'cirro/renderer.py',
   'cirro/search.py',
+  'cirro/settings_file.py',
   'cirro/source.py',
   'cirro/sun.py',
   'cirro/timebar.py',
@@ -50,6 +53,7 @@ python.install_sources(
   'cirro/layers/cache.py',
   'cirro/layers/catalogue.py',
   'cirro/layers/control.py',
+  'cirro/layers/demo.py',
   'cirro/layers/geometry.py',
   'cirro/layers/info.py',
   'cirro/layers/legend.py',
@@ -64,6 +68,22 @@ python.install_sources(
   'cirro/layers/wfs.py',
   'cirro/layers/wms.py',
   subdir: 'cirro/layers',
+)
+python.install_sources(
+  'cirro/notify/__init__.py',
+  'cirro/notify/alerts.py',
+  'cirro/notify/background.py',
+  'cirro/notify/rain.py',
+  'cirro/notify/watcher.py',
+  subdir: 'cirro/notify',
+)
+python.install_sources(
+  'cirro/warnings/__init__.py',
+  'cirro/warnings/cap.py',
+  'cirro/warnings/source.py',
+  'cirro/warnings/text.py',
+  'cirro/warnings/view.py',
+  subdir: 'cirro/warnings',
 )
 # Loaded next to the Python files, also from the source tree.
 install_data('cirro/style.css', install_dir: pythondir / 'cirro')

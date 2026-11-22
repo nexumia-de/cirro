@@ -1,6 +1,7 @@
 """Places as pins on the map (docs/places.md, pins): one button per
 place, a different icon for the own location, the selected pin
 highlighted, and an unsaved point for a search result."""
+
 import gi
 
 gi.require_version("Gtk", "4.0")
@@ -12,7 +13,7 @@ PLACE_ICON = "mark-location-symbolic"
 
 
 def status(place):
-    """"My location" for the own location, else None."""
+    """ "My location" for the own location, else None."""
     return "My location" if place.own else None
 
 
@@ -32,11 +33,16 @@ class PinLayer(Shumate.MarkerLayer):
         # The unsaved point is always the selected one, so it looks like
         # a selected pin; the nowcast row says "Not saved".
         self._point = Shumate.Marker(visible=False, can_target=False)
-        self._point.set_child(Gtk.Button(
-            icon_name=PLACE_ICON, can_focus=False,
-            css_classes=["circular", "suggested-action", "cirro-pin"]))
+        self._point.set_child(
+            Gtk.Button(
+                icon_name=PLACE_ICON,
+                can_focus=False,
+                css_classes=["circular", "suggested-action", "cirro-pin"],
+            )
+        )
         self._point.get_child().update_property(
-            [Gtk.AccessibleProperty.LABEL], ["Selected point, not saved"])
+            [Gtk.AccessibleProperty.LABEL], ["Selected point, not saved"]
+        )
         store.connect("changed", lambda *_: self._rebuild())
         self._rebuild()
 
@@ -79,8 +85,9 @@ class PinLayer(Shumate.MarkerLayer):
             label = name
         if selected:
             label = f"{label}, selected"
-        button = Gtk.Button(icon_name=OWN_ICON if place.own else PLACE_ICON,
-                            css_classes=classes, tooltip_text=label)
+        button = Gtk.Button(
+            icon_name=OWN_ICON if place.own else PLACE_ICON, css_classes=classes, tooltip_text=label
+        )
         button.update_property([Gtk.AccessibleProperty.LABEL], [label])
         place_id = place.id
         button.connect("clicked", lambda *_: self.emit("activated", place_id))

@@ -1,9 +1,10 @@
 """Polling and downloads against a local server that serves tars built
 from the recorded RV member, and the refresh policy."""
+
 import io
 import tarfile
 import threading
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
@@ -12,7 +13,7 @@ import pytest
 from cirro import USER_AGENT, source
 
 SAMPLE = Path(__file__).parent / "data" / "composite_rv_20261024_2110_000-hd5"
-T0 = datetime(2026, 10, 24, 21, 10, tzinfo=timezone.utc)
+T0 = datetime(2026, 10, 24, 21, 10, tzinfo=UTC)
 TAR_NAME = "composite_rv_20261024_2110.tar"
 ETAG = '"6addeee5-b1d000"'
 
@@ -37,8 +38,7 @@ def server(request):
 
     class Handler(BaseHTTPRequestHandler):
         def do_GET(self):
-            log.append((self.path, self.headers.get("Range"),
-                        self.headers.get("User-Agent")))
+            log.append((self.path, self.headers.get("Range"), self.headers.get("User-Agent")))
             data = files.get(self.path)
             if data is None:
                 self.send_error(404)
@@ -50,7 +50,7 @@ def server(request):
             header = self.headers.get("Range")
             if ranges and header:
                 first, last = map(int, header.removeprefix("bytes=").split("-"))
-                data = data[first:last + 1]
+                data = data[first : last + 1]
                 self.send_response(206)
             else:
                 self.send_response(200)
@@ -73,8 +73,7 @@ def test_stamp_roundtrip():
     assert source.parse_stamp("20261024_2110") == T0
 
 
-@pytest.mark.parametrize("server", [True, False], indirect=True,
-                         ids=["ranges", "no-ranges"])
+@pytest.mark.parametrize("server", [True, False], indirect=True, ids=["ranges", "no-ranges"])
 def test_poll_latest(server):
     base_url, log = server
     latest = source.poll_latest(base_url=base_url)
@@ -85,8 +84,7 @@ def test_poll_latest(server):
     assert all(agent == USER_AGENT for _, _, agent in log)
 
 
-@pytest.mark.parametrize("server", [True, False], indirect=True,
-                         ids=["ranges", "no-ranges"])
+@pytest.mark.parametrize("server", [True, False], indirect=True, ids=["ranges", "no-ranges"])
 def test_fetch_analysis(server):
     base_url, log = server
     name, data = source.fetch_analysis(T0, base_url)
@@ -100,7 +98,9 @@ def test_fetch_tar(server):
     base_url, log = server
     members = source.fetch_tar(T0, base_url)
     assert [name for name, _ in members] == [
-        "composite_rv_20261024_2110_000-hd5", "composite_rv_20261024_2110_005-hd5"]
+        "composite_rv_20261024_2110_000-hd5",
+        "composite_rv_20261024_2110_005-hd5",
+    ]
     assert all(data == SAMPLE.read_bytes() for _, data in members)
     assert log == [("/" + TAR_NAME, None, USER_AGENT)]
 
@@ -112,13 +112,16 @@ def test_fetch_missing_analysis(server):
     assert error.value.code == 404
 
 
-@pytest.mark.parametrize("minutes_after_t0, expected", [
-    (4, 5),      # just fetched: next analysis appears at t0 + 9 min
-    (7, 2),
-    (8.5, 1),    # due within a minute: retry every minute
-    (12, 1),     # late: keep retrying every minute …
-    (20, 5),     # … for 10 minutes, then every 5 minutes
-])
+@pytest.mark.parametrize(
+    "minutes_after_t0, expected",
+    [
+        (4, 5),  # just fetched: next analysis appears at t0 + 9 min
+        (7, 2),
+        (8.5, 1),  # due within a minute: retry every minute
+        (12, 1),  # late: keep retrying every minute …
+        (20, 5),  # … for 10 minutes, then every 5 minutes
+    ],
+)
 def test_next_poll(minutes_after_t0, expected):
     now = T0 + timedelta(minutes=minutes_after_t0)
     delay = source.next_poll(T0, now)
@@ -133,3 +136,22 @@ def test_stale_guard():
     assert not source.is_stale(T0, T0 + timedelta(minutes=30))
     assert source.is_stale(T0, T0 + timedelta(minutes=31))
     assert source.is_stale(None, T0)
+
+
+@pytest.mark.parametrize(
+    "minutes_after_t0, expected",
+    [
+        (0, 19),  # the analysis 15 min later, published 4 min after it
+        (10, 9),
+        (18.5, 5),  # due in less than a minute: try again in 5 min
+        (25, 5),  # late: every 5 min, not every minute
+    ],
+)
+def test_next_poll_metered(minutes_after_t0, expected):
+    now = T0 + timedelta(minutes=minutes_after_t0)
+    delay = source.next_poll(T0, now, metered=True)
+    assert delay == pytest.approx(timedelta(minutes=expected), abs=timedelta(seconds=31))
+
+
+def test_next_poll_metered_without_data():
+    assert source.next_poll(None, T0, metered=True) == source.POLL

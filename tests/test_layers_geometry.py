@@ -1,4 +1,5 @@
 """Map area of a layer request."""
+
 import pytest
 
 from cirro.layers import geometry

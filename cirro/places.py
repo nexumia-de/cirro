@@ -5,6 +5,8 @@ The store keeps them in a `Gio.ListStore`, the list model behind the map
 pins and the sidebar, and saves them as JSON in the data directory (in
 the Flatpak: ~/.var/app/<app id>/data/cirro/places.json). No GTK, so it
 is tested without a display."""
+
+import contextlib
 import json
 import logging
 import math
@@ -56,8 +58,7 @@ class Place(GObject.Object):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        for name in ("custom-name", "default-name", "latitude", "longitude",
-                     "has-position"):
+        for name in ("custom-name", "default-name", "latitude", "longitude", "has-position"):
             self.connect(f"notify::{name}", lambda *_: self.notify("title"))
 
     @GObject.Property(type=str, flags=GObject.ParamFlags.READABLE)
@@ -87,9 +88,12 @@ class Place(GObject.Object):
 
     @classmethod
     def from_json(cls, data, own=False):
-        place = cls(id=OWN if own else str(data["id"]), own=own,
-                    custom_name=str(data.get("name", "")),
-                    default_name=str(data.get("default_name", "")))
+        place = cls(
+            id=OWN if own else str(data["id"]),
+            own=own,
+            custom_name=str(data.get("name", "")),
+            default_name=str(data.get("default_name", "")),
+        )
         if "latitude" in data and "longitude" in data:
             place.set_position(float(data["latitude"]), float(data["longitude"]))
         return place
@@ -133,14 +137,11 @@ class PlaceStore(GObject.Object):
             pass
         except (OSError, ValueError, TypeError) as error:
             # Keep the broken file for inspection; start empty.
-            log.warning("%s unreadable, starting without places: %s",
-                        self.path, error)
+            log.warning("%s unreadable, starting without places: %s", self.path, error)
             data = {}
             if not self.read_only:
-                try:
+                with contextlib.suppress(OSError):
                     self.path.replace(self.path.with_suffix(".json.bad"))
-                except OSError:
-                    pass
         own = Place.from_json(data.get("own") or {}, own=True)
         places = [own]
         for item in data.get("places", []):
@@ -155,8 +156,7 @@ class PlaceStore(GObject.Object):
         self.location_enabled = bool(data.get("location_enabled", False))
 
     def _watch(self, place):
-        for name in ("latitude", "longitude", "custom-name", "default-name",
-                     "has-position"):
+        for name in ("latitude", "longitude", "custom-name", "default-name", "has-position"):
             place.connect(f"notify::{name}", self._on_place_changed)
 
     def _on_place_changed(self, *_):
@@ -174,8 +174,7 @@ class PlaceStore(GObject.Object):
             try:
                 self.path.parent.mkdir(parents=True, exist_ok=True)
                 temporary = self.path.with_suffix(".json.tmp")
-                temporary.write_text(json.dumps(data, indent=1,
-                                                ensure_ascii=False))
+                temporary.write_text(json.dumps(data, indent=1, ensure_ascii=False))
                 os.replace(temporary, self.path)
             except OSError as error:
                 log.warning("could not save places: %s", error)
@@ -216,8 +215,7 @@ class PlaceStore(GObject.Object):
     # Changes
 
     def add(self, latitude, longitude, default_name="", custom_name=""):
-        place = Place(id=uuid.uuid4().hex, default_name=default_name,
-                      custom_name=custom_name)
+        place = Place(id=uuid.uuid4().hex, default_name=default_name, custom_name=custom_name)
         place.set_position(latitude, longitude)
         self._watch(place)
         self.model.append(place)
@@ -259,8 +257,9 @@ class PlaceStore(GObject.Object):
         """A fix from the location portal: overwrites the stored position.
         Returns True if it moved so far that its default name is stale."""
         own = self.own
-        moved = (own.position is None or
-                 distance_m(own.position, (latitude, longitude)) > RENAME_AFTER_M)
+        moved = (
+            own.position is None or distance_m(own.position, (latitude, longitude)) > RENAME_AFTER_M
+        )
         own.freeze_notify()
         own.set_position(latitude, longitude)
         if moved:
@@ -273,6 +272,8 @@ class PlaceStore(GObject.Object):
 
     def unnamed(self):
         """Places with a position but no default name yet."""
-        return [self.model.get_item(i) for i in range(self.model.get_n_items())
-                if self.model.get_item(i).has_position
-                and not self.model.get_item(i).default_name]
+        return [
+            self.model.get_item(i)
+            for i in range(self.model.get_n_items())
+            if self.model.get_item(i).has_position and not self.model.get_item(i).default_name
+        ]

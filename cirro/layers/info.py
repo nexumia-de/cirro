@@ -1,16 +1,19 @@
 """The text shown for a tap on the map: the layer's value at that point,
 from GetFeatureInfo features (docs/map-layers.md)."""
+
 import math
 
 from cirro import wind
 from cirro.layers.catalogue import POLLEN_LEVELS
 
 _SKIP = {"TIME", "REFERENCE_TIME", "ELEVATION", "ENSEMBLE_PRODUCT"}
-_SEVERITY = {"Minor": "level 1", "Moderate": "level 2", "Severe": "level 3",
-             "Extreme": "level 4"}
-_HEALTH = {"positiver Einfluss": "positive effect",
-           "kein Einfluss": "no effect",
-           "geringe Gefährdung": "low risk", "hohe Gefährdung": "high risk"}
+_SEVERITY = {"Minor": "level 1", "Moderate": "level 2", "Severe": "level 3", "Extreme": "level 4"}
+_HEALTH = {
+    "positiver Einfluss": "positive effect",
+    "kein Einfluss": "no effect",
+    "geringe Gefährdung": "low risk",
+    "hohe Gefährdung": "high risk",
+}
 compass = wind.compass
 
 
@@ -104,6 +107,7 @@ def station_text(value, stations, latitude, longitude, within_km=30):
     """Text of the nearest station within `within_km` (station layers),
     or None."""
     from cirro.layers.wfs import nearest
+
     station, _ = nearest(stations, latitude, longitude, within_km)
     if station is None:
         return None

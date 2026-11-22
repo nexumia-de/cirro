@@ -1,5 +1,6 @@
 """Decoder, projection and colour scale, tested with the recorded RV member."""
-from datetime import datetime, timezone
+
+from datetime import UTC, datetime
 from pathlib import Path
 
 import numpy as np
@@ -23,7 +24,7 @@ def reprojection(frame):
 
 
 def test_decode_times_and_flags(frame):
-    utc = timezone.utc
+    utc = UTC
     assert frame.analysis_time == datetime(2026, 10, 24, 21, 10, tzinfo=utc)
     assert frame.valid_time == frame.analysis_time
     assert not frame.forecast
@@ -50,8 +51,7 @@ def test_grid_edges_from_corners(frame):
 def test_stereographic_matches_recorded_corners(frame):
     stere = projection.Stereographic(radar.parse_projdef(frame.grid.projdef))
     # Corner coordinates as stored in /where (degrees, outer edges).
-    corners = {(55.8621, 1.4633): (-500, 500),
-               (45.6846, 16.5809): (1099500, -1199500)}
+    corners = {(55.8621, 1.4633): (-500, 500), (45.6846, 16.5809): (1099500, -1199500)}
     for (lat, lon), expected in corners.items():
         assert stere.forward(lon, lat) == pytest.approx(expected, abs=20)
 
@@ -96,8 +96,9 @@ def test_reprojection_samples_the_right_cell(frame, reprojection):
     x0, y0 = projection.mercator_xy(r.west, r.north)
     x1, y1 = projection.mercator_xy(r.east, r.south)
     for px, py in [(100, 100), (350, 300), (600, 500)]:
-        lon, lat = projection.mercator_lonlat(x0 + (px + .5) * (x1 - x0) / r.width,
-                                              y0 + (py + .5) * (y1 - y0) / r.height)
+        lon, lat = projection.mercator_lonlat(
+            x0 + (px + 0.5) * (x1 - x0) / r.width, y0 + (py + 0.5) * (y1 - y0) / r.height
+        )
         sx, sy = stere.forward(lon, lat)
         col = int((sx - frame.grid.x_min) // 1000)
         row = int((frame.grid.y_max - sy) // 1000)
@@ -107,9 +108,11 @@ def test_reprojection_samples_the_right_cell(frame, reprojection):
 def test_colour_scale(frame):
     lut = colors.rgba_lut(frame.gain, frame.offset, frame.undetect)
     assert lut[radar.NODATA, 3] == 0 and lut[frame.undetect, 3] == 0
+
     # raw → mm/h: (raw × 0.001 − 0.001) × 12.
     def raw_for(rate):
         return int(np.ceil((rate / 12 - frame.offset) / frame.gain))
+
     assert lut[raw_for(0.1) - 1, 3] == 0
     for bound, rgb in colors.SCALE:
         assert tuple(lut[raw_for(bound)]) == (*rgb, colors.ALPHA)

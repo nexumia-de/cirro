@@ -7,6 +7,7 @@ timeline cost about 15 MB instead of about 100 MB decoded. The members
 are also written to a disk cache so the app opens with the last frames
 instantly. No GTK; the methods are thread-safe.
 """
+
 import logging
 import os
 import re
@@ -29,9 +30,9 @@ log = logging.getLogger(__name__)
 
 @dataclass(frozen=True)
 class Entry:
-    name: str                  # member name, unique per analysis and lead
-    analysis_time: datetime    # UTC
-    valid_time: datetime       # UTC
+    name: str  # member name, unique per analysis and lead
+    analysis_time: datetime  # UTC
+    valid_time: datetime  # UTC
     forecast: bool
     data: bytes
 
@@ -42,7 +43,7 @@ class Entry:
 class FrameStore:
     def __init__(self, cache_dir=None):
         self._lock = threading.Lock()
-        self._entries = {}     # valid time → Entry
+        self._entries = {}  # valid time → Entry
         self._analysis_time = None
         self._cache_dir = Path(cache_dir) if cache_dir else None
 
@@ -62,8 +63,7 @@ class FrameStore:
             current = self._entries.get(valid)
             if current is None or analysis >= current.analysis_time:
                 self._entries[valid] = entry
-            if not forecast and (self._analysis_time is None
-                                 or analysis > self._analysis_time):
+            if not forecast and (self._analysis_time is None or analysis > self._analysis_time):
                 self._analysis_time = analysis
         if save and self._cache_dir:
             self._save(entry)
@@ -83,8 +83,9 @@ class FrameStore:
         with self._lock:
             if self._analysis_time is None:
                 return []
-            return sorted((e for e in self._entries.values() if self._wanted(e)),
-                          key=lambda e: e.valid_time)
+            return sorted(
+                (e for e in self._entries.values() if self._wanted(e)), key=lambda e: e.valid_time
+            )
 
     def missing_past(self):
         """Times of past analyses (newest first) not yet in the store."""
@@ -106,8 +107,7 @@ class FrameStore:
             if self._analysis_time is None:
                 dropped = list(self._entries.values())
             else:
-                dropped = [e for e in self._entries.values()
-                           if not self._wanted(e)]
+                dropped = [e for e in self._entries.values() if not self._wanted(e)]
             for entry in dropped:
                 del self._entries[entry.valid_time]
             keep = {e.name for e in self._entries.values()}

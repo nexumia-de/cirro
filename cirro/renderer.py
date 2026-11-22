@@ -5,6 +5,7 @@ so frames are rendered ahead of the time bar's position and kept in a
 small LRU of textures (7.6 MB each) instead of all at once
 (docs/radar-architecture.md, memory and bandwidth budget).
 """
+
 import logging
 import threading
 import time
@@ -23,8 +24,8 @@ CAPACITY = 8
 
 @dataclass(frozen=True)
 class Rendered:
-    texture: object            # Gdk.Texture
-    bounds: tuple              # (north, west, south, east) in degrees
+    texture: object  # Gdk.Texture
+    bounds: tuple  # (north, west, south, east) in degrees
 
 
 class FrameRenderer:
@@ -33,10 +34,10 @@ class FrameRenderer:
         that member name has been rendered."""
         self._on_ready = on_ready
         self._capacity = capacity
-        self._cache = OrderedDict()   # member name → Rendered
-        self._queue = []              # entries still to render, by priority
+        self._cache = OrderedDict()  # member name → Rendered
+        self._queue = []  # entries still to render, by priority
         self._wanted = set()
-        self._reprojections = {}      # Grid → Reprojection
+        self._reprojections = {}  # Grid → Reprojection
         self._cond = threading.Condition()
         threading.Thread(target=self._worker, daemon=True).start()
 
@@ -51,7 +52,7 @@ class FrameRenderer:
     def request(self, entries):
         """Render these entries, the first one first; replaces any earlier
         request that has not been rendered yet."""
-        entries = entries[:self._capacity]
+        entries = entries[: self._capacity]
         with self._cond:
             self._wanted = {e.name for e in entries}
             self._queue = [e for e in entries if e.name not in self._cache]
@@ -76,8 +77,7 @@ class FrameRenderer:
     def _evict(self):
         while len(self._cache) > self._capacity:
             # Oldest frame that is not part of the current request.
-            name = next((n for n in self._cache if n not in self._wanted),
-                        next(iter(self._cache)))
+            name = next((n for n in self._cache if n not in self._wanted), next(iter(self._cache)))
             del self._cache[name]
 
     def _render(self, entry):
@@ -93,6 +93,10 @@ class FrameRenderer:
         image = colors.colorize(frame, reprojection)
         texture = rgba_texture(image)
         r = reprojection
-        log.debug("%s: decoded in %.0f ms, coloured in %.0f ms", entry.name,
-                  (decoded - started) * 1000, (time.monotonic() - decoded) * 1000)
+        log.debug(
+            "%s: decoded in %.0f ms, coloured in %.0f ms",
+            entry.name,
+            (decoded - started) * 1000,
+            (time.monotonic() - decoded) * 1000,
+        )
         return Rendered(texture, (r.north, r.west, r.south, r.east))

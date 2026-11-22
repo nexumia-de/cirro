@@ -5,6 +5,7 @@ texture is reprojected once per grid definition into a Mercator-aligned
 index table, then every frame is a single numpy gather
 (docs/radar-architecture.md, step 5).
 """
+
 import math
 from dataclasses import dataclass
 
@@ -51,7 +52,9 @@ def mercator_xy(lon, lat):
 
 def mercator_lonlat(x, y):
     """Normalised Web Mercator → degrees."""
-    return np.asarray(x) * 360 - 180, np.degrees(np.arctan(np.sinh(np.pi * (1 - 2 * np.asarray(y)))))
+    return np.asarray(x) * 360 - 180, np.degrees(
+        np.arctan(np.sinh(np.pi * (1 - 2 * np.asarray(y))))
+    )
 
 
 @dataclass(frozen=True)
@@ -63,6 +66,7 @@ class Reprojection:
     gather from the source with one appended NODATA value yields the
     target image.
     """
+
     width: int
     height: int
     # Bounds in degrees (north, west, south, east): the image's edges.
@@ -105,13 +109,13 @@ def reproject_grid(grid, width=1400, block_rows=128):
         col = np.floor((sx - grid.x_min) / grid.xscale).astype(np.int64)
         row = np.floor((grid.y_max - sy) / grid.yscale).astype(np.int64)
         inside = (col >= 0) & (col < grid.xsize) & (row >= 0) & (row < grid.ysize)
-        index[rows] = np.where(inside, row * grid.xsize + col,
-                               grid.xsize * grid.ysize)
+        index[rows] = np.where(inside, row * grid.xsize + col, grid.xsize * grid.ysize)
 
     west, north = mercator_lonlat(x0, y0)
     east, south = mercator_lonlat(x1, y1)
-    return Reprojection(width, height, float(north), float(west), float(south),
-                        float(east), index.ravel())
+    return Reprojection(
+        width, height, float(north), float(west), float(south), float(east), index.ravel()
+    )
 
 
 def stere_inverse(stere, x, y, iterations=8):

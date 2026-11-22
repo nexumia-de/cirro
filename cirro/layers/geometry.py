@@ -1,6 +1,7 @@
 """The map area a layer image is requested for: the visible part of the
 libshumate map in Web Mercator (EPSG:3857) and its corners in degrees,
 which the texture layer draws at (cirro/radar_layer.py)."""
+
 import math
 from dataclasses import dataclass
 
@@ -27,8 +28,8 @@ def from_mercator(x, y):
 
 @dataclass(frozen=True)
 class View:
-    bbox: tuple    # west, south, east, north in metres
-    size: tuple    # width, height in pixels
+    bbox: tuple  # west, south, east, north in metres
+    size: tuple  # width, height in pixels
 
     @property
     def bounds(self):
@@ -45,7 +46,7 @@ def view(latitude, longitude, zoom, width, height, scale=1, rotation=0.0):
     square around its diagonal, so the corners are covered too."""
     if rotation:
         width = height = math.hypot(width, height)
-    metres_per_pixel = 2 * HALF / (TILE * 2 ** zoom)
+    metres_per_pixel = 2 * HALF / (TILE * 2**zoom)
     cx, cy = to_mercator(latitude, longitude)
     half_w, half_h = width / 2 * metres_per_pixel, height / 2 * metres_per_pixel
     west, east = cx - half_w, cx + half_w

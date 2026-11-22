@@ -1,13 +1,13 @@
 """The layer catalogue matches DWD's GeoServer (layer names recorded
 from GetCapabilities on 2026-11-07)."""
+
 from datetime import timedelta
 from pathlib import Path
 
 from cirro.layers import catalogue
 from cirro.layers.timeaxis import parse_time, usable
 
-NAMES = set((Path(__file__).parent / "data" / "wms" / "layer-names.txt")
-            .read_text().split())
+NAMES = set((Path(__file__).parent / "data" / "wms" / "layer-names.txt").read_text().split())
 
 
 def test_ids_are_unique_and_groups_known():

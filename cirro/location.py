@@ -1,5 +1,6 @@
 """Own location through the XDG location portal (GeoClue behind it), via
 libportal. Works inside and outside the Flatpak; no extra permission."""
+
 import logging
 
 import gi
@@ -31,7 +32,7 @@ class Location(GObject.Object):
         super().__init__()
         self._portal = None
         self._running = False
-        self.fix = None            # (latitude, longitude, accuracy)
+        self.fix = None  # (latitude, longitude, accuracy)
 
     @property
     def running(self):
@@ -49,8 +50,14 @@ class Location(GObject.Object):
             return
         self._running = True
         self._portal.location_monitor_start(
-            XdpGtk4.parent_new_gtk(window), DISTANCE_M, 0, ACCURACY,
-            Xdp.LocationMonitorFlags.NONE, None, self._on_started)
+            XdpGtk4.parent_new_gtk(window),
+            DISTANCE_M,
+            0,
+            ACCURACY,
+            Xdp.LocationMonitorFlags.NONE,
+            None,
+            self._on_started,
+        )
 
     def stop(self):
         if self._running:
@@ -67,8 +74,19 @@ class Location(GObject.Object):
         self._running = False
         self._fail(message)
 
-    def _on_updated(self, portal, latitude, longitude, altitude, accuracy,
-                    speed, heading, description, seconds, microseconds):
+    def _on_updated(
+        self,
+        portal,
+        latitude,
+        longitude,
+        altitude,
+        accuracy,
+        speed,
+        heading,
+        description,
+        seconds,
+        microseconds,
+    ):
         self.fix = (latitude, longitude, accuracy)
         self.emit("changed", latitude, longitude, accuracy)
 

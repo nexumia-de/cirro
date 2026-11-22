@@ -1,5 +1,6 @@
 """RadarSource refresh cycle with the downloads replaced by recorded
 members (see test_frames.py), driven by a GLib main loop."""
+
 import urllib.error
 from datetime import timedelta
 
@@ -8,9 +9,9 @@ import pytest
 pytest.importorskip("h5py")
 gi = pytest.importorskip("gi")
 from gi.repository import GLib  # noqa: E402
+from test_frames import STEP, T0, member  # noqa: E402
 
 from cirro import frames, radar_source, source  # noqa: E402
-from test_frames import STEP, T0, member  # noqa: E402
 
 
 def run_until_idle(rs, timeout=10):
@@ -50,8 +51,7 @@ def fake_dwd(monkeypatch):
 def test_refresh_cycle(fake_dwd, tmp_path):
     calls, state = fake_dwd
     now = {"t": T0 + timedelta(minutes=4)}
-    rs = radar_source.RadarSource(frames.FrameStore(tmp_path),
-                                  now=lambda: now["t"])
+    rs = radar_source.RadarSource(frames.FrameStore(tmp_path), now=lambda: now["t"])
     changes = []
     rs.connect("changed", lambda *_: changes.append(len(rs.store.timeline())))
 
@@ -80,8 +80,9 @@ def test_refresh_cycle(fake_dwd, tmp_path):
 
 
 def test_stale_and_failure(fake_dwd, tmp_path, monkeypatch):
-    rs = radar_source.RadarSource(frames.FrameStore(tmp_path),
-                                  now=lambda: T0 + timedelta(minutes=45))
+    rs = radar_source.RadarSource(
+        frames.FrameStore(tmp_path), now=lambda: T0 + timedelta(minutes=45)
+    )
     rs.start()
     run_until_idle(rs)
     assert rs.stale

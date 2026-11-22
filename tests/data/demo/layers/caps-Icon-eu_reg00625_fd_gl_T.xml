@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?><WMS_Capabilities xmlns:inspire_vs="http://inspire.ec.europa.eu/schemas/inspire_vs/1.0" xmlns:inspire_common="http://inspire.ec.europa.eu/schemas/common/1.0" version="1.3.0" updateSequence="29689" xmlns="http://www.opengis.net/wms" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wms https://maps.dwd.de/geoserver/schemas/wms/1.3.0/capabilities_1_3_0.xsd http://inspire.ec.europa.eu/schemas/inspire_vs/1.0 https://inspire.ec.europa.eu/schemas/inspire_vs/1.0/inspire_vs.xsd">
+  <Service>
+    <Name>WMS</Name>
+    <Title>DWD GeoServer WMS</Title>
+    <Abstract>This is the Web Map Server of DWD.</Abstract>
+    <KeywordList>
+      <Keyword>meteorology</Keyword>
+      <Keyword>climatology</Keyword>
+    </KeywordList>
+    <OnlineResource xlink:type="simple" xlink:href="https://maps.dwd.de/geoserver/"/>
+    <ContactInformation>
+      <ContactPersonPrimary>
+        <ContactPerson/>
+        <ContactOrganization>Deutscher Wetterdienst</ContactOrganization>
+      </ContactPersonPrimary>
+      <ContactPosition/>
+      <ContactAddress>
+        <AddressType>postal</AddressType>
+        <Address>Frankfurter Strasse 135</Address>
+        <City>Offenbach</City>
+        <StateOrProvince>Hessen</StateOrProvince>
+        <PostCode>63067</PostCode>
+        <Country>Germany</Country>
+      </ContactAddress>
+      <ContactVoiceTelephone/>
+      <ContactFacsimileTelephone/>
+      <ContactElectronicMailAddress>info@dwd.de</ContactElectronicMailAddress>
+    </ContactInformation>
+    <Fees>none</Fees>
+    <AccessConstraints>https://www.dwd.de/copyright</AccessConstraints>
+  </Service>
+  <Capability>
+    <Request>
+      <GetCapabilities>
+        <Format>text/xml</Format>
+        <DCPType>
+          <HTTP>
+            <Get>
+              <OnlineResource xlink:type="simple" xlink:href="https://maps.dwd.de/geoserver/dwd/Icon-eu_reg00625_fd_gl_T/ows?SERVICE=WMS&amp;"/>
+            </Get>
+            <Post>
+              <OnlineResource xlink:type="simple" xlink:href="https://maps.dwd.de/geoserver/dwd/Icon-eu_reg00625_fd_gl_T/ows?SERVICE=WMS&amp;"/>
+            </Post>
+          </HTTP>
+        </DCPType>
+      </GetCapabilities>
+      <GetMap>
+        <Format>image/png</Format>
+        <Format>application/atom+xml</Format>
+        <Format>application/json;type=utfgrid</Format>
+        <Format>application/pdf</Format>
+        <Format>application/rss+xml</Format>
+        <Format>application/vnd.google-earth.kml+xml</Format>
+        <Format>application/vnd.google-earth.kml+xml;mode=networklink</Format>
+        <Format>application/vnd.google-earth.kmz</Format>
+        <Format>image/geotiff</Format>
+        <Format>image/geotiff8</Format>
+        <Format>image/gif</Format>
+        <Format>image/jpeg</Format>
+        <Format>image/png; mode=8bit</Format>
+        <Format>image/svg+xml</Format>
+        <Format>image/tiff</Format>
+        <Format>image/tiff8</Format>
+        <Format>image/vnd.jpeg-png</Format>
+        <Format>image/vnd.jpeg-png8</Format>
+        <Format>text/html; subtype=openlayers</Format>
+        <Format>text/html; subtype=openlayers2</Format>
+        <Format>text/html; subtype=openlayers3</Format>
+        <DCPType>
+          <HTTP>
+            <Get>
+              <OnlineResource xlink:type="simple" xlink:href="https://maps.dwd.de/geoserver/dwd/Icon-eu_reg00625_fd_gl_T/ows?SERVICE=WMS&amp;"/>
+            </Get>
+          </HTTP>
+        </DCPType>
+      </GetMap>
+      <GetFeatureInfo>
+        <Format>text/plain</Format>
+        <Format>application/vnd.ogc.gml</Format>
+        <Format>text/xml</Format>
+        <Format>application/vnd.ogc.gml/3.1.1</Format>
+        <Format>text/xml; subtype=gml/3.1.1</Format>
+        <Format>text/html</Format>
+        <Format>text/javascript</Format>
+        <Format>application/json</Format>
+        <DCPType>
+          <HTTP>
+            <Get>
+              <OnlineResource xlink:type="simple" xlink:href="https://maps.dwd.de/geoserver/dwd/Icon-eu_reg00625_fd_gl_T/ows?SERVICE=WMS&amp;"/>
+            </Get>
+          </HTTP>
+        </DCPType>
+      </GetFeatureInfo>
+    </Request>
+    <Exception>
+      <Format>XML</Format>
+      <Format>INIMAGE</Format>
+      <Format>BLANK</Format>
+      <Format>JSON</Format>
+      <Format>JSONP</Format>
+    </Exception>
+    <inspire_vs:ExtendedCapabilities>
+      <inspire_common:MetadataUrl>
+        <inspire_common:URL>https://gdk.gdi-de.org/gdi-de/srv/eng/csw?request=GetRecordById&amp;version=2.0.2&amp;service=CSW&amp;outputSchema=http://www.isotc211.org/2005/gmd&amp;elementSetName=full&amp;id=de.dwd.services.wms</inspire_common:URL>
+        <inspire_common:MediaType>application/vnd.iso.19139+xml</inspire_common:MediaType>
+      </inspire_common:MetadataUrl>
+      <inspire_common:SupportedLanguages>
+        <inspire_common:DefaultLanguage>
+          <inspire_common:Language>ger</inspire_common:Language>
+        </inspire_common:DefaultLanguage>
+      </inspire_common:SupportedLanguages>
+      <inspire_common:ResponseLanguage>
+        <inspire_common:Language>ger</inspire_common:Language>
+      </inspire_common:ResponseLanguage>
+    </inspire_vs:ExtendedCapabilities>
+    <Layer>
+      <Title>DWD GeoServer WMS</Title>
+      <Abstract>This is the Web Map Server of DWD.</Abstract>
+      <!--Limited list of EPSG projections:-->
+      <CRS>EPSG:3044</CRS>
+      <CRS>EPSG:3045</CRS>
+      <CRS>EPSG:3413</CRS>
+      <CRS>EPSG:3857</CRS>
+      <CRS>EPSG:4258</CRS>
+      <CRS>EPSG:4326</CRS>
+      <CRS>EPSG:4839</CRS>
+      <CRS>EPSG:25832</CRS>
+      <CRS>EPSG:25833</CRS>
+      <CRS>EPSG:31467</CRS>
+      <CRS>EPSG:31468</CRS>
+      <CRS>EPSG:900913</CRS>
+      <CRS>EPSG:1000001</CRS>
+      <EX_GeographicBoundingBox>
+        <westBoundLongitude>-23.53125</westBoundLongitude>
+        <eastBoundLongitude>62.53125</eastBoundLongitude>
+        <southBoundLatitude>29.46875</southBoundLatitude>
+        <northBoundLatitude>70.53125</northBoundLatitude>
+      </EX_GeographicBoundingBox>
+      <BoundingBox CRS="EPSG:3044" minx="3266078.9469760163" miny="-2740515.1170287323" maxx="8673533.26065045" maxy="6048133.679837126"/>
+      <BoundingBox CRS="EPSG:3045" minx="3268365.398154352" miny="-3377622.6790049206" maxx="8499703.828101395" maxy="5366733.112610812"/>
+      <BoundingBox CRS="EPSG:3413" minx="779093.1863974744" miny="-6718243.508860684" maxx="7207957.191830363" maxy="2174587.8484162525"/>
+      <BoundingBox CRS="EPSG:3857" minx="-2619486.7677292186" miny="3435443.766284772" maxx="6960946.908666887" maxy="1.1243868112024302E7"/>
+      <BoundingBox CRS="EPSG:4258" minx="29.46875002706887" miny="-23.531250000000004" maxx="70.53125001102518" maxy="62.53125"/>
+      <BoundingBox CRS="EPSG:4326" minx="29.46875" miny="-23.53125" maxx="70.53125" maxy="62.53125"/>
+      <BoundingBox CRS="EPSG:4839" minx="-2422300.4998297426" miny="-3392820.6676097265" maxx="2927019.769141159" maxy="4939637.238415538"/>
+      <BoundingBox CRS="EPSG:25832" minx="-2740515.1170287323" miny="3266078.9469760163" maxx="6048133.679837126" maxy="8673533.26065045"/>
+      <BoundingBox CRS="EPSG:25833" minx="-3377622.6790049206" miny="3268365.398154352" maxx="5366733.112610812" maxy="8499703.828101395"/>
+      <BoundingBox CRS="EPSG:31467" minx="3266927.747122287" miny="258253.23182776803" maxx="8676590.935194049" maxy="9050588.528165929"/>
+      <BoundingBox CRS="EPSG:31468" minx="3280350.6572090904" miny="941748.4305253257" maxx="8587505.99889916" maxy="9707699.124680042"/>
+      <BoundingBox CRS="EPSG:900913" minx="-2619486.7677292186" miny="3435443.766284772" maxx="6960946.908666887" maxy="1.1243868112024302E7"/>
+      <BoundingBox CRS="EPSG:1000001" minx="-3831.6308476171357" miny="-6911.66562490425" maxx="5505.348454951087" maxy="-1240.4818469455083"/>
+      <Layer>
+        <Name>Fachlayer</Name>
+        <Title>Fachlayer</Title>
+        <Layer>
+          <Name>Wetter</Name>
+          <Title>Wetter</Title>
+          <Layer>
+            <Name>Kurzfristvorhersagen</Name>
+            <Title>Kurzfristvorhersagen</Title>
+            <Layer queryable="1" opaque="0">
+              <Name>Icon-eu_reg00625_fd_gl_T</Name>
+              <Title>Temperatur auf Höhen über Grund in m aus ICON-EU</Title>
+              <Abstract>2m Temperatur auf diversen Höhen über Grund in m (2, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500) aus dem Modell ICON-EU mit einer räumlichen Auflösung von 0.0625° und einer stündlichen Auflösung, europaweite Abdeckung (ICON-EU Modellgebiet). Die Daten liegen für die Modellläufe 00, 06, 12, und 18 UTC für die Vorhersagezeitschritte vv+00 bis vv+120 vor.</Abstract>
+              <KeywordList>
+                <Keyword>Atmosphärische Bedingungen</Keyword>
+                <Keyword>Gitterpunkt (reguläres geographisches Gitter)</Keyword>
+                <Keyword>GRIB</Keyword>
+                <Keyword>Horizontale Auflösung von 0,0625 Grad</Keyword>
+                <Keyword>Luftfahrt</Keyword>
+                <Keyword>Lufttemperatur</Keyword>
+                <Keyword>Numerische Wettervorhersagen</Keyword>
+                <Keyword>Stündlich</Keyword>
+                <Keyword>Vorhersage</Keyword>
+                <Keyword>2 m über Grund</Keyword>
+              </KeywordList>
+              <CRS>EPSG:4326</CRS>
+              <BoundingBox CRS="EPSG:4326" minx="29.46875" miny="-23.53125" maxx="70.53125" maxy="62.53125"/>
+              <BoundingBox CRS="EPSG:3044" minx="3266078.9469760163" miny="-2740515.1170287323" maxx="8673533.26065045" maxy="6048133.679837126"/>
+              <BoundingBox CRS="EPSG:3045" minx="3268365.398154352" miny="-3377622.6790049206" maxx="8499703.828101395" maxy="5366733.112610812"/>
+              <BoundingBox CRS="EPSG:3413" minx="779093.1863974744" miny="-6718243.508860684" maxx="7207957.191830363" maxy="2174587.8484162525"/>
+              <BoundingBox CRS="EPSG:3857" minx="-2619486.7677292186" miny="3435443.766284772" maxx="6960946.908666887" maxy="1.1243868112024302E7"/>
+              <BoundingBox CRS="EPSG:4258" minx="29.46875002706887" miny="-23.531250000000004" maxx="70.53125001102518" maxy="62.53125"/>
+              <BoundingBox CRS="EPSG:4839" minx="-2422300.4998297426" miny="-3392820.6676097265" maxx="2927019.769141159" maxy="4939637.238415538"/>
+              <BoundingBox CRS="EPSG:25832" minx="-2740515.1170287323" miny="3266078.9469760163" maxx="6048133.679837126" maxy="8673533.26065045"/>
+              <BoundingBox CRS="EPSG:25833" minx="-3377622.6790049206" miny="3268365.398154352" maxx="5366733.112610812" maxy="8499703.828101395"/>
+              <BoundingBox CRS="EPSG:31467" minx="3266927.747122287" miny="258253.23182776803" maxx="8676590.935194049" maxy="9050588.528165929"/>
+              <BoundingBox CRS="EPSG:31468" minx="3280350.6572090904" miny="941748.4305253257" maxx="8587505.99889916" maxy="9707699.124680042"/>
+              <BoundingBox CRS="EPSG:900913" minx="-2619486.7677292186" miny="3435443.766284772" maxx="6960946.908666887" maxy="1.1243868112024302E7"/>
+              <BoundingBox CRS="EPSG:1000001" minx="-3831.6308476171357" miny="-6911.66562490425" maxx="5505.348454951087" maxy="-1240.4818469455083"/>
+              <Dimension name="time" default="current" units="ISO8601">2026-11-20T18:00:00.000Z/2026-11-27T00:00:00.000Z/PT1H</Dimension>
+              <Dimension name="elevation" default="2.0" units="EPSG:5030" unitSymbol="m">2.0,50.0,100.0,150.0,200.0,250.0,300.0,350.0,400.0,450.0,500.0</Dimension>
+              <Dimension name="REFERENCE_TIME" default="2026-11-22T00:00:00.000Z" units="ISO8601">2026-11-20T18:00:00.000Z,2026-11-21T00:00:00.000Z,2026-11-21T06:00:00.000Z,2026-11-21T12:00:00.000Z,2026-11-21T18:00:00.000Z,2026-11-22T00:00:00.000Z</Dimension>
+              <Style>
+                <Name>icon-eu_reg00625_fd_gl_t_isoarea_isa</Name>
+                <Title>icon-eu_reg00625_fd_gl_t_isoarea_isa</Title>
+                <LegendURL width="80" height="252">
+                  <Format>image/png</Format>
+                  <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://maps.dwd.de/geoserver/dwd/Icon-eu_reg00625_fd_gl_T/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=Icon-eu_reg00625_fd_gl_T"/>
+                </LegendURL>
+              </Style>
+              <Style>
+                <Name>icon-eu_reg00625_fd_gl_t_isoarea_tkb</Name>
+                <Title>icon-eu_reg00625_fd_gl_t_isoarea_tkb</Title>
+                <Abstract>style for temperature 2m thematische bodenkarte, data in celsius, labeled in celsius</Abstract>
+                <LegendURL width="72" height="482">
+                  <Format>image/png</Format>
+                  <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://maps.dwd.de/geoserver/dwd/Icon-eu_reg00625_fd_gl_T/ows?service=WMS&amp;version=1.3.0&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=Icon-eu_reg00625_fd_gl_T&amp;style=icon-eu_reg00625_fd_gl_t_isoarea_tkb"/>
+                </LegendURL>
+              </Style>
+            </Layer>
+          </Layer>
+        </Layer>
+      </Layer>
+    </Layer>
+  </Capability>
+</WMS_Capabilities>

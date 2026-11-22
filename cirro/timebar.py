@@ -4,8 +4,11 @@ mark and forecast labelling (docs/radar-architecture.md, TimeBar).
 Playback moves a fractional playhead at the display's frame rate; the
 map crossfades between the two frames on either side of it
 (docs/decisions/smooth-playback.md)."""
+
+import contextlib
 import logging
 import math
+import os
 from pathlib import Path
 
 import gi
@@ -28,6 +31,18 @@ FPS = 30
 # blended by the CPU, so update less often (docs/radar-architecture.md,
 # measurements).
 SOFTWARE_FPS = 10
+
+
+def fps_override(environ=os.environ):
+    """`CIRRO_FPS=<n>` (1–60) sets the update rate for measurements on
+    the phone (issue #33); None without a valid value."""
+    try:
+        value = int(environ.get("CIRRO_FPS", ""))
+    except ValueError:
+        return None
+    return value if 1 <= value <= 60 else None
+
+
 # A longer gap between two frame clock ticks (a stall, a hidden window)
 # does not make the playhead jump.
 MAX_TICK_SECONDS = 0.1
@@ -87,10 +102,8 @@ def load_speed(path=SETTINGS):
 
 def save_speed(speed, path=SETTINGS):
     keyfile = GLib.KeyFile()
-    try:
+    with contextlib.suppress(GLib.Error):
         keyfile.load_from_file(str(path), GLib.KeyFileFlags.KEEP_COMMENTS)
-    except GLib.Error:
-        pass
     keyfile.set_double("playback", "speed", speed)
     try:
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -108,7 +121,7 @@ def clock(time_):
 
 
 def day(time_):
-    """"Sat 7 Nov", for daily layers."""
+    """ "Sat 7 Nov", for daily layers."""
     return _local(time_).format("%a %-d %b")
 
 
@@ -118,8 +131,7 @@ def when(time_, now, daily=False):
     if daily:
         return day(time_)
     local, today = _local(time_), _local(now)
-    if (local.get_year(), local.get_day_of_year()) == \
-            (today.get_year(), today.get_day_of_year()):
+    if (local.get_year(), local.get_day_of_year()) == (today.get_year(), today.get_day_of_year()):
         return clock(time_)
     return local.format("%a %H:%M")
 
@@ -156,8 +168,10 @@ def mark(entry, previous, step_minutes):
     if step_minutes < 60:
         return local.get_minute() == 0
     if step_minutes < 1440:
-        return previous is not None and \
-            _local(previous.valid_time).get_day_of_year() != local.get_day_of_year()
+        return (
+            previous is not None
+            and _local(previous.valid_time).get_day_of_year() != local.get_day_of_year()
+        )
     return False
 
 
@@ -174,21 +188,28 @@ class TimeBar(Gtk.Box):
     def __init__(self, ready=lambda index: True):
         """`ready(index)` tells playback whether the next frame can be
         shown yet; playback waits for it instead of skipping frames."""
-        super().__init__(orientation=Gtk.Orientation.HORIZONTAL, spacing=6,
-                         margin_start=6, margin_end=12, margin_top=6)
+        super().__init__(
+            orientation=Gtk.Orientation.HORIZONTAL,
+            spacing=6,
+            margin_start=6,
+            margin_end=12,
+            margin_top=6,
+        )
         self._ready = ready
         self._entries = []
         self._analysis_time = None
         self._tick = 0
         self._last_tick = 0
-        self._position = 0.0     # playhead in frames, past the end while holding
+        self._position = 0.0  # playhead in frames, past the end while holding
         self._speed = 1.0
         self._fps = FPS
         self._daily = False
 
-        self._play = Gtk.Button(icon_name="media-playback-start-symbolic",
-                                valign=Gtk.Align.CENTER,
-                                css_classes=["circular", "flat"])
+        self._play = Gtk.Button(
+            icon_name="media-playback-start-symbolic",
+            valign=Gtk.Align.CENTER,
+            css_classes=["circular", "flat"],
+        )
         self._play.connect("clicked", lambda *_: self.set_playing(not self.playing))
         self._set_play_button(False)
         self.append(self._play)
@@ -196,22 +217,26 @@ class TimeBar(Gtk.Box):
         column = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, hexpand=True)
         labels = Gtk.Box(spacing=6, margin_start=10, margin_end=10)
         self._time = Gtk.Label(xalign=0, css_classes=["heading", "numeric"])
-        self._kind = Gtk.Label(xalign=0, hexpand=True, ellipsize=Pango.EllipsizeMode.END,
-                               css_classes=["dim-label"])
+        self._kind = Gtk.Label(
+            xalign=0, hexpand=True, ellipsize=Pango.EllipsizeMode.END, css_classes=["dim-label"]
+        )
         labels.append(self._time)
         labels.append(self._kind)
         column.append(labels)
 
-        self._adjustment = Gtk.Adjustment(lower=0, upper=0, step_increment=1,
-                                          page_increment=6)
-        self._scale = Gtk.Scale(adjustment=self._adjustment, draw_value=False,
-                                digits=0, round_digits=0, hexpand=True,
-                                show_fill_level=True, has_origin=False,
-                                restrict_to_fill_level=False)
-        self._scale.update_property([Gtk.AccessibleProperty.LABEL],
-                                    ["Time"])
-        self._changed = self._adjustment.connect("value-changed",
-                                                 self._on_value_changed)
+        self._adjustment = Gtk.Adjustment(lower=0, upper=0, step_increment=1, page_increment=6)
+        self._scale = Gtk.Scale(
+            adjustment=self._adjustment,
+            draw_value=False,
+            digits=0,
+            round_digits=0,
+            hexpand=True,
+            show_fill_level=True,
+            has_origin=False,
+            restrict_to_fill_level=False,
+        )
+        self._scale.update_property([Gtk.AccessibleProperty.LABEL], ["Time"])
+        self._changed = self._adjustment.connect("value-changed", self._on_value_changed)
         column.append(self._scale)
         self.append(column)
         self.set_sensitive(False)
@@ -247,8 +272,7 @@ class TimeBar(Gtk.Box):
 
         self.set_sensitive(bool(entries))
         self._scale.clear_marks()
-        step = round((times[1] - times[0]).total_seconds() / 60) \
-            if len(times) > 1 else 5
+        step = round((times[1] - times[0]).total_seconds() / 60) if len(times) > 1 else 5
         for i, entry in enumerate(entries):
             if i == now and not daily:
                 self._scale.add_mark(i, Gtk.PositionType.BOTTOM, "Now")
@@ -289,9 +313,10 @@ class TimeBar(Gtk.Box):
                 self._adjustment.set_value(0)
             self._last_tick = 0
             renderer = self.get_native().get_renderer() if self.get_native() else None
-            self._fps = SOFTWARE_FPS if isinstance(renderer, Gsk.CairoRenderer) else FPS
-            log.debug("playing at up to %d updates/s (%s)", self._fps,
-                      type(renderer).__name__)
+            self._fps = fps_override() or (
+                SOFTWARE_FPS if isinstance(renderer, Gsk.CairoRenderer) else FPS
+            )
+            log.debug("playing at up to %d updates/s (%s)", self._fps, type(renderer).__name__)
             # Driven by the frame clock, at most self._fps updates per second.
             self._tick = self.add_tick_callback(self._on_tick)
         else:
@@ -303,8 +328,9 @@ class TimeBar(Gtk.Box):
 
     def _set_play_button(self, playing):
         label = "Pause" if playing else "Play"
-        self._play.set_icon_name("media-playback-pause-symbolic" if playing
-                                 else "media-playback-start-symbolic")
+        self._play.set_icon_name(
+            "media-playback-pause-symbolic" if playing else "media-playback-start-symbolic"
+        )
         self._play.set_tooltip_text(label)
         self._play.update_property([Gtk.AccessibleProperty.LABEL], [label])
 
@@ -315,8 +341,7 @@ class TimeBar(Gtk.Box):
         seconds = (now - self._last_tick) / 1e6 if self._last_tick else 0.0
         self._last_tick = now
         count = len(self._entries)
-        position = advance(self._position, step_frames(seconds, self._speed),
-                           count, self._ready)
+        position = advance(self._position, step_frames(seconds, self._speed), count, self._ready)
         if position != self._position:
             previous = self.index
             self._position = position
@@ -345,7 +370,6 @@ class TimeBar(Gtk.Box):
         label = when(entry.valid_time, self._analysis_time, self._daily)
         self._time.set_label(label)
         self._kind.set_label(text)
-        self._scale.update_property([Gtk.AccessibleProperty.VALUE_TEXT],
-                                    [f"{label}, {text}"])
+        self._scale.update_property([Gtk.AccessibleProperty.VALUE_TEXT], [f"{label}, {text}"])
         if emit:
             self.emit("selected", self.index)

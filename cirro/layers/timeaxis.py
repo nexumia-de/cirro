@@ -4,14 +4,16 @@ GeoServer advertises them as ISO 8601 text, a list of instants, of
 `start/end/period` intervals, or both. `TIME` must be one of these
 exact values (docs/data-sources.md, section 11), so the app picks the
 nearest one."""
+
 import bisect
 import re
 from dataclasses import dataclass
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 _DURATION = re.compile(
     r"P(?:(?P<days>\d+)D)?(?:T(?:(?P<hours>\d+)H)?(?:(?P<minutes>\d+)M)?"
-    r"(?:(?P<seconds>\d+)S)?)?$")
+    r"(?:(?P<seconds>\d+)S)?)?$"
+)
 # More steps are never offered on the time bar.
 MAX_STEPS = 400
 
@@ -19,12 +21,12 @@ MAX_STEPS = 400
 def parse_time(text):
     """ISO 8601 UTC instant → aware datetime."""
     text = text.strip().replace("Z", "+00:00")
-    return datetime.fromisoformat(text).astimezone(timezone.utc)
+    return datetime.fromisoformat(text).astimezone(UTC)
 
 
 def format_time(time_):
     """The form GeoServer advertises: 2026-11-07T12:00:00.000Z."""
-    return time_.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.000Z")
+    return time_.astimezone(UTC).strftime("%Y-%m-%dT%H:%M:%S.000Z")
 
 
 def parse_duration(text):
@@ -76,8 +78,7 @@ class TimeAxis:
                     # "start/end/" without a period: GeoServer means
                     # "continuous"; the period is unknown.
                     raise ValueError(f"interval without period {part!r}")
-                intervals.append(Interval(parse_time(start), parse_time(end),
-                                          parse_duration(step)))
+                intervals.append(Interval(parse_time(start), parse_time(end), parse_duration(step)))
             else:
                 instants.append(parse_time(part))
         return cls(tuple(sorted(instants)), tuple(intervals))
@@ -88,7 +89,7 @@ class TimeAxis:
         if self.intervals:
             return min(i.step for i in self.intervals)
         if len(self.instants) > 1:
-            gaps = [b - a for a, b in zip(self.instants, self.instants[1:])]
+            gaps = [b - a for a, b in zip(self.instants, self.instants[1:], strict=False)]
             return sorted(gaps)[len(gaps) // 2]
         return timedelta(hours=1)
 

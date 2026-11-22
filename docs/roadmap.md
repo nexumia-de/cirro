@@ -95,9 +95,9 @@ built on the map-layer foundation (layer catalogue and WMS source,
 layer picker, time bar for layer time steps, legends and tap values;
 [map layers](map-layers.md)).
 
-Implemented: the map-layer foundation and the warning overlay
-(WMS). Still open: the warning product decision and the warnings per
-place.
+Implemented: the map-layer foundation, the warning overlay
+(WMS), the [warning product decision](decisions/warning-product.md)
+(CAP) and the [warnings per place](warnings.md) with a detail page.
 
 # M6 – Extras
 
@@ -116,7 +116,9 @@ place.
 
 Implemented: all layer groups of [map layers](map-layers.md), wind
 arrows and station values drawn from WFS, sunrise, sunset and wind
-for the selected place. Still open: notifications.
+for the selected place, and opt-in [notifications](notifications.md)
+for warnings and rain at the default place. Still open: the battery
+measurement on the phone ([owner checks](owner-checks.md)).
 
 # Risks
 

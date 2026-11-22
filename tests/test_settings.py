@@ -1,4 +1,5 @@
 """Playback speed preference."""
+
 import pytest
 
 pytest.importorskip("h5py")

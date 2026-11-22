@@ -191,8 +191,12 @@ hours". No extra download. Details: [point nowcast](nowcast.md).
   without news costs one `304`. A start with an empty cache adds 12 past
   members (≈ 6 MB in wide rain); with a warm cache only the frames that
   became past since are fetched (none if the app ran within the hour).
-  If this is too much on mobile data, poll less often on a metered
-  connection (`Gio.NetworkMonitor:network-metered`).
+  On a metered connection Cirro polls less often
+  ([decision](decisions/metered-polling.md), `cirro/data_saver.py`):
+  the analysis 15 min later instead of every 5 min, so 4 tars an hour
+  instead of 12; the two analyses in between come later as past
+  frames (only their first member, ≈ 0.5 MB each in wide rain), so the
+  hour costs about 40 % of the full rate.
 
 ## Measurements
 
@@ -276,8 +280,9 @@ Conclusions:
   ≈ 220 MB more RSS to save the worker's 0.09–0.33 core. The constant
   ≈ 0.5 core of the main thread at 30 updates/s costs more than the
   re-rendering.
-- The poll interval stays at 5 min: every poll in the hour found a new
-  analysis, so polling less often only adds delay. Bandwidth scales
+- The poll interval stays at 5 min on unmetered connections: every
+  poll in the hour found a new analysis, so polling less often only
+  adds delay. On metered ones it is 15 min (issue #34). Bandwidth scales
   with the tar size: 16.9 MB/h in light rain, up to the estimated
   ~140 MB/h in wide rain (budget above).
 - Memory is ≈ 300 MB RSS on the phone (≈ 245 MB in the dev
@@ -289,6 +294,15 @@ frame, and after every refresh the frame count, total bytes received,
 RSS and CPU time; starting playback logs the GSK renderer in use and
 the update rate chosen for it ("playing at up to 30 updates/s
 (VulkanRenderer)").
+
+`CIRRO_FPS=<1–60>` overrides that rate (issue #33), so the main
+thread's ≈ 0.5 core can be compared at 20 and 30 updates/s on the
+phone without a new build; the steps are an
+[owner check](owner-checks.md). If 20 looks as smooth and costs
+clearly less, `timebar.FPS` becomes 20 and the
+[smooth playback decision](decisions/smooth-playback.md) records the
+numbers; otherwise the next step is a profile of the main thread while
+playing.
 
 # Fallback
 

@@ -1,4 +1,5 @@
-# Weekly pull requests for new versions of the GitHub Actions used here.
+# Weekly pull requests for new versions of the GitHub Actions used here
+# and of the development tools in requirements-dev.txt.
 # Flatpak modules are updated by the update-check workflow instead (see
 # phosh-toolkit docs/dependency-updates.md).
 version: 2
@@ -9,4 +10,11 @@ updates:
       interval: weekly
     groups:
       actions:
+        patterns: ['*']
+  - package-ecosystem: pip
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      dev-tools:
         patterns: ['*']
