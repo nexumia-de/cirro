@@ -396,7 +396,7 @@ problem, switch to another tile provider; the tile URL is a setting.
 - Recorded DWD sample data in `tests/data/` is marked `CC-BY-4.0`,
   copyright Deutscher Wetterdienst, in `REUSE.toml`.
 
-# 8. DMI radar (Denmark) *(not verified live)*
+# 8. DMI radar (Denmark) *(not verified live; hosts still blocked on 2026-11-22)*
 
 All DMI hosts (`opendataapi.dmi.dk`, `dmigw.govcloud.dk`, `www.dmi.dk`,
 `opendatadocs.dmi.govcloud.dk`) were blocked in the cloud environment
