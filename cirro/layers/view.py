@@ -4,9 +4,10 @@ area and the selected time, drawn by a texture layer on the map.
 Images are fetched in worker threads, kept as textures in memory (a
 small LRU) and as PNG on disk (cirro/layers/cache.py). Capabilities are
 refreshed while the layer is shown, so the time steps move on."""
+
 import logging
 from collections import OrderedDict
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 import gi
 
@@ -28,8 +29,7 @@ def refresh_after(axis):
     """How often the time steps are read again: often for nowcasts."""
     if axis is None:
         return timedelta(minutes=5)
-    return timedelta(minutes=5) if axis.step <= timedelta(minutes=15) \
-        else timedelta(minutes=30)
+    return timedelta(minutes=5) if axis.step <= timedelta(minutes=15) else timedelta(minutes=30)
 
 
 class LayerView(GObject.Object):
@@ -53,13 +53,13 @@ class LayerView(GObject.Object):
         self.drawing.set_opacity(layer.alpha)
         self.caps = None
         self.steps = []
-        self._known = False   # steps-changed was emitted once
+        self._known = False  # steps-changed was emitted once
         self._missing = set()  # steps the server had no data for
         self._time = None
         self._view = None
-        self._memory = OrderedDict()   # url → (texture, bounds, fetched at)
+        self._memory = OrderedDict()  # url → (texture, bounds, fetched at)
         self._pending = set()
-        self._time_of = {}     # url → its time step
+        self._time_of = {}  # url → its time step
         self._failed = False
         self._closed = False
         self._timer = 0
@@ -91,15 +91,14 @@ class LayerView(GObject.Object):
 
     def _load_capabilities(self):
         future = self._executor.submit(wms.fetch_capabilities, self.name)
-        future.add_done_callback(
-            lambda f: GLib.idle_add(self._on_capabilities, f))
+        future.add_done_callback(lambda f: GLib.idle_add(self._on_capabilities, f))
 
     def _on_capabilities(self, future):
         if self._closed:
             return GLib.SOURCE_REMOVE
         try:
             self.caps = future.result()
-        except Exception as error:   # network, parsing
+        except Exception as error:  # network, parsing
             log.warning("%s: capabilities: %s", self.name, error)
             self._fail(str(error))
             self._schedule(timedelta(minutes=1))
@@ -112,8 +111,7 @@ class LayerView(GObject.Object):
     def _schedule(self, delay):
         if self._timer:
             GLib.source_remove(self._timer)
-        self._timer = GLib.timeout_add_seconds(int(delay.total_seconds()),
-                                               self._on_timer)
+        self._timer = GLib.timeout_add_seconds(int(delay.total_seconds()), self._on_timer)
 
     def _on_timer(self):
         self._timer = 0
@@ -132,8 +130,7 @@ class LayerView(GObject.Object):
             steps = axis.times(first, axis.last or now)
             if not steps and axis.last:
                 steps = axis.times(axis.last - axis.step * 24, axis.last)
-            steps = usable(steps, self.caps.reference_time,
-                           self.variant.lead, self.variant.every)
+            steps = usable(steps, self.caps.reference_time, self.variant.lead, self.variant.every)
             steps = [t for t in steps if t not in self._missing]
         if steps != self.steps or not self._known:
             self._known = True
@@ -147,8 +144,7 @@ class LayerView(GObject.Object):
         """The step to show for a time of the base layer: the nearest one,
         if it is close enough (half a step of either layer, at least
         10 min); None hides the layer."""
-        if self.caps is None or self.caps.axis is None or not self.steps \
-                or time_ is None:
+        if self.caps is None or self.caps.axis is None or not self.steps or time_ is None:
             return None
         # Only the layer's own window: the server does not keep every
         # time it advertises (docs/data-sources.md, section 11).
@@ -172,10 +168,16 @@ class LayerView(GObject.Object):
         self._show()
 
     def _url(self, time_, view):
-        url = wms.map_url(self.variant.wms, view.bbox, view.size,
-                           None if self.timeless else time_,
-                           self.variant.style, self.variant.cql,
-                           self.caps.reference_time, self.variant.dims)
+        url = wms.map_url(
+            self.variant.wms,
+            view.bbox,
+            view.size,
+            None if self.timeless else time_,
+            self.variant.style,
+            self.variant.cql,
+            self.caps.reference_time,
+            self.variant.dims,
+        )
         if time_ is not None:
             self._time_of[url] = time_
         return url
@@ -196,8 +198,7 @@ class LayerView(GObject.Object):
             return
         self.drawing.set_visible(True)
         hit = self._memory.get(url)
-        if hit and self.timeless and \
-                datetime.now(timezone.utc) - hit[2] > TIMELESS_TTL:
+        if hit and self.timeless and datetime.now(UTC) - hit[2] > TIMELESS_TTL:
             hit = None
         if hit:
             self._memory.move_to_end(url)
@@ -213,8 +214,7 @@ class LayerView(GObject.Object):
         return self._url(time_, self._view) in self._memory
 
     def prefetch(self, times):
-        if self.caps is None or (self._view is None and self.needs_view) \
-                or self.timeless:
+        if self.caps is None or (self._view is None and self.needs_view) or self.timeless:
             return
         for time_ in times:
             url = self._url(time_, self._view)
@@ -226,8 +226,7 @@ class LayerView(GObject.Object):
             return
         self._pending.add(url)
         future = self._executor.submit(self._job(url))
-        future.add_done_callback(
-            lambda f: GLib.idle_add(self._on_image, url, view, f))
+        future.add_done_callback(lambda f: GLib.idle_add(self._on_image, url, view, f))
 
     def _on_image(self, url, view, future):
         self._pending.discard(url)
@@ -248,7 +247,7 @@ class LayerView(GObject.Object):
             return GLib.SOURCE_REMOVE
         self._failed = False
         bounds = view.bounds if view is not None else None
-        self._memory[url] = (texture, bounds, datetime.now(timezone.utc))
+        self._memory[url] = (texture, bounds, datetime.now(UTC))
         while len(self._memory) > MEMORY:
             self._memory.popitem(last=False)
         if url == self._wanted():

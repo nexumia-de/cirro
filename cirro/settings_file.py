@@ -1,5 +1,7 @@
 """Boolean user settings in `settings.ini` (the key file of the playback
 speed, cirro/timebar.py): save mobile data, notifications."""
+
+import contextlib
 import logging
 
 from gi.repository import GLib
@@ -20,10 +22,8 @@ def load_bool(group, key, default, path=SETTINGS):
 
 def save_bool(group, key, value, path=SETTINGS):
     keyfile = GLib.KeyFile()
-    try:
+    with contextlib.suppress(GLib.Error):
         keyfile.load_from_file(str(path), GLib.KeyFileFlags.KEEP_COMMENTS)
-    except GLib.Error:
-        pass
     keyfile.set_boolean(group, key, value)
     try:
         path.parent.mkdir(parents=True, exist_ok=True)

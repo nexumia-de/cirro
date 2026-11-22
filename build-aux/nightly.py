@@ -5,6 +5,7 @@
 The stable files in data/ stay the only source; meson calls this for
 -Dprofile=development (docs/release-channels.md).
 """
+
 import re
 import sys
 

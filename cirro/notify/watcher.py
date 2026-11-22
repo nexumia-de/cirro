@@ -2,10 +2,11 @@
 sends notifications, while the app runs, with or without a window
 (docs/notifications.md). Rain every 15 min (30 when saving mobile data),
 warnings when the shared CAP source changes."""
+
 import json
 import logging
 import threading
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 from gi.repository import Gio, GLib, GObject
@@ -24,8 +25,7 @@ STATE = Path(GLib.get_user_cache_dir()) / "cirro" / "notified.json"
 def load_state(path=STATE):
     try:
         data = json.loads(path.read_text())
-        return alerts.State(set(data.get("warnings", [])),
-                            bool(data.get("raining_soon", False)))
+        return alerts.State(set(data.get("warnings", [])), bool(data.get("raining_soon", False)))
     except (OSError, ValueError):
         return alerts.State()
 
@@ -35,8 +35,7 @@ def save_state(state, path=STATE):
         path.parent.mkdir(parents=True, exist_ok=True)
         # Only identifiers still worth remembering: the last 500.
         warnings = sorted(state.warnings)[-500:]
-        path.write_text(json.dumps({"warnings": warnings,
-                                    "raining_soon": state.raining_soon}))
+        path.write_text(json.dumps({"warnings": warnings, "raining_soon": state.raining_soon}))
     except OSError as error:
         log.warning("cannot save %s: %s", path, error)
 
@@ -97,8 +96,7 @@ class Watcher(GObject.Object):
         if not self._running or place is None:
             return
         name, latitude, longitude = place
-        found = cap.at_point(self._warnings.warnings, latitude, longitude,
-                             datetime.now(timezone.utc))
+        found = cap.at_point(self._warnings.warnings, latitude, longitude, datetime.now(UTC))
         for warning in alerts.new_warnings(found, self._state):
             title, body = alerts.warning_text(warning, name)
             self._send(f"warning-{warning.identifier}", title, body)
@@ -116,20 +114,20 @@ class Watcher(GObject.Object):
             def work():
                 try:
                     series = rain.fetch_series(latitude, longitude)
-                except Exception as error:   # network, server
+                except Exception as error:  # network, server
                     log.warning("rain check: %s", error)
                     series = None
                 GLib.idle_add(self._rain_checked, name, series)
+
             threading.Thread(target=work, name="rain-check", daemon=True).start()
         every = RAIN_EVERY_METERED if self._saver.saving else RAIN_EVERY
-        self._timer = GLib.timeout_add_seconds(int(every.total_seconds()),
-                                               self._check_rain)
+        self._timer = GLib.timeout_add_seconds(int(every.total_seconds()), self._check_rain)
         return GLib.SOURCE_REMOVE
 
     def _rain_checked(self, name, series):
         self._checking = False
         if series:
-            now = datetime.now(timezone.utc)
+            now = datetime.now(UTC)
             minutes = rain.starts_in(series, now)
             dry = all(rate < rain.RAIN for _, rate in series)
             if alerts.rain_due(minutes, dry, self._state):

@@ -3,9 +3,10 @@
 Layout and units: docs/data-sources.md, section 1. Pure functions, no
 GTK, so they are unit-tested with the recorded file in tests/data/.
 """
+
 import io
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import numpy as np
 
@@ -19,6 +20,7 @@ RAW_MAX = NODATA - 1
 @dataclass(frozen=True)
 class Grid:
     """Polar stereographic grid of the composite (row 0 is the north edge)."""
+
     projdef: str
     xsize: int
     ysize: int
@@ -31,12 +33,12 @@ class Grid:
 
 @dataclass(frozen=True)
 class Frame:
-    raw: np.ndarray            # uint16, shape (ysize, xsize), NODATA outside
+    raw: np.ndarray  # uint16, shape (ysize, xsize), NODATA outside
     gain: float
-    offset: float              # mm per 5 min = raw * gain + offset
-    undetect: int              # raw value meaning "no precipitation"
-    analysis_time: datetime    # UTC
-    valid_time: datetime       # UTC, end of the 5-min interval
+    offset: float  # mm per 5 min = raw * gain + offset
+    undetect: int  # raw value meaning "no precipitation"
+    analysis_time: datetime  # UTC
+    valid_time: datetime  # UTC, end of the 5-min interval
     forecast: bool
     grid: Grid
 
@@ -53,8 +55,7 @@ def _str(value):
 
 
 def _time(date, time):
-    return datetime.strptime(_str(date) + _str(time), "%Y%m%d%H%M%S") \
-        .replace(tzinfo=timezone.utc)
+    return datetime.strptime(_str(date) + _str(time), "%Y%m%d%H%M%S").replace(tzinfo=UTC)
 
 
 def parse_projdef(projdef):
@@ -80,9 +81,11 @@ def _times(f):
     """(analysis time, valid time, forecast flag) from the attributes."""
     dataset = f["dataset1/what"].attrs
     top = f["what"].attrs
-    return (_time(top["date"], top["time"]),
-            _time(dataset["enddate"], dataset["endtime"]),
-            _str(f["how"].attrs.get("simulated", b"False")) == "True")
+    return (
+        _time(top["date"], top["time"]),
+        _time(dataset["enddate"], dataset["endtime"]),
+        _str(f["how"].attrs.get("simulated", b"False")) == "True",
+    )
 
 
 def _grid(f):
@@ -91,11 +94,19 @@ def _grid(f):
     # The corner coordinates are the outer cell edges; the upper-left
     # one fixes the grid's position (docs/data-sources.md).
     from cirro.projection import Stereographic
+
     x_min, y_max = Stereographic(parse_projdef(projdef)).forward(
-        float(where["UL_lon"]), float(where["UL_lat"]))
-    return Grid(projdef, int(where["xsize"]), int(where["ysize"]),
-                float(where["xscale"]), float(where["yscale"]),
-                round(float(x_min), 1), round(float(y_max), 1))
+        float(where["UL_lon"]), float(where["UL_lat"])
+    )
+    return Grid(
+        projdef,
+        int(where["xsize"]),
+        int(where["ysize"]),
+        float(where["xscale"]),
+        float(where["yscale"]),
+        round(float(x_min), 1),
+        round(float(y_max), 1),
+    )
 
 
 def cell(grid, latitude, longitude):
@@ -148,7 +159,7 @@ def sample_points(data, points):
             rows = [r for r, _ in inside]
             cols = [c for _, c in inside]
             # One read of the bounding block: a single decompression.
-            block = dataset[min(rows):max(rows) + 1, min(cols):max(cols) + 1]
+            block = dataset[min(rows) : max(rows) + 1, min(cols) : max(cols) + 1]
             for r, c in inside:
                 values[(r, c)] = int(block[r - min(rows), c - min(cols)])
         rates = []
@@ -186,8 +197,9 @@ def decode(data):
 
         grid = _grid(f)
         if values.shape != (grid.ysize, grid.xsize):
-            raise ValueError(f"data shape {values.shape} does not match "
-                             f"grid {grid.ysize}×{grid.xsize}")
+            raise ValueError(
+                f"data shape {values.shape} does not match grid {grid.ysize}×{grid.xsize}"
+            )
 
         analysis_time, valid_time, forecast = _times(f)
         return Frame(

@@ -1,5 +1,7 @@
 """The chosen map layers, kept in settings.ini next to the playback
 speed: the base layer with its variant and the overlays with theirs."""
+
+import contextlib
 import logging
 
 from gi.repository import GLib
@@ -47,14 +49,11 @@ def load(path=SETTINGS):
 
 def save(base, variant, overlays, path=SETTINGS):
     keyfile = GLib.KeyFile()
-    try:
+    with contextlib.suppress(GLib.Error):
         keyfile.load_from_file(str(path), GLib.KeyFileFlags.KEEP_COMMENTS)
-    except GLib.Error:
-        pass
     keyfile.set_string("layers", "base", base)
     keyfile.set_string("layers", "base-variant", str(variant))
-    keyfile.set_string("layers", "overlays",
-                       ";".join(f"{k}:{v}" for k, v in overlays.items()))
+    keyfile.set_string("layers", "overlays", ";".join(f"{k}:{v}" for k, v in overlays.items()))
     try:
         path.parent.mkdir(parents=True, exist_ok=True)
         keyfile.save_to_file(str(path))

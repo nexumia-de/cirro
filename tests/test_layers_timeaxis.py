@@ -1,23 +1,35 @@
 """Time dimensions of WMS layers."""
-from datetime import datetime, timedelta, timezone
+
+from datetime import UTC, datetime, timedelta
 
 import pytest
 
-from cirro.layers.timeaxis import (MAX_STEPS, TimeAxis, format_time,
-                                   latest_at, parse_duration, parse_time)
+from cirro.layers.timeaxis import (
+    MAX_STEPS,
+    TimeAxis,
+    format_time,
+    latest_at,
+    parse_duration,
+    parse_time,
+)
 
-UTC = timezone.utc
+UTC = UTC
 
 
 def t(text):
     return datetime.fromisoformat(text).replace(tzinfo=UTC)
 
 
-@pytest.mark.parametrize("text, delta", [
-    ("PT5M", timedelta(minutes=5)), ("PT1H", timedelta(hours=1)),
-    ("PT3H", timedelta(hours=3)), ("P1D", timedelta(days=1)),
-    ("P1DT12H", timedelta(days=1, hours=12)),
-])
+@pytest.mark.parametrize(
+    "text, delta",
+    [
+        ("PT5M", timedelta(minutes=5)),
+        ("PT1H", timedelta(hours=1)),
+        ("PT3H", timedelta(hours=3)),
+        ("P1D", timedelta(days=1)),
+        ("P1DT12H", timedelta(days=1, hours=12)),
+    ],
+)
 def test_durations(text, delta):
     assert parse_duration(text) == delta
 
@@ -44,11 +56,14 @@ def test_interval_steps_within_window():
 
 
 def test_list_of_instants():
-    axis = TimeAxis.parse("2025-11-05T00:00:00.000Z,2025-11-06T00:00:00.000Z,"
-                          "2025-11-07T00:00:00.000Z")
+    axis = TimeAxis.parse(
+        "2025-11-05T00:00:00.000Z,2025-11-06T00:00:00.000Z,2025-11-07T00:00:00.000Z"
+    )
     assert axis.step == timedelta(days=1)
-    assert axis.times(t("2025-11-05T12:00"), t("2025-11-08T00:00")) == \
-        [t("2025-11-06T00:00"), t("2025-11-07T00:00")]
+    assert axis.times(t("2025-11-05T12:00"), t("2025-11-08T00:00")) == [
+        t("2025-11-06T00:00"),
+        t("2025-11-07T00:00"),
+    ]
 
 
 def test_steps_are_capped():

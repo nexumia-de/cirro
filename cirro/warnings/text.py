@@ -1,4 +1,5 @@
 """Texts about a warning for the list and the detail page. No GTK."""
+
 from datetime import datetime
 
 
@@ -10,7 +11,7 @@ def _clock(time_, now):
 
 
 def period(warning, now):
-    """"Now until 09:00", "From Sun 22:00 until Mon 09:00", "Until further notice"."""
+    """ "Now until 09:00", "From Sun 22:00 until Mon 09:00", "Until further notice"."""
     start = warning.onset
     if start is None or start <= now:
         if warning.expires is None:
@@ -29,7 +30,7 @@ def level(warning):
 
 
 def heights(area):
-    """"Above 1000 m", "Below 800 m", or "" for all heights."""
+    """ "Above 1000 m", "Below 800 m", or "" for all heights."""
     low = round(area.altitude_m / 100) * 100
     if area.ceiling_m is None:
         return f"Above {low:.0f} m" if low > 0 else ""

@@ -1,4 +1,5 @@
 """Release notes for the About dialog, and the recorded demo data."""
+
 from pathlib import Path
 
 import pytest
@@ -6,9 +7,9 @@ import pytest
 pytest.importorskip("h5py")
 gi = pytest.importorskip("gi")
 from gi.repository import GLib  # noqa: E402
+from test_radar_source import run_until_idle  # noqa: E402
 
 from cirro import metainfo, radar_source  # noqa: E402
-from test_radar_source import run_until_idle  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -21,8 +22,7 @@ def test_release_notes_of_the_newest_release(tmp_path):
       </description></release>
       <release version="0.1.0"><description><p>Old.</p></description></release>
     </releases></component>""")
-    assert metainfo.release_notes(path) == (
-        "0.2.0~dev.1", "<ul><li>Radar &amp; more.</li></ul>")
+    assert metainfo.release_notes(path) == ("0.2.0~dev.1", "<ul><li>Radar &amp; more.</li></ul>")
 
 
 def test_release_notes_of_the_source_tree():

@@ -1,6 +1,7 @@
 """Notifications (issue #25): the rain check on DWD's recorded WMS point
 series and the decisions what to notify."""
-from datetime import datetime, timedelta, timezone
+
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 from cirro.notify import alerts, rain
@@ -11,7 +12,7 @@ DATA = Path(__file__).parent / "data"
 # GetFeatureInfo of Radar_rv_product_1x1km_ger at 47.3127 N 6.9089 E,
 # analysis 2026-11-22 04:50 UTC, +0 … +120 min (raining throughout).
 SERIES = DATA / "wms" / "info-rv-series.json"
-T0 = datetime(2026, 11, 22, 4, 50, tzinfo=timezone.utc)
+T0 = datetime(2026, 11, 22, 4, 50, tzinfo=UTC)
 CAP = DATA / "cap" / "Z_CAP_C_EDZW_LATEST_PVW_STATUS_PREMIUMDWD_COMMUNEUNION_EN.zip"
 
 
@@ -32,8 +33,16 @@ def test_no_notification_while_it_rains():
 def test_rain_starting_soon():
     def at(minutes, rate):
         return (T0 + timedelta(minutes=minutes), rate)
-    dry_then_rain = [at(0, 0.0), at(5, 0.0), at(10, 0.0), at(15, 0.0),
-                     at(20, 0.3), at(25, 1.0), at(60, 0.0)]
+
+    dry_then_rain = [
+        at(0, 0.0),
+        at(5, 0.0),
+        at(10, 0.0),
+        at(15, 0.0),
+        at(20, 0.3),
+        at(25, 1.0),
+        at(60, 0.0),
+    ]
     assert rain.starts_in(dry_then_rain, T0 + timedelta(minutes=2)) == 18
     assert rain.starts_in(dry_then_rain, T0 - timedelta(minutes=30)) is None
     drizzle = [at(0, 0.0), at(10, 0.05)]
@@ -50,7 +59,7 @@ def test_one_rain_notification_per_shower():
     state = alerts.State()
     assert alerts.rain_due(20, False, state)
     assert not alerts.rain_due(15, False, state)
-    assert not alerts.rain_due(None, True, state)   # dry again
+    assert not alerts.rain_due(None, True, state)  # dry again
     assert alerts.rain_due(10, False, state)
 
 
@@ -61,8 +70,8 @@ def test_rain_text():
 
 def test_new_warnings_once_and_from_level_two():
     warnings = cap.parse_zip(CAP.read_bytes())
-    now = datetime(2026, 11, 22, 4, 45, tzinfo=timezone.utc)
-    found = cap.at_point(warnings, 47.99, 7.85, now)   # Freiburg: level 1 only
+    now = datetime(2026, 11, 22, 4, 45, tzinfo=UTC)
+    found = cap.at_point(warnings, 47.99, 7.85, now)  # Freiburg: level 1 only
     state = alerts.State()
     assert alerts.new_warnings(found, state) == []
     assert alerts.new_warnings(found, alerts.State(), min_level=1) == found

@@ -1,6 +1,7 @@
 """WMS requests and answers, with GeoServer answers recorded on
 2026-11-07 (tests/data/wms/)."""
-from datetime import datetime, timedelta, timezone
+
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
@@ -9,7 +10,7 @@ import pytest
 from cirro.layers import wms
 
 DATA = Path(__file__).parent / "data" / "wms"
-UTC = timezone.utc
+UTC = UTC
 
 
 def caps(layer):
@@ -46,9 +47,15 @@ def test_unknown_layer():
 
 
 def test_map_url():
-    url = wms.map_url(("A", "B"), (1.4, 2, 3, 4), (300, 200),
-                      datetime(2026, 11, 7, 12, tzinfo=UTC), "s",
-                      "EC_II=4", "2026-11-07T06:00:00.000Z")
+    url = wms.map_url(
+        ("A", "B"),
+        (1.4, 2, 3, 4),
+        (300, 200),
+        datetime(2026, 11, 7, 12, tzinfo=UTC),
+        "s",
+        "EC_II=4",
+        "2026-11-07T06:00:00.000Z",
+    )
     q = query(url)
     assert q["layers"] == "dwd:A,dwd:B"
     assert q["styles"] == "s,s"
@@ -62,8 +69,11 @@ def test_map_url():
 
 
 def test_extra_dimensions():
-    q = query(wms.map_url(("A",), (0, 0, 1, 1), (1, 1),
-                          dims=(("ENSEMBLE_PRODUCT", "Probabilities:>14m/s"),)))
+    q = query(
+        wms.map_url(
+            ("A",), (0, 0, 1, 1), (1, 1), dims=(("ENSEMBLE_PRODUCT", "Probabilities:>14m/s"),)
+        )
+    )
     assert q["dim_ensemble_product"] == "Probabilities:>14m/s"
 
 
@@ -90,12 +100,15 @@ def test_feature_info_url_is_latitude_first():
 
 def test_capabilities_url_is_per_layer():
     assert wms.capabilities_url("Blitzdichte").startswith(
-        "https://maps.dwd.de/geoserver/dwd/Blitzdichte/wms?")
+        "https://maps.dwd.de/geoserver/dwd/Blitzdichte/wms?"
+    )
 
 
 def test_service_exception_is_raised():
-    body = (b'<?xml version="1.0"?><ServiceExceptionReport><ServiceException '
-            b'code="InvalidDimensionValue">No data available</ServiceException>'
-            b'</ServiceExceptionReport>')
+    body = (
+        b'<?xml version="1.0"?><ServiceExceptionReport><ServiceException '
+        b'code="InvalidDimensionValue">No data available</ServiceException>'
+        b"</ServiceExceptionReport>"
+    )
     with pytest.raises(wms.ServiceError, match="No data"):
         wms._check(body, "text/xml")

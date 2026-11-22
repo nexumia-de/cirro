@@ -14,8 +14,9 @@ NEAREST_ZOOM = 9
 def rgba_texture(image):
     """(height, width, 4) uint8 array → Gdk.Texture."""
     height, width, _ = image.shape
-    return Gdk.MemoryTexture.new(width, height, Gdk.MemoryFormat.R8G8B8A8,
-                                 GLib.Bytes.new(image.tobytes()), width * 4)
+    return Gdk.MemoryTexture.new(
+        width, height, Gdk.MemoryFormat.R8G8B8A8, GLib.Bytes.new(image.tobytes()), width * 4
+    )
 
 
 class RadarLayer(Shumate.Layer):
@@ -63,8 +64,9 @@ class RadarLayer(Shumate.Layer):
         top = height / 2 - source.get_y(zoom, viewport.get_latitude())
         x0 = left + source.get_x(zoom, west)
         y0 = top + source.get_y(zoom, north)
-        rect = Graphene.Rect().init(x0, y0, left + source.get_x(zoom, east) - x0,
-                                    top + source.get_y(zoom, south) - y0)
+        rect = Graphene.Rect().init(
+            x0, y0, left + source.get_x(zoom, east) - x0, top + source.get_y(zoom, south) - y0
+        )
 
         rotation = viewport.get_rotation()
         if rotation:
@@ -73,8 +75,7 @@ class RadarLayer(Shumate.Layer):
             snapshot.translate(center)
             snapshot.rotate(math.degrees(rotation))
             snapshot.translate(Graphene.Point().init(-width / 2, -height / 2))
-        scaling = Gsk.ScalingFilter.NEAREST if zoom >= NEAREST_ZOOM \
-            else Gsk.ScalingFilter.LINEAR
+        scaling = Gsk.ScalingFilter.NEAREST if zoom >= NEAREST_ZOOM else Gsk.ScalingFilter.LINEAR
         if self._next is not None:
             snapshot.push_cross_fade(self._fraction)
             snapshot.append_scaled_texture(self._texture, scaling, rect)

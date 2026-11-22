@@ -3,6 +3,7 @@ polled every 15 min instead of every 5 and the warnings every 30 min
 instead of 10, unless the user turned "Save Mobile Data" off in the
 preferences. Reload always fetches at once (docs/radar-architecture.md,
 bandwidth)."""
+
 import logging
 
 from gi.repository import Gio, GObject

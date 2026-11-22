@@ -2,6 +2,7 @@
 #56): "Rain in 35 min", "Raining, stops in 25 min", "Dry for 2 h".
 All places are sampled in one pass over the frames in a worker thread,
 again when a new analysis arrives or the places change."""
+
 import threading
 
 from gi.repository import GLib
@@ -38,11 +39,11 @@ class PlacesRain:
 
         def work():
             series = nowcast.series_many(
-                entries, analysis_time, points,
-                cancelled=lambda: generation != self._generation)
+                entries, analysis_time, points, cancelled=lambda: generation != self._generation
+            )
             if series is None:
                 return
-            texts = {i: nowcast.short(values) for i, values in zip(ids, series)}
+            texts = {i: nowcast.short(values) for i, values in zip(ids, series, strict=False)}
             GLib.idle_add(self._done, generation, texts)
 
         threading.Thread(target=work, name="places-rain", daemon=True).start()

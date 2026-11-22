@@ -1,4 +1,5 @@
 """Nominatim answers recorded on 2026-10-26 (tests/data/nominatim)."""
+
 import json
 from pathlib import Path
 
@@ -45,6 +46,7 @@ def test_no_search_results():
 def test_empty_query_sends_nothing(monkeypatch):
     def fail(*_):
         raise AssertionError("no request expected")
+
     monkeypatch.setattr(geocode, "_get", fail)
     assert geocode.search("   ") == []
 
@@ -55,6 +57,7 @@ def test_search_is_cached(monkeypatch):
     def fake(path, params):
         calls.append(params["q"])
         return load("search-freiburg")
+
     monkeypatch.setattr(geocode, "_get", fake)
     geocode._search_cache.clear()
     first = geocode.search("Freiburg")
@@ -70,12 +73,16 @@ def test_requests_are_spaced_one_second(monkeypatch):
     class Response:
         def __init__(self, request, timeout):
             assert request.get_header("User-agent").startswith("Cirro/")
+
         def __enter__(self):
             return self
+
         def __exit__(self, *_):
             pass
+
         def read(self):
             return b"[]"
+
     monkeypatch.setattr(geocode.urllib.request, "urlopen", Response)
     geocode._last = 0.0
     geocode._get("search", {"q": "a"})

@@ -1,6 +1,7 @@
 """Release notes from the installed AppStream metainfo, for the About
 dialog. Releases and their notes are written by the release workflow
 (docs/release-channels.md); this only reads them. No GTK."""
+
 import xml.etree.ElementTree as ET
 from pathlib import Path
 

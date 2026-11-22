@@ -1,6 +1,7 @@
 """Station measurements (WFS answer recorded 2026-11-07 12:00 UTC)."""
+
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
@@ -21,12 +22,17 @@ def test_parse_wind():
 
 def test_missing_field_is_skipped():
     assert wfs.parse(DATA, "TEMPERATURE") == []
-    assert wfs.parse({"features": [{"properties": {"SPEED": "x"},
-                                    "geometry": {"coordinates": [1, 2]}}]}, "SPEED") == []
+    assert (
+        wfs.parse(
+            {"features": [{"properties": {"SPEED": "x"}, "geometry": {"coordinates": [1, 2]}}]},
+            "SPEED",
+        )
+        == []
+    )
 
 
 def test_url_filters_one_hour():
-    url = wfs.features_url("RBSN_FF", datetime(2026, 11, 7, 12, tzinfo=timezone.utc))
+    url = wfs.features_url("RBSN_FF", datetime(2026, 11, 7, 12, tzinfo=UTC))
     q = {k: v[0] for k, v in parse_qs(urlparse(url).query).items()}
     assert q["CQL_FILTER"] == "M_DATE='2026-11-07T12:00:00Z'"
     assert q["typeNames"] == "dwd:RBSN_FF"
@@ -48,8 +54,9 @@ def test_nearest_within():
 def test_place_wind_line():
     pytest.importorskip("gi")
     from cirro.place_details import sun_text, wind_text
+
     stations = wfs.parse(DATA, "SPEED")
-    measured = datetime(2026, 11, 7, 12, tzinfo=timezone.utc)
+    measured = datetime(2026, 11, 7, 12, tzinfo=UTC)
     text = wind_text(stations, 50.11, 8.68, measured)
     assert text.startswith("Wind ") and " km · " in text
     assert wind_text(stations, 40.0, 3.0, measured) is None

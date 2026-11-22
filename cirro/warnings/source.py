@@ -2,6 +2,7 @@
 polled with `If-None-Match` while the window is visible and kept on
 disk, so warnings show at once after a start and without a network
 (docs/warnings.md)."""
+
 import logging
 import threading
 import urllib.error
@@ -16,8 +17,10 @@ from cirro.warnings import cap
 
 log = logging.getLogger(__name__)
 
-URL = ("https://opendata.dwd.de/weather/alerts/cap/COMMUNEUNION_DWD_STAT/"
-       "Z_CAP_C_EDZW_LATEST_PVW_STATUS_PREMIUMDWD_COMMUNEUNION_EN.zip")
+URL = (
+    "https://opendata.dwd.de/weather/alerts/cap/COMMUNEUNION_DWD_STAT/"
+    "Z_CAP_C_EDZW_LATEST_PVW_STATUS_PREMIUMDWD_COMMUNEUNION_EN.zip"
+)
 # The status changes up to 200 times a day; every 10 min keeps warnings
 # current at 0.2–0.8 MB per change, a 304 costs almost nothing.
 POLL = timedelta(minutes=10)
@@ -87,7 +90,7 @@ class WarningSource(GObject.Object):
         self._fetch = fetcher
         self._etag = None
         self._active = False
-        self._holders = set()      # who wants polling: window, notify
+        self._holders = set()  # who wants polling: window, notify
         self._timer = 0
         self._loading = False
         self._metered = False
@@ -99,7 +102,7 @@ class WarningSource(GObject.Object):
     def _apply(self, data, etag):
         try:
             self.warnings = cap.parse_zip(data)
-        except Exception as error:   # corrupt zip or XML
+        except Exception as error:  # corrupt zip or XML
             log.warning("warnings: %s", error)
             return False
         self._etag = etag
@@ -133,8 +136,7 @@ class WarningSource(GObject.Object):
     def _schedule(self, delay):
         if self._timer:
             GLib.source_remove(self._timer)
-        self._timer = GLib.timeout_add_seconds(
-            int(delay.total_seconds()), self._on_timer)
+        self._timer = GLib.timeout_add_seconds(int(delay.total_seconds()), self._on_timer)
 
     def _on_timer(self):
         self._timer = 0
@@ -150,10 +152,11 @@ class WarningSource(GObject.Object):
         def work():
             try:
                 result = ("ok", self._fetch(etag))
-            except Exception as error:   # network, server
+            except Exception as error:  # network, server
                 log.warning("warnings: %s", error)
                 result = ("failed", None)
             GLib.idle_add(self._done, *result)
+
         threading.Thread(target=work, name="warnings", daemon=True).start()
 
     def _done(self, state, result):

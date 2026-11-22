@@ -4,6 +4,8 @@ The GeoServer sends no `ETag` or `Cache-Control`, so Cirro decides:
 images of a time step and model run don't change and are kept on disk
 up to a size limit, oldest first out. Timeless layers (warnings) are
 not cached here, they change at any moment. Thread safe."""
+
+import contextlib
 import hashlib
 import logging
 import os
@@ -39,10 +41,8 @@ class ImageCache:
             data = path.read_bytes()
         except OSError:
             return None
-        try:
-            os.utime(path)   # most recently used
-        except OSError:
-            pass
+        with contextlib.suppress(OSError):
+            os.utime(path)  # most recently used
         return data
 
     def put(self, url, data):

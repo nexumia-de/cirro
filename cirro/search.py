@@ -2,6 +2,7 @@
 Enter: the usage policy forbids search-as-you-type (docs/places.md,
 search). A bottom sheet on the phone, a floating dialog on the
 desktop."""
+
 import threading
 
 import gi
@@ -26,40 +27,57 @@ class SearchDialog(Adw.Dialog):
         self._generation = 0
 
         self._entry = Gtk.SearchEntry(
-            hexpand=True, placeholder_text="City or town",
-            activates_default=False)
-        self._entry.update_property([Gtk.AccessibleProperty.LABEL],
-                                    ["Search places"])
+            hexpand=True, placeholder_text="City or town", activates_default=False
+        )
+        self._entry.update_property([Gtk.AccessibleProperty.LABEL], ["Search places"])
         self._entry.connect("activate", self._on_activate)
         self._entry.connect("stop-search", lambda *_: self.close())
-        clamp = Adw.Clamp(child=self._entry, maximum_size=560,
-                          margin_start=12, margin_end=12, margin_bottom=6)
+        clamp = Adw.Clamp(
+            child=self._entry, maximum_size=560, margin_start=12, margin_end=12, margin_bottom=6
+        )
 
-        self._results = Gtk.ListBox(css_classes=["boxed-list"],
-                                    selection_mode=Gtk.SelectionMode.NONE,
-                                    valign=Gtk.Align.START)
+        self._results = Gtk.ListBox(
+            css_classes=["boxed-list"],
+            selection_mode=Gtk.SelectionMode.NONE,
+            valign=Gtk.Align.START,
+        )
         self._results.connect("row-activated", self._on_row_activated)
-        results = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12,
-                          margin_start=12, margin_end=12, margin_top=6,
-                          margin_bottom=12)
+        results = Gtk.Box(
+            orientation=Gtk.Orientation.VERTICAL,
+            spacing=12,
+            margin_start=12,
+            margin_end=12,
+            margin_top=6,
+            margin_bottom=12,
+        )
         results.append(self._results)
-        results.append(Gtk.Label(label=geocode.ATTRIBUTION, wrap=True,
-                                 css_classes=["caption", "dim-label"]))
+        results.append(
+            Gtk.Label(label=geocode.ATTRIBUTION, wrap=True, css_classes=["caption", "dim-label"])
+        )
 
         self._status = Adw.StatusPage(
-            icon_name="system-search-symbolic", title="Search Places",
+            icon_name="system-search-symbolic",
+            title="Search Places",
             description="Enter a city or town and press Enter",
-            css_classes=["compact"])
-        self._spinner = Gtk.Spinner(spinning=True, width_request=32,
-                                    height_request=32,
-                                    halign=Gtk.Align.CENTER,
-                                    valign=Gtk.Align.CENTER)
+            css_classes=["compact"],
+        )
+        self._spinner = Gtk.Spinner(
+            spinning=True,
+            width_request=32,
+            height_request=32,
+            halign=Gtk.Align.CENTER,
+            valign=Gtk.Align.CENTER,
+        )
         self._stack = Gtk.Stack(vexpand=True)
         self._stack.add_named(self._status, "status")
         self._stack.add_named(self._spinner, "loading")
-        self._stack.add_named(Gtk.ScrolledWindow(
-            child=Adw.Clamp(child=results, maximum_size=560),
-            hscrollbar_policy=Gtk.PolicyType.NEVER), "results")
+        self._stack.add_named(
+            Gtk.ScrolledWindow(
+                child=Adw.Clamp(child=results, maximum_size=560),
+                hscrollbar_policy=Gtk.PolicyType.NEVER,
+            ),
+            "results",
+        )
 
         header = Adw.HeaderBar()
         view = Adw.ToolbarView(content=self._stack)
@@ -95,8 +113,7 @@ class SearchDialog(Adw.Dialog):
         if error:
             self._status.set_icon_name("network-offline-symbolic")
             self._status.set_title("Search Unavailable")
-            self._status.set_description(
-                "Check the internet connection and try again")
+            self._status.set_description("Check the internet connection and try again")
             self._stack.set_visible_child_name("status")
         elif not found:
             self._status.set_icon_name("system-search-symbolic")
@@ -105,9 +122,11 @@ class SearchDialog(Adw.Dialog):
             self._stack.set_visible_child_name("status")
         else:
             for result in found:
-                row = Adw.ActionRow(title=GLib.markup_escape_text(result.name),
-                                    subtitle=GLib.markup_escape_text(result.detail),
-                                    activatable=True)
+                row = Adw.ActionRow(
+                    title=GLib.markup_escape_text(result.name),
+                    subtitle=GLib.markup_escape_text(result.detail),
+                    activatable=True,
+                )
                 row.result = result
                 self._results.append(row)
             self._stack.set_visible_child_name("results")

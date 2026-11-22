@@ -1,15 +1,20 @@
 """CAP warnings per place, with DWD's recorded status of 2026-11-22
 04:38 UTC (tests/data/cap, docs/data-sources.md section 4)."""
-from datetime import datetime, timedelta, timezone
+
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 import pytest
 
 from cirro.warnings import cap, text
 
-ZIP = (Path(__file__).parent / "data" / "cap" /
-       "Z_CAP_C_EDZW_LATEST_PVW_STATUS_PREMIUMDWD_COMMUNEUNION_EN.zip")
-NOW = datetime(2026, 11, 22, 4, 45, tzinfo=timezone.utc)
+ZIP = (
+    Path(__file__).parent
+    / "data"
+    / "cap"
+    / "Z_CAP_C_EDZW_LATEST_PVW_STATUS_PREMIUMDWD_COMMUNEUNION_EN.zip"
+)
+NOW = datetime(2026, 11, 22, 4, 45, tzinfo=UTC)
 
 
 @pytest.fixture(scope="module")
@@ -32,11 +37,14 @@ def test_sea_warnings_have_no_polygon(warnings):
 
 
 def test_fields_and_times(warnings):
-    warning = next(w for w in warnings if w.identifier.startswith(
-        "2.49.0.0.276.0.DWD.PVW.1795260780000.f33da1d1"))
+    warning = next(
+        w
+        for w in warnings
+        if w.identifier.startswith("2.49.0.0.276.0.DWD.PVW.1795260780000.f33da1d1")
+    )
     assert warning.event == "frost"
-    assert warning.onset == datetime(2026, 11, 21, 20, 0, tzinfo=timezone.utc)
-    assert warning.expires == datetime(2026, 11, 22, 8, 0, tzinfo=timezone.utc)
+    assert warning.onset == datetime(2026, 11, 21, 20, 0, tzinfo=UTC)
+    assert warning.expires == datetime(2026, 11, 22, 8, 0, tzinfo=UTC)
     assert warning.colour == (255, 235, 59)
     assert warning.headline == "Official WARNING of FROST"
     assert warning.description
@@ -66,20 +74,43 @@ def test_expired_warnings_are_left_out(warnings):
 
 def test_most_severe_first():
     def warning(severity, onset):
-        return cap.Warning("x", "Alert", severity.lower(), severity, "", "", "",
-                           "", "", "", onset, None, None,
-                           (cap.Area(((0, 0), (0, 1), (1, 1), (1, 0))),))
+        return cap.Warning(
+            "x",
+            "Alert",
+            severity.lower(),
+            severity,
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            onset,
+            None,
+            None,
+            (cap.Area(((0, 0), (0, 1), (1, 1), (1, 0))),),
+        )
+
     early, late = NOW, NOW + timedelta(hours=1)
-    found = cap.at_point([warning("Minor", early), warning("Severe", late),
-                          warning("Minor", late - timedelta(hours=2))],
-                         0.5, 0.5, NOW)
+    found = cap.at_point(
+        [
+            warning("Minor", early),
+            warning("Severe", late),
+            warning("Minor", late - timedelta(hours=2)),
+        ],
+        0.5,
+        0.5,
+        NOW,
+    )
     assert [w.severity for w in found] == ["Severe", "Minor", "Minor"]
     assert found[1].onset < found[2].onset
 
 
 def test_cancel_and_test_messages_are_skipped():
-    alert = (b'<alert xmlns="urn:oasis:names:tc:emergency:cap:1.2">'
-             b'<status>%s</status><msgType>%s</msgType><info/></alert>')
+    alert = (
+        b'<alert xmlns="urn:oasis:names:tc:emergency:cap:1.2">'
+        b"<status>%s</status><msgType>%s</msgType><info/></alert>"
+    )
     assert cap.parse_alert(alert % (b"Test", b"Alert")) is None
     assert cap.parse_alert(alert % (b"Actual", b"Cancel")) is None
 
@@ -111,6 +142,7 @@ def test_all_heights_parse_as_no_limit(warnings):
 
 def test_disk_cache_round_trip(tmp_path):
     from cirro.warnings.source import DiskCache
+
     cache = DiskCache(tmp_path / "w")
     assert cache.load() == (None, None)
     cache.save(b"zip", '"abc"')

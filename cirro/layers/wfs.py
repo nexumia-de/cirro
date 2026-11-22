@@ -1,6 +1,7 @@
 """Station measurements from DWD's GeoServer WFS (`dwd:RBSN_*`): 72
 stations, one hour (or day) per request, about 21 KB of GeoJSON
 (docs/data-sources.md, section 10). No GTK."""
+
 import json
 import math
 import urllib.parse
@@ -15,13 +16,17 @@ class Station:
     latitude: float
     longitude: float
     value: float
-    direction: float | None = None   # wind: where it comes from, degrees
+    direction: float | None = None  # wind: where it comes from, degrees
 
 
 def features_url(typename, time_, base_url=BASE_URL):
-    params = {"service": "WFS", "version": "2.0.0", "request": "GetFeature",
-              "typeNames": f"dwd:{typename}",
-              "outputFormat": "application/json"}
+    params = {
+        "service": "WFS",
+        "version": "2.0.0",
+        "request": "GetFeature",
+        "typeNames": f"dwd:{typename}",
+        "outputFormat": "application/json",
+    }
     if time_ is not None:
         stamp = time_.strftime("%Y-%m-%dT%H:%M:%SZ")
         params["CQL_FILTER"] = f"M_DATE='{stamp}'"
@@ -46,8 +51,9 @@ def parse(data, field):
             direction = float(direction) if direction is not None else None
         except (TypeError, ValueError):
             direction = None
-        stations.append(Station(str(p.get("NAME", "")).strip(), latitude,
-                                longitude, value, direction))
+        stations.append(
+            Station(str(p.get("NAME", "")).strip(), latitude, longitude, value, direction)
+        )
     return stations
 
 
@@ -66,8 +72,11 @@ def distance_km(lat1, lon1, lat2, lon2):
 
 def nearest(stations, latitude, longitude, within_km=None):
     """(station, distance in km) closest to a point, or (None, None)."""
-    best = min(stations, default=None,
-               key=lambda s: distance_km(latitude, longitude, s.latitude, s.longitude))
+    best = min(
+        stations,
+        default=None,
+        key=lambda s: distance_km(latitude, longitude, s.latitude, s.longitude),
+    )
     if best is None:
         return None, None
     km = distance_km(latitude, longitude, best.latitude, best.longitude)

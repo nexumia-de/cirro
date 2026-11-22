@@ -1,4 +1,5 @@
 """Place store: persistence, fallbacks and the own location."""
+
 import json
 
 import pytest
@@ -55,16 +56,25 @@ def test_corrupt_file_is_kept_aside(tmp_path):
 
 def test_unknown_version_is_not_read(tmp_path):
     path = tmp_path / "places.json"
-    path.write_text(json.dumps({"version": 99, "places": [
-        {"id": "a", "latitude": 1, "longitude": 2}]}))
+    path.write_text(
+        json.dumps({"version": 99, "places": [{"id": "a", "latitude": 1, "longitude": 2}]})
+    )
     assert PlaceStore(path).places() == []
 
 
 def test_broken_place_is_skipped(tmp_path):
     path = tmp_path / "places.json"
-    path.write_text(json.dumps({"version": 1, "places": [
-        {"latitude": 1, "longitude": 2},
-        {"id": "b", "latitude": 3, "longitude": 4}]}))
+    path.write_text(
+        json.dumps(
+            {
+                "version": 1,
+                "places": [
+                    {"latitude": 1, "longitude": 2},
+                    {"id": "b", "latitude": 3, "longitude": 4},
+                ],
+            }
+        )
+    )
     assert [p.id for p in PlaceStore(path).places()] == ["b"]
 
 
@@ -105,8 +115,14 @@ def test_reorder(tmp_path):
 def test_old_manual_flag_is_ignored(tmp_path):
     # Files from 0.2.x may mark the own location as set by hand.
     path = tmp_path / "places.json"
-    path.write_text(json.dumps({"version": 1, "own": {
-        "id": "own", "latitude": 51.0, "longitude": 10.0, "manual": True}}))
+    path.write_text(
+        json.dumps(
+            {
+                "version": 1,
+                "own": {"id": "own", "latitude": 51.0, "longitude": 10.0, "manual": True},
+            }
+        )
+    )
     store = PlaceStore(path)
     assert store.own.position == (51.0, 10.0)
     store.update_own(50.0, 9.0)
@@ -125,8 +141,14 @@ def test_small_moves_keep_the_own_name(tmp_path):
 
 def test_read_only_store_never_writes(tmp_path):
     path = tmp_path / "places.json"
-    path.write_text(json.dumps({"version": 1, "places": [
-        {"id": "a", "latitude": 1, "longitude": 2, "default_name": "A"}]}))
+    path.write_text(
+        json.dumps(
+            {
+                "version": 1,
+                "places": [{"id": "a", "latitude": 1, "longitude": 2, "default_name": "A"}],
+            }
+        )
+    )
     before = path.read_text()
     store = PlaceStore(path, read_only=True)
     store.add(3.0, 4.0)

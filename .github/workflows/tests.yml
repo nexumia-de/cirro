@@ -29,3 +29,19 @@ jobs:
           grep -Eiq '^X-Purism-FormFactor=.*mobile;' data/*.desktop
       - name: Run tests
         run: /usr/bin/python3 -m pytest -v
+
+  lint:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Install the pinned tools
+        run: |
+          python3 -m venv /tmp/lint
+          /tmp/lint/bin/pip install --no-cache-dir -r requirements-dev.txt
+      - name: Ruff
+        run: |
+          /tmp/lint/bin/ruff check --output-format github .
+          /tmp/lint/bin/ruff format --check .
+      - name: Type check (ratchet)
+        run: PATH=/tmp/lint/bin:$PATH python3 build-aux/mypy_ratchet.py

@@ -1,8 +1,24 @@
 """Wind in words: Beaufort force, compass point and km/h, for the wind
 arrows, the tap value and the wind at the selected place."""
 
-_COMPASS = ("N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE",
-            "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW")
+_COMPASS = (
+    "N",
+    "NNE",
+    "NE",
+    "ENE",
+    "E",
+    "ESE",
+    "SE",
+    "SSE",
+    "S",
+    "SSW",
+    "SW",
+    "WSW",
+    "W",
+    "WNW",
+    "NW",
+    "NNW",
+)
 # Upper limits of Beaufort 0 … 11 in m/s (WMO); above is 12.
 _BEAUFORT = (0.3, 1.6, 3.4, 5.5, 8.0, 10.8, 13.9, 17.2, 20.8, 24.5, 28.5, 32.7)
 
@@ -24,7 +40,7 @@ def kmh(speed):
 
 
 def describe(speed, direction=None):
-    """"4 Bft (25 km/h) from NNE"; "Calm" below 0.3 m/s."""
+    """ "4 Bft (25 km/h) from NNE"; "Calm" below 0.3 m/s."""
     force = beaufort(speed)
     if force == 0:
         return "Calm"

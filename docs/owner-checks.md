@@ -74,3 +74,7 @@ DMI host was unreachable from the cloud environment (2026-10-26,
 
 - [ ] Allow `opendataapi.dmi.dk` and `www.dmi.dk` in the cloud environment's network settings.
 - [ ] Then ask an agent to verify [data sources](data-sources.md) section 8 live, record one composite in `tests/data/`, and build the provider as the decision describes.
+
+# #43 Required check "lint" (repository settings)
+
+- [ ] Re-import `.github/rulesets/main.json` in the repository's rulesets, so the new `lint` job is a required check.

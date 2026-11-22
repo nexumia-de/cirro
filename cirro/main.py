@@ -9,27 +9,30 @@ gi.require_version("Adw", "1")
 gi.require_version("Shumate", "1.0")
 from gi.repository import Adw, Gdk, Gio, GLib, Gtk, Shumate  # noqa: E402
 
-from cirro import (APP_ID, NAME, NIGHTLY, REPO_URL, SUPPORT_URL,  # noqa: E402
-                   USER_AGENT, VERSION_LABEL, metainfo)
+from cirro import APP_ID, NAME, NIGHTLY, REPO_URL, SUPPORT_URL, USER_AGENT, VERSION_LABEL, metainfo  # noqa: E402
 from cirro.data_saver import DataSaver, load_enabled, save_enabled  # noqa: E402
 from cirro.notify import background  # noqa: E402
 from cirro.notify.watcher import Watcher  # noqa: E402
-from cirro.settings_file import load_bool, save_bool  # noqa: E402
-from cirro.warnings.source import WarningSource  # noqa: E402
 from cirro.preferences import PreferencesDialog  # noqa: E402
+from cirro.settings_file import load_bool, save_bool  # noqa: E402
 from cirro.timebar import load_speed, save_speed  # noqa: E402
+from cirro.warnings.source import WarningSource  # noqa: E402
 from cirro.window import Window  # noqa: E402
 
 
 class Application(Adw.Application):
     def __init__(self):
-        super().__init__(application_id=APP_ID,
-                         flags=Gio.ApplicationFlags.DEFAULT_FLAGS)
+        super().__init__(application_id=APP_ID, flags=Gio.ApplicationFlags.DEFAULT_FLAGS)
         # --background: started at login for notifications, no window
         # until the user opens the app (issue #25).
-        self.add_main_option("background", 0, GLib.OptionFlags.NONE,
-                             GLib.OptionArg.NONE,
-                             "Start without a window, for notifications", None)
+        self.add_main_option(
+            "background",
+            0,
+            GLib.OptionFlags.NONE,
+            GLib.OptionArg.NONE,
+            "Start without a window, for notifications",
+            None,
+        )
         self._background_start = False
         self._held = False
         self.warnings = None
@@ -50,20 +53,21 @@ class Application(Adw.Application):
         # app.playback-speed(f): radar playback speed factor (timebar.SPEEDS),
         # set in the preferences, kept across starts.
         speed = Gio.SimpleAction.new_stateful(
-            "playback-speed", GLib.VariantType("d"),
-            GLib.Variant("d", load_speed()))
+            "playback-speed", GLib.VariantType("d"), GLib.Variant("d", load_speed())
+        )
         speed.connect("change-state", self._on_playback_speed)
         self.add_action(speed)
         # app.save-mobile-data(b): poll less often on metered connections.
         saver = Gio.SimpleAction.new_stateful(
-            "save-mobile-data", None, GLib.Variant("b", load_enabled()))
+            "save-mobile-data", None, GLib.Variant("b", load_enabled())
+        )
         saver.connect("change-state", self._on_save_mobile_data)
         self.add_action(saver)
         # app.notifications(b): warnings and rain at the default place,
         # also with the window closed.
         notify = Gio.SimpleAction.new_stateful(
-            "notifications", None,
-            GLib.Variant("b", load_bool("notifications", "enabled", False)))
+            "notifications", None, GLib.Variant("b", load_bool("notifications", "enabled", False))
+        )
         notify.connect("change-state", self._on_notifications)
         self.add_action(notify)
         preferences = Gio.SimpleAction.new("preferences", None)
@@ -77,12 +81,15 @@ class Application(Adw.Application):
         # a map layer (base or overlay, "radar" for the radar), for
         # screenshots and testing (docs/map-layers.md).
         layers = Gio.SimpleAction.new("layers", None)
-        layers.connect("activate", lambda *_: self._window_call(
-            lambda w: w.layers.present_picker()))
+        layers.connect(
+            "activate", lambda *_: self._window_call(lambda w: w.layers.present_picker())
+        )
         self.add_action(layers)
         show_layer = Gio.SimpleAction.new("show-layer", GLib.VariantType("s"))
-        show_layer.connect("activate", lambda _, value: self._window_call(
-            lambda w: w.layers.show_layer(value.unpack())))
+        show_layer.connect(
+            "activate",
+            lambda _, value: self._window_call(lambda w: w.layers.show_layer(value.unpack())),
+        )
         self.add_action(show_layer)
         self.set_accels_for_action("app.quit", ["<Control>q"])
         self.set_accels_for_action("app.preferences", ["<Control>comma"])
@@ -97,13 +104,12 @@ class Application(Adw.Application):
         css = Gtk.CssProvider()
         css.load_from_path(str(Path(__file__).with_name("style.css")))
         Gtk.StyleContext.add_provider_for_display(
-            Gdk.Display.get_default(), css,
-            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+            Gdk.Display.get_default(), css, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+        )
         # Running from the source tree: the app icon is not installed.
         icons = Path(__file__).resolve().parent.parent / "data" / "icons"
         if icons.is_dir():
-            Gtk.IconTheme.get_for_display(Gdk.Display.get_default()) \
-                .add_search_path(str(icons))
+            Gtk.IconTheme.get_for_display(Gdk.Display.get_default()).add_search_path(str(icons))
 
     def do_handle_local_options(self, options):
         self._background_start = options.contains("background")
@@ -123,7 +129,7 @@ class Application(Adw.Application):
         if on:
             self.watcher.start()
             if not self._held:
-                self.hold()     # keep running after the window closes
+                self.hold()  # keep running after the window closes
                 self._held = True
         else:
             self.watcher.stop()
@@ -146,7 +152,9 @@ class Application(Adw.Application):
             self._set_watching(allowed)
             if not allowed and self.props.active_window:
                 self.props.active_window.show_toast(
-                    "Notifications need permission to run in the background")
+                    "Notifications need permission to run in the background"
+                )
+
         background.request(self.props.active_window, True, answered)
 
     def do_activate(self):
@@ -160,8 +168,7 @@ class Application(Adw.Application):
         window = self.props.active_window
         if window is None:
             window = Window(self)
-            window.timebar.set_speed(
-                self.lookup_action("playback-speed").get_state().unpack())
+            window.timebar.set_speed(self.lookup_action("playback-speed").get_state().unpack())
             if NIGHTLY:
                 # libadwaita's striped header bar for development builds.
                 window.add_css_class("devel")
@@ -178,10 +185,12 @@ class Application(Adw.Application):
     def _on_preferences(self, *_):
         window = self.props.active_window
         if window:
-            PreferencesDialog(window.places,
-                              self.lookup_action("playback-speed"),
-                              self.lookup_action("save-mobile-data"),
-                              self.lookup_action("notifications")).present(window)
+            PreferencesDialog(
+                window.places,
+                self.lookup_action("playback-speed"),
+                self.lookup_action("save-mobile-data"),
+                self.lookup_action("notifications"),
+            ).present(window)
 
     def _on_show_places(self, *_):
         if self.props.active_window:
@@ -210,7 +219,7 @@ class Application(Adw.Application):
             issue_url=f"{REPO_URL}/issues",
             license_type=Gtk.License.AGPL_3_0,
             comments="Rain radar with a 2-hour forecast. Not affiliated "
-                     "with the Deutscher Wetterdienst.",
+            "with the Deutscher Wetterdienst.",
         )
         # "What's New" from the metainfo, the same text GNOME Software shows.
         notes = metainfo.release_notes(metainfo.find(APP_ID))
@@ -220,13 +229,13 @@ class Application(Adw.Application):
         dialog.add_link("Support Development", SUPPORT_URL)
         dialog.add_legal_section(
             "Weather Data",
-            "Based on data from Deutscher Wetterdienst, "
-            "gridded data reproduced graphically",
+            "Based on data from Deutscher Wetterdienst, gridded data reproduced graphically",
             Gtk.License.CUSTOM,
             "Radar composites reprojected and coloured by Weather Radar "
             "(Cirro). Licensed "
             "under <a href='https://creativecommons.org/licenses/by/4.0/'>"
-            "CC BY 4.0</a>.")
+            "CC BY 4.0</a>.",
+        )
         dialog.add_legal_section(
             "Map Layers",
             "Based on data from Deutscher Wetterdienst",
@@ -236,28 +245,35 @@ class Application(Adw.Application):
             "<a href='https://creativecommons.org/licenses/by/4.0/'>"
             "CC BY 4.0</a>. Warning, pollen and health weather areas: "
             "© GeoBasis-DE / BKG. Satellite images and lightning from "
-            "satellite: © EUMETSAT.")
+            "satellite: © EUMETSAT.",
+        )
         dialog.add_legal_section(
-            "Map Data", "© OpenStreetMap contributors",
+            "Map Data",
+            "© OpenStreetMap contributors",
             Gtk.License.CUSTOM,
             "Available under the <a href='https://www.openstreetmap.org/"
             "copyright'>Open Database License</a>. Place names and search "
-            "by Nominatim.")
+            "by Nominatim.",
+        )
         # Bundled libraries (docs/dependencies.md); full licence texts are
         # in /app/share/licenses/de.nexumia.Cirro/.
         for name, holder, license_type, text in (
-                ("libshumate", "© The libshumate authors",
-                 Gtk.License.LGPL_2_1, None),
-                ("protobuf-c", "© Dave Benson and the protobuf-c authors",
-                 Gtk.License.CUSTOM, "BSD-2-Clause"),
-                ("NumPy", "© NumPy Developers",
-                 Gtk.License.CUSTOM,
-                 "BSD-3-Clause; includes code under 0BSD, MIT, Zlib and "
-                 "CC0-1.0."),
-                ("h5py", "© Andrew Collette and contributors",
-                 Gtk.License.CUSTOM, "BSD-3-Clause"),
-                ("HDF5", "© The HDF Group",
-                 Gtk.License.CUSTOM, "BSD-3-Clause")):
+            ("libshumate", "© The libshumate authors", Gtk.License.LGPL_2_1, None),
+            (
+                "protobuf-c",
+                "© Dave Benson and the protobuf-c authors",
+                Gtk.License.CUSTOM,
+                "BSD-2-Clause",
+            ),
+            (
+                "NumPy",
+                "© NumPy Developers",
+                Gtk.License.CUSTOM,
+                "BSD-3-Clause; includes code under 0BSD, MIT, Zlib and CC0-1.0.",
+            ),
+            ("h5py", "© Andrew Collette and contributors", Gtk.License.CUSTOM, "BSD-3-Clause"),
+            ("HDF5", "© The HDF Group", Gtk.License.CUSTOM, "BSD-3-Clause"),
+        ):
             dialog.add_legal_section(name, holder, license_type, text)
         dialog.present(self.props.active_window)
 
@@ -269,4 +285,3 @@ def main(argv):
     if os.environ.get("CIRRO_DEBUG"):
         logging.getLogger("cirro").setLevel(logging.DEBUG)
     return Application().run(argv)
-

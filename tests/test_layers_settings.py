@@ -1,4 +1,5 @@
 """The chosen map layers are kept across starts."""
+
 from cirro.layers import catalogue, settings
 
 

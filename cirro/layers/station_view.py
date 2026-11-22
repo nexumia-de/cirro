@@ -1,6 +1,7 @@
 """A station layer (WFS `dwd:RBSN_*`): the time steps come from the
 layer's WMS capabilities like any other layer; the data is one GeoJSON
 per time step for all stations, drawn by Cirro (station_layer.py)."""
+
 from cirro.layers import info, wfs
 from cirro.layers.station_layer import StationLayer
 from cirro.layers.view import LayerView
@@ -35,5 +36,4 @@ class StationView(LayerView):
 
     def describe_at(self, latitude, longitude):
         """Text of the nearest shown station within 30 km, or None."""
-        return info.station_text(self.layer.value, self.stations,
-                                 latitude, longitude)
+        return info.station_text(self.layer.value, self.stations, latitude, longitude)

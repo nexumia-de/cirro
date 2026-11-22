@@ -3,8 +3,9 @@
 Members for other times are made from the recorded RV member by
 rewriting only its time attributes, exactly where DWD stores them
 (docs/data-sources.md, tar contents)."""
+
 import io
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 import pytest
@@ -14,7 +15,7 @@ h5py = pytest.importorskip("h5py")
 from cirro import frames  # noqa: E402
 
 SAMPLE = Path(__file__).parent / "data" / "composite_rv_20261024_2110_000-hd5"
-T0 = datetime(2026, 10, 24, 21, 10, tzinfo=timezone.utc)
+T0 = datetime(2026, 10, 24, 21, 10, tzinfo=UTC)
 STEP = timedelta(minutes=5)
 
 
@@ -78,7 +79,7 @@ def test_past_analyses_fill_the_last_hour(store):
 
 def test_new_analysis_replaces_old_forecast(store, tmp_path):
     add_tar(store, T0)
-    t1 = T0 + 2 * STEP          # one analysis was missed
+    t1 = T0 + 2 * STEP  # one analysis was missed
     add_tar(store, t1)
     store.prune()
     timeline = store.timeline()
@@ -95,7 +96,7 @@ def test_new_analysis_replaces_old_forecast(store, tmp_path):
 
 def test_older_data_does_not_replace_newer(store):
     add_tar(store, T0, leads=[0, 5])
-    store.add(*member(T0 - STEP, 10))   # forecast of an older analysis
+    store.add(*member(T0 - STEP, 10))  # forecast of an older analysis
     entry = store.timeline()[1]
     assert entry.valid_time == T0 + STEP and entry.analysis_time == T0
 
@@ -106,8 +107,7 @@ def test_disk_cache_restores_the_timeline(store, tmp_path):
     (tmp_path / "frames" / "composite_rv_20261024_2105_005-hd5").write_bytes(b"junk")
     restored = frames.FrameStore(tmp_path / "frames")
     restored.load_cache(T0 + timedelta(minutes=20))
-    assert [e.name for e in restored.timeline()] == \
-        [e.name for e in store.timeline()]
+    assert [e.name for e in restored.timeline()] == [e.name for e in store.timeline()]
     # The unreadable file is gone.
     assert not (tmp_path / "frames" / "composite_rv_20261024_2105_005-hd5").exists()
 

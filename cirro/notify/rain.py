@@ -1,6 +1,7 @@
 """Will it start raining at one point soon? The 2-hour RV series at the
 point from one `GetFeatureInfo` of DWD's radar WMS (≈ 5 KB) instead of
 the 2–12 MB tar the map needs (docs/data-sources.md, section 2). No GTK."""
+
 import json
 from datetime import datetime, timedelta
 
@@ -15,8 +16,7 @@ FORECAST = timedelta(minutes=120)
 
 
 def series_url(latitude, longitude, analysis_time, reference_time):
-    url = wms.feature_info_url([LAYER], latitude, longitude,
-                               reference_time=reference_time)
+    url = wms.feature_info_url([LAYER], latitude, longitude, reference_time=reference_time)
     end = analysis_time + FORECAST
     return f"{url}&time={format_time(analysis_time)}/{format_time(end)}"
 
@@ -39,8 +39,7 @@ def parse_series(body):
 def fetch_series(latitude, longitude):
     caps = wms.fetch_capabilities(LAYER)
     analysis_time = caps.axis.last - FORECAST
-    body, kind = wms.get(series_url(latitude, longitude, analysis_time,
-                                    caps.reference_time))
+    body, kind = wms.get(series_url(latitude, longitude, analysis_time, caps.reference_time))
     return parse_series(body)
 
 

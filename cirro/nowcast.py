@@ -1,6 +1,7 @@
 """Point nowcast: the rain rate at one place over the radar timeline and
 a sentence about it (docs/nowcast.md). No GTK, unit-tested with the
 recorded frames in tests/data/demo."""
+
 import math
 from dataclasses import dataclass
 from datetime import datetime
@@ -22,14 +23,21 @@ MIN_HEIGHT = 0.1
 
 @dataclass(frozen=True)
 class Value:
-    valid_time: datetime    # UTC, end of the 5-min interval
-    minutes: int            # valid time relative to the analysis time
+    valid_time: datetime  # UTC, end of the 5-min interval
+    minutes: int  # valid time relative to the analysis time
     forecast: bool
-    rate: float             # mm/h, NaN outside the radar coverage
+    rate: float  # mm/h, NaN outside the radar coverage
 
 
-def series(entries, analysis_time, latitude, longitude, cache=None,
-           cancelled=lambda: False, sample=radar.sample):
+def series(
+    entries,
+    analysis_time,
+    latitude,
+    longitude,
+    cache=None,
+    cancelled=lambda: False,
+    sample=radar.sample,
+):
     """Rain rate at the point for every FrameStore entry, in their order.
     `cache` (a dict) keeps values per member and point between calls;
     returns None as soon as `cancelled()` is true."""
@@ -48,8 +56,9 @@ def series(entries, analysis_time, latitude, longitude, cache=None,
     return values
 
 
-def series_many(entries, analysis_time, points, cancelled=lambda: False,
-                sample=radar.sample_points):
+def series_many(
+    entries, analysis_time, points, cancelled=lambda: False, sample=radar.sample_points
+):
     """series() for several points in one pass over the frames: a list
     of value lists, one per point, or None if cancelled."""
     out = [[] for _ in points]
@@ -60,7 +69,7 @@ def series_many(entries, analysis_time, points, cancelled=lambda: False,
             return None
         rates = sample(entry.data, points)
         minutes = round((entry.valid_time - analysis_time).total_seconds() / 60)
-        for values, rate in zip(out, rates):
+        for values, rate in zip(out, rates, strict=False):
             values.append(Value(entry.valid_time, minutes, entry.forecast, rate))
     return out
 
@@ -73,9 +82,9 @@ def short(values):
         return "No radar data here"
     ahead = [v for v in values if v.minutes >= 0]
     if text.startswith("Rain starts in "):
-        return "Rain in " + text[len("Rain starts in "):]
+        return "Rain in " + text[len("Rain starts in ") :]
     if text.startswith("Rain stops in "):
-        return "Raining, stops in " + text[len("Rain stops in "):]
+        return "Raining, stops in " + text[len("Rain stops in ") :]
     if text.startswith("Rain for the next ") or text == "Raining now":
         return "Raining"
     if text.startswith("No rain expected"):
@@ -84,7 +93,7 @@ def short(values):
 
 
 def is_rain(rate):
-    return rate >= RAIN     # False for NaN
+    return rate >= RAIN  # False for NaN
 
 
 def duration(minutes):
@@ -111,9 +120,10 @@ def summary(values):
     horizon = ahead[-1].minutes
     if is_rain(ahead[0].rate):
         for i, value in enumerate(ahead):
-            dry = ahead[i:i + DRY_FRAMES]
-            if not any(is_rain(v.rate) for v in dry) \
-                    and (len(dry) == DRY_FRAMES or i + len(dry) == len(ahead)):
+            dry = ahead[i : i + DRY_FRAMES]
+            if not any(is_rain(v.rate) for v in dry) and (
+                len(dry) == DRY_FRAMES or i + len(dry) == len(ahead)
+            ):
                 return f"Rain stops in {duration(value.minutes)}"
         if horizon < 5:
             return "Raining now"

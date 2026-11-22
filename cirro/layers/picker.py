@@ -2,6 +2,7 @@
 radar first) and any overlays (switches), grouped as in the catalogue.
 A layer with variants is a combo row; choosing a variant also chooses
 the layer. Changes apply at once; there is nothing to confirm."""
+
 import gi
 
 gi.require_version("Adw", "1")
@@ -18,8 +19,7 @@ def _subtitle(layer):
 
 class LayerPicker(Adw.Dialog):
     def __init__(self, manager):
-        super().__init__(title="Map Layers", content_width=440,
-                         content_height=640)
+        super().__init__(title="Map Layers", content_width=440, content_height=640)
         self._manager = manager
         self._radios = {}
         self._group = None
@@ -29,8 +29,11 @@ class LayerPicker(Adw.Dialog):
             if name == "Precipitation":
                 group.add(self._base_row(None))
             for layer in catalogue.in_group(name):
-                group.add(self._base_row(layer) if layer.role == catalogue.BASE
-                          else self._overlay_row(layer))
+                group.add(
+                    self._base_row(layer)
+                    if layer.role == catalogue.BASE
+                    else self._overlay_row(layer)
+                )
             page.add(group)
         view = Adw.ToolbarView(content=page)
         view.add_top_bar(Adw.HeaderBar())
@@ -41,30 +44,37 @@ class LayerPicker(Adw.Dialog):
     def _base_row(self, layer):
         layer_id = layer.id if layer else catalogue.RADAR
         current = self._manager.base_id == layer_id
-        radio = Gtk.CheckButton(active=current, valign=Gtk.Align.CENTER,
-                                group=self._group)
+        radio = Gtk.CheckButton(active=current, valign=Gtk.Align.CENTER, group=self._group)
         self._group = self._group or radio
         self._radios[layer_id] = radio
         if layer is None:
-            row = Adw.ActionRow(title="Rain Radar",
-                                subtitle="Measured and forecast to +2 h, Germany",
-                                activatable_widget=radio)
+            row = Adw.ActionRow(
+                title="Rain Radar",
+                subtitle="Measured and forecast to +2 h, Germany",
+                activatable_widget=radio,
+            )
         elif layer.variants:
-            row = Adw.ComboRow(title=layer.title, subtitle=_subtitle(layer),
-                               model=Gtk.StringList.new(
-                                   [v.label for v in layer.variants]),
-                               selected=self._manager.base_variant if current else 0)
-            row.connect("notify::selected", lambda r, _p, l=layer:
-                        self._choose_base(l.id, r.get_selected()))
+            row = Adw.ComboRow(
+                title=layer.title,
+                subtitle=_subtitle(layer),
+                model=Gtk.StringList.new([v.label for v in layer.variants]),
+                selected=self._manager.base_variant if current else 0,
+            )
+            row.connect(
+                "notify::selected",
+                lambda r, _p, chosen=layer: self._choose_base(chosen.id, r.get_selected()),
+            )
         else:
-            row = Adw.ActionRow(title=layer.title, subtitle=_subtitle(layer),
-                                activatable_widget=radio)
+            row = Adw.ActionRow(
+                title=layer.title, subtitle=_subtitle(layer), activatable_widget=radio
+            )
         row.add_prefix(radio)
 
         def toggled(button):
             if button.get_active() and self._manager.base_id != layer_id:
                 variant = row.get_selected() if isinstance(row, Adw.ComboRow) else 0
                 self._manager.set_base(layer_id, variant)
+
         radio.connect("toggled", toggled)
         return row
 
@@ -81,20 +91,25 @@ class LayerPicker(Adw.Dialog):
         switch = Gtk.Switch(active=view is not None, valign=Gtk.Align.CENTER)
         switch.update_property([Gtk.AccessibleProperty.LABEL], [layer.title])
         if layer.variants:
-            row = Adw.ComboRow(title=layer.title, subtitle=_subtitle(layer),
-                               model=Gtk.StringList.new(
-                                   [v.label for v in layer.variants]),
-                               selected=view.variant_index if view else 0)
+            row = Adw.ComboRow(
+                title=layer.title,
+                subtitle=_subtitle(layer),
+                model=Gtk.StringList.new([v.label for v in layer.variants]),
+                selected=view.variant_index if view else 0,
+            )
             row.add_suffix(switch)
+
             def chosen(r, _param):
                 if switch.get_active():
                     self._manager.set_overlay(layer.id, True, r.get_selected())
                 else:
-                    switch.set_active(True)   # adds it with this variant
+                    switch.set_active(True)  # adds it with this variant
+
             row.connect("notify::selected", chosen)
         else:
-            row = Adw.ActionRow(title=layer.title, subtitle=_subtitle(layer),
-                                activatable_widget=switch)
+            row = Adw.ActionRow(
+                title=layer.title, subtitle=_subtitle(layer), activatable_widget=switch
+            )
             row.add_suffix(switch)
 
         def switched(button, _param):
@@ -103,5 +118,6 @@ class LayerPicker(Adw.Dialog):
                 return
             variant = row.get_selected() if isinstance(row, Adw.ComboRow) else 0
             self._manager.set_overlay(layer.id, active, variant)
+
         switch.connect("notify::active", switched)
         return row

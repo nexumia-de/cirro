@@ -1,4 +1,5 @@
 """Legends from GetLegendGraphic JSON (recorded 2026-11-07)."""
+
 import json
 from pathlib import Path
 
@@ -41,8 +42,14 @@ def test_classes_are_translated():
     pollen = legend("Pollenflug", catalogue.POLLEN_LEGEND)
     assert pollen.kind == "classes"
     assert [e.label for e in pollen.entries] == [
-        "None", "None to low", "Low", "Low to moderate", "Moderate",
-        "Moderate to high", "High"]
+        "None",
+        "None to low",
+        "Low",
+        "Low to moderate",
+        "Moderate",
+        "Moderate to high",
+        "High",
+    ]
     warnings = legend("Warnungen_Gemeinden_vereinigt", catalogue.WARNING_LEGEND)
     assert "Level 3" in [e.label for e in warnings.entries]
 

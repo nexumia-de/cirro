@@ -2,6 +2,7 @@
 its usage policy: at most one request per second, a descriptive
 User-Agent, results cached, no search-as-you-type (docs/data-sources.md,
 section 9). No GTK, so it runs in worker threads and in tests."""
+
 import json
 import locale
 import logging
@@ -42,9 +43,14 @@ def _get(path, params, timeout=20):
     """GET a Nominatim endpoint as JSON, at most once per second across
     all threads."""
     global _last
-    url = BASE_URL + path + "?" + urllib.parse.urlencode(
-        {"format": "jsonv2", "addressdetails": 1,
-         "accept-language": language(), **params})
+    url = (
+        BASE_URL
+        + path
+        + "?"
+        + urllib.parse.urlencode(
+            {"format": "jsonv2", "addressdetails": 1, "accept-language": language(), **params}
+        )
+    )
     request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
     with _lock:
         wait = _last + MIN_INTERVAL - time.monotonic()
@@ -75,9 +81,9 @@ def reverse(latitude, longitude):
     """Default name for a position, or None where Nominatim knows none
     (e.g. at sea). Raises OSError or ValueError when offline or on a bad
     answer, so the caller can try again later."""
-    return place_name(_get("reverse", {
-        "lat": f"{latitude:.5f}", "lon": f"{longitude:.5f}",
-        "zoom": REVERSE_ZOOM}))
+    return place_name(
+        _get("reverse", {"lat": f"{latitude:.5f}", "lon": f"{longitude:.5f}", "zoom": REVERSE_ZOOM})
+    )
 
 
 @dataclass(frozen=True)
@@ -96,9 +102,8 @@ def results(data):
             name = item.get("name") or place_name(item)
             detail = item.get("display_name", "")
             if detail.startswith(f"{name}, "):
-                detail = detail[len(name) + 2:]
-            found.append(Result(name, detail, float(item["lat"]),
-                                float(item["lon"])))
+                detail = detail[len(name) + 2 :]
+            found.append(Result(name, detail, float(item["lat"]), float(item["lon"])))
         except (KeyError, TypeError, ValueError):
             continue
     return found
@@ -111,6 +116,5 @@ def search(query):
         return []
     key = (query.casefold(), language())
     if key not in _search_cache:
-        _search_cache[key] = results(_get("search", {
-            "q": query, "limit": SEARCH_LIMIT}))
+        _search_cache[key] = results(_get("search", {"q": query, "limit": SEARCH_LIMIT}))
     return _search_cache[key]

@@ -1,4 +1,5 @@
 """Save Mobile Data (issue #34): the setting and the metered state."""
+
 from gi.repository import GObject
 
 from cirro.data_saver import DataSaver, load_enabled, save_enabled

@@ -9,6 +9,7 @@ and content pages (libadwaita `adw-navigation-split-view.c`); that view
 offers the forward swipe, Alt+→ and the forward mouse button through
 its `get-next-page` signal. A new navigation view is made each time the
 split view collapses, so the handler is connected again then."""
+
 import gi
 
 gi.require_version("Adw", "1")

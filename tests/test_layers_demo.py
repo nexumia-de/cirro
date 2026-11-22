@@ -1,6 +1,7 @@
 """Demo mode of the map layers: recorded GeoServer answers in
 tests/data/demo/layers (issue #74)."""
-from datetime import datetime, timezone
+
+from datetime import UTC, datetime
 from pathlib import Path
 
 import pytest
@@ -31,21 +32,24 @@ def test_off_without_demo_data(monkeypatch):
 def test_file_names():
     assert demo.file_for(wms.capabilities_url(LAYER)) == f"caps-{LAYER}.xml"
     assert demo.file_for(wms.legend_url(LAYER)) == f"legend-{LAYER}.json"
-    url = wms.map_url([LAYER], (0, 0, 1, 1), (2, 2),
-                      datetime(2026, 11, 22, 5, tzinfo=timezone.utc))
+    url = wms.map_url([LAYER], (0, 0, 1, 1), (2, 2), datetime(2026, 11, 22, 5, tzinfo=UTC))
     assert demo.file_for(url) == f"map-{LAYER}-20261122T0500.png"
 
 
 def test_recorded_answers(demo_mode):
-    assert demo.now() == datetime(2026, 11, 22, 4, 53, tzinfo=timezone.utc)
+    assert demo.now() == datetime(2026, 11, 22, 4, 53, tzinfo=UTC)
     caps = wms.fetch_capabilities(LAYER)
     assert caps.reference_time == "2026-11-22T00:00:00.000Z"
     assert wms.fetch_legend(LAYER)
     view = demo.view()
     for hour in (4, 5, 6):
-        url = wms.map_url([LAYER], view.bbox, view.size,
-                          datetime(2026, 11, 22, hour, tzinfo=timezone.utc),
-                          reference_time=caps.reference_time)
+        url = wms.map_url(
+            [LAYER],
+            view.bbox,
+            view.size,
+            datetime(2026, 11, 22, hour, tzinfo=UTC),
+            reference_time=caps.reference_time,
+        )
         assert wms.fetch_map(url).startswith(b"\x89PNG")
     north, west, south, east = view.bounds
     assert 55.9 < north < 56.1 and 46.4 < south < 46.6

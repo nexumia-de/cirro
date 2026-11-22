@@ -5,10 +5,11 @@ request is answered from recorded files instead of the server, the
 layers' "now" is the recording time and images cover one recorded area,
 whatever the map shows (docs/map-layers.md, demo mode). Never used for
 live data."""
+
 import json
 import os
 import urllib.parse
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from functools import cache
 from pathlib import Path
 
@@ -34,7 +35,7 @@ def _recorded():
 def now():
     """The layers' "now": the recording time in demo mode."""
     if not active():
-        return datetime.now(timezone.utc)
+        return datetime.now(UTC)
     return datetime.fromisoformat(_recorded()["time"])
 
 
@@ -46,8 +47,9 @@ def view():
 
 def stamp(text):
     """WMS time "2026-11-22T05:00:00.000Z" → "20261122T0500"."""
-    return datetime.fromisoformat(text.replace("Z", "+00:00")) \
-        .astimezone(timezone.utc).strftime("%Y%m%dT%H%M")
+    return (
+        datetime.fromisoformat(text.replace("Z", "+00:00")).astimezone(UTC).strftime("%Y%m%dT%H%M")
+    )
 
 
 def file_for(url):

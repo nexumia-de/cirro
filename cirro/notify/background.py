@@ -1,5 +1,6 @@
 """Permission to run without a window and to start at login, from the
 XDG background portal via libportal (docs/notifications.md)."""
+
 import logging
 
 import gi
@@ -35,5 +36,4 @@ def request(window, autostart, callback):
             allowed = False
         callback(allowed)
 
-    portal.request_background(parent, REASON, COMMAND if autostart else None,
-                              flags, None, done)
+    portal.request_background(parent, REASON, COMMAND if autostart else None, flags, None, done)
