@@ -50,7 +50,7 @@ Flathub requires for bundled dependencies (phosh-toolkit
 |--------|---------|---------|----------------|--------------|
 | `protobuf-c` | 1.5.2 | BSD-2-Clause[^protobuf-c] | – (from `toolkit/flatpak/libshumate.yml`) | in phosh-toolkit |
 | `libshumate` | 1.7.0 | LGPL-2.1-or-later[^libshumate] | – (from `toolkit/flatpak/libshumate.yml`) | in phosh-toolkit |
-| `phosh-toolkit` | v0.7.0 (13275a7) | GPL-3.0-or-later | – (`lib/phosh_toolkit/*.py`; Cirro uses `location`) | git tags |
+| `phosh-toolkit` | v0.7.1 (2b2d1ad) | GPL-3.0-or-later | – (`lib/phosh_toolkit/*.py`; Cirro uses `location`) | git tags |
 | `python3-build-tools` | meson-python 0.22.1, pyproject-metadata 0.12.1, pkgconfig 1.6.0 | MIT; MIT; MIT[^build-tools] | – (build only: pure-Python wheels, removed by `cleanup`, only the licence texts ship; Cython and packaging come from the GNOME SDK) | PyPI, one per wheel |
 | `python3-numpy` | 2.5.4 | BSD-3-Clause AND 0BSD AND MIT AND Zlib AND CC0-1.0[^numpy] | – (built without BLAS/LAPACK) | PyPI sdist |
 | `hdf5` | 2.0.0 | BSD-3-Clause[^hdf5] | – (zlib from the runtime; no szip) | GitHub releases (JSON checker) |
@@ -62,8 +62,9 @@ Since issue #49, `libshumate` with `protobuf-c` comes from the toolkit's
 `flatpak/libshumate.yml` through the git submodule `toolkit/`, and the
 own location from `phosh_toolkit.location.Location` (200 m distance,
 set in `cirro/window.py`); `cirro/location.py` is gone. The submodule
-and the `phosh-toolkit` module pin the same tag, **v0.7.0** (commit
-13275a7); move both together in one pull request. Their versions are
+and the `phosh-toolkit` module pin the same tag, **v0.7.1** (commit
+2b2d1ad), as do the reusable workflows in `.github/workflows/`
+(`@<commit> # v0.7.1`); move all of them together in one pull request. Their versions are
 updated in phosh-toolkit, not here. Tests and source-tree runs find the
 package at `toolkit/lib` (`pyproject.toml`, `PYTHONPATH`).
 
