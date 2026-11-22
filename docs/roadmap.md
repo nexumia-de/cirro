@@ -95,9 +95,9 @@ built on the map-layer foundation (layer catalogue and WMS source,
 layer picker, time bar for layer time steps, legends and tap values;
 [map layers](map-layers.md)).
 
-Implemented: the map-layer foundation and the warning overlay
-(WMS). Still open: the warning product decision and the warnings per
-place.
+Implemented: the map-layer foundation, the warning overlay
+(WMS) and the [warning product decision](decisions/warning-product.md)
+(CAP). Still open: the warnings per place.
 
 # M6 – Extras
 

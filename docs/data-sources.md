@@ -229,7 +229,7 @@ for a day on 2026-10-01).[^breezy-3010]
 - No `ETag`, `Last-Modified` or `Cache-Control` headers: the app has
   to cache by its own rules.
 
-# 4. Warnings (M4) *(live, 2026-10-25 20:45 UTC)*
+# 4. Warnings (M4) *(live, 2026-10-25 20:45 UTC; CAP rechecked 2026-11-22 04:45 UTC)*
 
 DWD publishes its official warnings as CAP 1.2 XML on open data, as WMS
 and WFS layers of the GeoServer, and as a JSON file.[^dwd-warn-overview]
@@ -266,11 +266,21 @@ and WFS layers of the GeoServer, and as a JSON file.[^dwd-warn-overview]
   `AREA_COLOR` (DWD's RGB, e.g. `251 140 0`), `PROFILE_VERSION`
   `2.1.14` and `LICENSE` `© GeoBasis-DE / BKG 2021 (Daten modifiziert)`
   (the geometry's licence).[^dwd-cap-profile][^dwd-warn-codes]
-- Each `<area>` carries a `<polygon>` (lat,lon pairs), `<geocode>`
-  `WARNCELLID` (e.g. `809272121`), `<altitude>`/`<ceiling>` in feet
-  (e.g. warnings above 1000 m only). Warning a saved place therefore
-  needs only a point-in-polygon test on the CAP itself; no extra
-  geometry download.
+- Areas, as found on 2026-11-22 (`EN` status, 50 warnings, 394 KB zip,
+  3.98 MB unpacked, `ETag` and `304` confirmed): each land warning has
+  one or more `<area>`s with `<areaDesc>` "polygonal event area", a
+  `<polygon>` (lat,lon pairs, first point repeated at the end) and, for
+  17 of 48, `<geocode>` `EXCLUDE_POLYGON` whose value is a hole in the
+  same lat,lon format. Next to them are the warn cell areas (14 141 in
+  that file): `<areaDesc>` with the municipality name and `<geocode>`
+  `WARNCELLID` (e.g. `716051104`), no polygon. Every area has
+  `<altitude>`/`<ceiling>` in feet (e.g. warnings above 1000 m only;
+  `0.0`/`9842.5197` = all heights). The two sea warnings (sender "DWD /
+  Seewetterdienst Hamburg") had only a warn cell area, no polygon and no
+  `<expires>`. Warning a saved place therefore needs only a
+  point-in-polygon test on the CAP itself; no extra geometry download.
+  Times carry the offset (`2026-11-22T04:24:00+01:00`). Recorded in
+  `tests/data/cap/`.
 - The warn cell list `cap_warncellids_csv.csv` (11 828 cells: id, name,
   short name, state) and shapefiles for municipalities, districts,
   coast and sea are on DWD's open data help page.

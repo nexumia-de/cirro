@@ -1,6 +1,7 @@
 # Directory Update Log
 
 ## 2026-11-22
+* **Update**: Decision [CAP open data as warning source](decisions/warning-product.md) accepted (issue #20). CAP rechecked live: polygons sit in "polygonal event area" areas with `EXCLUDE_POLYGON` holes, warn cell areas carry names only, sea warnings have no polygon ([data sources](data-sources.md) section 4).
 * **Update**: Nominatim usage policy (issue #45): the OSMF pages were still unreachable (container and web fetch); the code was compared with the published rules again in [data sources](data-sources.md) section 9 and the live comparison is an [owner check](owner-checks.md).
 * **Creation**: [Owner checks](owner-checks.md): checklists for what only the owner can do; first entry the touch check of the places list's way back to the map (issue #50, built in 47da5f1).
 
