@@ -396,13 +396,44 @@ problem, switch to another tile provider; the tile URL is a setting.
 - Recorded DWD sample data in `tests/data/` is marked `CC-BY-4.0`,
   copyright Deutscher Wetterdienst, in `REUSE.toml`.
 
-# 8. DMI radar (Denmark) *(not verified live; hosts still blocked on 2026-11-22)*
+# 8. DMI radar (Denmark) *(live, 2026-11-22 05:45 UTC)*
 
-All DMI hosts (`opendataapi.dmi.dk`, `dmigw.govcloud.dk`, `www.dmi.dk`,
-`opendatadocs.dmi.govcloud.dk`) were blocked in the cloud environment
-on 2026-10-26 (proxy `403`), so these facts come from DMI's
-documentation as quoted by web search and from a third-party client.
-Verify them before building on them.
+Checked live once the hosts were allowed (2026-11-22), recorded in
+`tests/data/dmi/` (two composites and an item list), used by
+`cirro/dmi.py` and `cirro/dmi_source.py`:
+
+- `GET …/collections/composite/items?datetime=<start>/..&sortorder=datetime,DESC&limit=40`
+  without a key answered a STAC FeatureCollection; `id` is the file name
+  (`dk.com.202611220530.500_max.h5`), `properties.scanType` alternates
+  `fullRange` (minutes 0, 10, …) and `doppler` (5, 15, …), and
+  `created` was 8–13 min after `datetime`. The download is about 40–48 KB
+  (`application/x-hdf5`), without `ETag` or `Cache-Control`.
+- File: `Conventions` `ODIM_H5/V2_0`; `/what`: `gain` 0.5, `offset`
+  −32, `nodata` 255, `undetect` 0, `date`/`time` (scan start, e.g.
+  `053001`), `product` `DBZH`; `quantity` `DBZH` sits on the
+  `dataset1/data1` group itself; `/how`: `zr-a` 200, `zr-b` 1.6
+  (Marshall–Palmer); data `uint8` 1728 × 1984 (rows × columns), gzip.
+- `/where`: `projdef` `+proj=stere +ellps=WGS84 +lat_0=56 +lon_0=10.5666
+  +lat_ts=56`, `xscale`/`yscale` 500, corners UL (3 °E, 60 °N),
+  UR, LL, LR. UL and LR project 1983 × 1727 cells apart, so the
+  corners are cell centres. PROJ ignores `lat_ts` for an oblique
+  stereographic projection; Cirro's own projection matches pyproj to
+  1e-6 m.
+- In the 05:30 full-range scan, 46 % of the grid is `nodata` (beyond the
+  radars' range); 05:30 had at most 5.2 mm/h after the Z–R conversion.
+- Terms (`www.dmi.dk/friedata/dokumentation/terms-of-use`): CC BY 4.0
+  (credit, link to the licence, indicate changes); no registration;
+  "applications for mobile units" must avoid continuous updating and
+  must not update via DMI's web services when not active; DMI may set
+  fair-use limits per IP.
+
+Notes from the documentation, before the live check:
+
+
+All DMI hosts were blocked in the cloud environment on 2026-10-26
+(proxy `403`); the notes below come from DMI's documentation as quoted
+by web search and from a third-party client, and the live check above
+confirmed them.
 
 - API: `https://opendataapi.dmi.dk/v1/radardata/collections/{composite,pseudoCappi,volume}/items`,
   STAC GeoJSON; each feature's `asset` (singular) links an `.h5` file

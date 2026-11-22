@@ -31,6 +31,13 @@ precedence = "override"
 SPDX-FileCopyrightText = ["Deutscher Wetterdienst", "GeoBasis-DE / BKG 2021"]
 SPDX-License-Identifier = "CC-BY-4.0"
 
+# DMI radar composites and item list recorded for tests (CC BY 4.0).
+[[annotations]]
+path = "tests/data/dmi/**"
+precedence = "override"
+SPDX-FileCopyrightText = "Danmarks Meteorologiske Institut"
+SPDX-License-Identifier = "CC-BY-4.0"
+
 # Our own description of the recorded layer answers next to them.
 [[annotations]]
 path = "tests/data/demo/layers/recorded.json"

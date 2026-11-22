@@ -237,6 +237,15 @@ class Application(Adw.Application):
             "CC BY 4.0</a>.",
         )
         dialog.add_legal_section(
+            "Radar for Denmark",
+            "Based on data from DMI (Danmarks Meteorologiske Institut)",
+            Gtk.License.CUSTOM,
+            "Reflectivity composites converted to rain rates, reprojected "
+            "and coloured by Weather Radar (Cirro). Licensed under "
+            "<a href='https://creativecommons.org/licenses/by/4.0/'>"
+            "CC BY 4.0</a>.",
+        )
+        dialog.add_legal_section(
             "Map Layers",
             "Based on data from Deutscher Wetterdienst",
             Gtk.License.CUSTOM,

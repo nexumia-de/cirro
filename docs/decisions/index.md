@@ -13,5 +13,5 @@
 * [Poll less often on metered connections](metered-polling.md) - Radar every 15 min and warnings every 30 min on metered connections; "Save Mobile Data" switch, on by default.
 * [CAP open data as warning source](warning-product.md) - Warnings per place from DWD's CAP status files; WMS layer only for the optional overlay.
 * [MOSMIX directly as forecast source](forecast-source.md) - Rejected: the forecast view is dropped; it proposed MOSMIX_L single-station KMZ files.
-* [DMI as second radar source for Denmark](dmi-radar.md) - Accepted, waiting for host access: DMI composite behind a radar provider interface after M3, past frames only; not verified live.
+* [DMI as second radar source for Denmark](dmi-radar.md) - DMI composite behind a radar provider interface after M3, past frames only; not verified live.
 * [Radar focus, no forecast view](scope-radar-focus.md) - Cirro covers radar, nowcast, warnings and what GNOME Weather lacks; no current conditions, hourly or 10-day forecast.

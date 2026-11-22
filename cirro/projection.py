@@ -13,6 +13,25 @@ import numpy as np
 
 # Web Mercator clamps latitudes like libshumate does.
 MAX_LATITUDE = 85.0511287798
+# Ellipsoids named by `+ellps=`: (a, inverse flattening).
+ELLIPSOIDS = {"WGS84": (6378137.0, 298.257223563)}
+
+
+def _axes(params):
+    """(a, b) from `+a`/`+b` or `+ellps`."""
+    if "a" in params:
+        a = params["a"]
+        return a, params.get("b", a)
+    a, rf = ELLIPSOIDS[params.get("ellps", "WGS84")]
+    return a, a * (1 - 1 / rf)
+
+
+def stereographic(params):
+    """The projection of a radar grid: north-polar (DWD RV) or oblique
+    (DMI composite, `lat_0` 56, issue #11)."""
+    if params.get("proj") == "stere" and params.get("lat_0") not in (90, None):
+        return ObliqueStereographic(params)
+    return Stereographic(params)
 
 
 class Stereographic:
@@ -21,8 +40,7 @@ class Stereographic:
     def __init__(self, params):
         if params.get("proj") != "stere" or params.get("lat_0") != 90:
             raise ValueError(f"unsupported projection {params!r}")
-        a = params["a"]
-        b = params.get("b", a)
+        a, b = _axes(params)
         self.a = a
         self.e = math.sqrt(1 - (b / a) ** 2)
         self.lon_0 = math.radians(params.get("lon_0", 0))
@@ -41,6 +59,61 @@ class Stereographic:
         lam = np.radians(lon) - self.lon_0
         rho = self.k * self._t(np.radians(lat))
         return self.x_0 + rho * np.sin(lam), self.y_0 - rho * np.cos(lam)
+
+
+class ObliqueStereographic:
+    """Ellipsoidal oblique stereographic projection as PROJ's `stere`
+    computes it (conformal sphere of Snyder 1987, 21-36; `lat_ts` only
+    matters for the polar case and is ignored, like PROJ does)."""
+
+    def __init__(self, params):
+        a, b = _axes(params)
+        self.a = a
+        self.e = math.sqrt(1 - (b / a) ** 2)
+        self.lon_0 = math.radians(params.get("lon_0", 0))
+        self.x_0 = params.get("x_0", 0)
+        self.y_0 = params.get("y_0", 0)
+        phi_0 = math.radians(params["lat_0"])
+        k_0 = params.get("k_0", params.get("k", 1.0))
+        x_1 = self._chi(phi_0)
+        self.sin_x1, self.cos_x1 = math.sin(x_1), math.cos(x_1)
+        e_sin = self.e * math.sin(phi_0)
+        self.akm1 = 2 * k_0 * math.cos(phi_0) / math.sqrt(1 - e_sin * e_sin)
+
+    def _chi(self, phi):
+        e_sin = self.e * np.sin(phi)
+        ssfn = np.tan(0.5 * (np.pi / 2 + phi)) * ((1 - e_sin) / (1 + e_sin)) ** (0.5 * self.e)
+        return 2 * np.arctan(ssfn) - np.pi / 2
+
+    def forward(self, lon, lat):
+        """Degrees → projected metres (scalars or arrays)."""
+        lam = np.radians(lon) - self.lon_0
+        chi = self._chi(np.radians(lat))
+        sin_x, cos_x, cos_lam = np.sin(chi), np.cos(chi), np.cos(lam)
+        denominator = 1 + self.sin_x1 * sin_x + self.cos_x1 * cos_x * cos_lam
+        big_a = self.akm1 / (self.cos_x1 * denominator)
+        x = big_a * cos_x * np.sin(lam)
+        y = big_a * (self.cos_x1 * sin_x - self.sin_x1 * cos_x * cos_lam)
+        return self.x_0 + self.a * x, self.y_0 + self.a * y
+
+    def inverse(self, x, y, iterations=12):
+        """Projected metres → degrees, by Newton's method on `forward`."""
+        x = np.asarray(x, dtype=np.float64)
+        y = np.asarray(y, dtype=np.float64)
+        lon = np.full(x.shape, math.degrees(self.lon_0))
+        lat = np.full(x.shape, math.degrees(math.asin(self.sin_x1)))
+        h = 1e-6
+        for _ in range(iterations):
+            fx, fy = self.forward(lon, lat)
+            ax, ay = self.forward(lon + h, lat)
+            bx, by = self.forward(lon, lat + h)
+            j11, j21 = (ax - fx) / h, (ay - fy) / h
+            j12, j22 = (bx - fx) / h, (by - fy) / h
+            det = j11 * j22 - j12 * j21
+            rx, ry = x - fx, y - fy
+            lon = lon + (j22 * rx - j12 * ry) / det
+            lat = lat + (j11 * ry - j21 * rx) / det
+        return lon, lat
 
 
 def mercator_xy(lon, lat):
@@ -85,7 +158,7 @@ def reproject_grid(grid, width=1400, block_rows=128):
     """Build the Reprojection for a radar Grid at `width` target pixels."""
     from cirro.radar import parse_projdef
 
-    stere = Stereographic(parse_projdef(grid.projdef))
+    stere = stereographic(parse_projdef(grid.projdef))
     xs = grid.x_min + np.arange(grid.xsize + 1) * grid.xscale
     ys = grid.y_max - np.arange(grid.ysize + 1) * grid.yscale
 
@@ -120,6 +193,8 @@ def reproject_grid(grid, width=1400, block_rows=128):
 
 def stere_inverse(stere, x, y, iterations=8):
     """Projected metres → degrees, by fixed-point iteration on latitude."""
+    if isinstance(stere, ObliqueStereographic):
+        return stere.inverse(x, y)
     dx = np.asarray(x, dtype=np.float64) - stere.x_0
     dy = stere.y_0 - np.asarray(y, dtype=np.float64)
     rho = np.hypot(dx, dy)

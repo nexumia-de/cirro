@@ -16,7 +16,8 @@ secondary.
   [docs/data-sources.md](docs/data-sources.md). Verify every unverified
   fact there against the live service before building on it, and record
   the result in that file.
-- Only use open data that may be redistributed (DWD open data, OSM).
+- Only use open data that may be redistributed (DWD open data, DMI open
+  data for Denmark, OSM).
   Never scrape the WarnWetter app's private backend and never use DWD
   branding, logos or the name "WarnWetter" in the UI or metadata.
 - The app talks to public services directly; there is no own backend.

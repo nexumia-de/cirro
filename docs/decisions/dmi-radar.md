@@ -1,7 +1,7 @@
 ---
 type: Decision Record
 title: DMI as second radar source for Denmark
-description: Accepted, waiting for host access - add DMI's radar composite behind a radar provider interface after M3, chosen by location; past frames only, no forecast for Denmark.
+description: Accepted and implemented - add DMI's radar composite behind a radar provider interface after M3, chosen by location; past frames only, no forecast for Denmark.
 tags: [decision, radar, dmi, denmark, data, architecture]
 generated: { by: claude-code/2.1.310, at: 2026-10-26T06:30:00Z }
 ---
@@ -11,10 +11,29 @@ generated: { by: claude-code/2.1.310, at: 2026-10-26T06:30:00Z }
 Accepted (2026-11-22) for issue
 [#11](https://github.com/nexumia-de/cirro/issues/11), by best practice
 on the owner's standing instruction: option 2 below. Proposed on
-2026-10-26. Implementation waits until the DMI hosts are reachable from
-the development environment and the facts below are verified and a
-composite is recorded: that needs the owner
-([owner checks](../owner-checks.md)); still blocked on 2026-11-22. **DMI facts are not verified live**:
+2026-10-26. Implemented on 2026-11-22 once the owner had allowed the
+DMI hosts; the facts are verified live in
+[data sources](../data-sources.md), section 8.
+
+# As built
+
+- `cirro/provider.py` picks DMI for a selected place in Denmark north
+  of RV's coverage (the edge measured on a recorded RV composite), DWD
+  everywhere else; `cirro/source_switch.py` swaps the window's source.
+- `cirro/dmi.py` converts DBZH with the file's Z–R relation into the
+  same `Frame` as RV (mm per 5 min), so colours, drawing, the nowcast
+  and the places list need no change; `cirro/projection.py` has the
+  oblique stereographic projection, checked against pyproj.
+- `cirro/dmi_source.py` uses the full-range scans only (10-min step).
+  DMI's terms ask mobile apps not to update continuously and not while
+  inactive, so it fetches at start, when the window shows again after
+  10 min, and on Reload; there is no timer. A banner says when the
+  newest scan is over 40 min old.
+- Denmark gets past frames only: the time bar ends at "Now" and the
+  sentence says "Raining now" or "No rain now". Notifications use DWD's
+  WMS and send no rain notice there.
+- Credit "Radar: DMI, converted to rain rates (CC BY 4.0)" on the map
+  while DMI frames show, and a legal section in the About dialog. **DMI facts are not verified live**:
 every DMI host was blocked in the cloud environment on 2026-10-26
 ([data sources](../data-sources.md), section 8;
 [dev environment](../dev-environment.md)). Verify them before accepting.

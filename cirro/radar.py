@@ -93,9 +93,9 @@ def _grid(f):
     projdef = _str(where["projdef"])
     # The corner coordinates are the outer cell edges; the upper-left
     # one fixes the grid's position (docs/data-sources.md).
-    from cirro.projection import Stereographic
+    from cirro.projection import stereographic
 
-    x_min, y_max = Stereographic(parse_projdef(projdef)).forward(
+    x_min, y_max = stereographic(parse_projdef(projdef)).forward(
         float(where["UL_lon"]), float(where["UL_lat"])
     )
     return Grid(
@@ -111,9 +111,9 @@ def _grid(f):
 
 def cell(grid, latitude, longitude):
     """(row, column) of the grid cell containing the point, None outside."""
-    from cirro.projection import Stereographic
+    from cirro.projection import stereographic
 
-    x, y = Stereographic(parse_projdef(grid.projdef)).forward(longitude, latitude)
+    x, y = stereographic(parse_projdef(grid.projdef)).forward(longitude, latitude)
     col = int((float(x) - grid.x_min) // grid.xscale)
     row = int((grid.y_max - float(y)) // grid.yscale)
     if 0 <= row < grid.ysize and 0 <= col < grid.xsize:
@@ -126,6 +126,8 @@ def sample(data, latitude, longitude):
     coverage. Reads one cell instead of decoding the whole frame, though
     HDF5 still decompresses the member's single chunk."""
     with _open(data) as f:
+        if _dmi.is_dmi(f):
+            return _dmi.sample_points(f, [(latitude, longitude)])[0]
         what = f["dataset1/data1/what"].attrs
         if _str(what["quantity"]) != "ACRR":
             raise ValueError(f"unexpected quantity {_str(what['quantity'])!r}")
@@ -145,6 +147,8 @@ def sample_points(data, points):
     member (NaN outside the coverage). The member is opened and its
     chunk decompressed once for all points (the places list, #56)."""
     with _open(data) as f:
+        if _dmi.is_dmi(f):
+            return _dmi.sample_points(f, points)
         what = f["dataset1/data1/what"].attrs
         if _str(what["quantity"]) != "ACRR":
             raise ValueError(f"unexpected quantity {_str(what['quantity'])!r}")
@@ -178,12 +182,16 @@ def peek(data):
     """(analysis time, valid time, forecast flag) of a member without
     decompressing its data, for the frame timeline."""
     with _open(data) as f:
+        if _dmi.is_dmi(f):
+            return _dmi.peek(f)
         return _times(f)
 
 
 def decode(data):
     """Decode one `composite_rv_<time>_<lead>-hd5` member (bytes or path)."""
     with _open(data) as f:
+        if _dmi.is_dmi(f):
+            return _dmi.decode(f)
         what = f["dataset1/data1/what"].attrs
         quantity = _str(what["quantity"])
         if quantity != "ACRR":
@@ -212,3 +220,7 @@ def decode(data):
             forecast=forecast,
             grid=grid,
         )
+
+
+# DMI's composite reuses Frame and Grid (issue #11).
+from cirro import dmi as _dmi  # noqa: E402
