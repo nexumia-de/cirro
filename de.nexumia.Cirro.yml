@@ -149,8 +149,8 @@ modules:
     sources:
       - type: git
         url: https://github.com/nexumia-de/phosh-toolkit.git
-        tag: v0.7.1
-        commit: 2b2d1ad327cb73d462c09bf1cceadb8e4e1220aa
+        tag: v0.8.1
+        commit: 1910057162098f0963b44623e91b3650f685c49b
         x-checker-data:
           type: git
           tag-pattern: ^v([\d.]+)$

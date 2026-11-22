@@ -22,15 +22,17 @@ jobs:
           "${apt[@]}" update -q
           "${apt[@]}" install -y -q --no-install-recommends \
             python3-pytest python3-h5py python3-numpy python3-pyproj \
-            python3-gi gir1.2-gtk-4.0 \
-            appstream desktop-file-utils
+            python3-gi gir1.2-gtk-4.0 gir1.2-adw-1 gir1.2-shumate-1.0 gir1.2-soup-3.0 gir1.2-xdp-1.0 gir1.2-xdpgtk4-1.0 \
+            appstream desktop-file-utils dbus xvfb
       - name: Validate metadata
         run: |
           desktop-file-validate data/*.desktop
           appstreamcli validate --no-net data/*.metainfo.xml
           grep -Eiq '^X-Purism-FormFactor=.*mobile;' data/*.desktop
       - name: Run tests
-        run: /usr/bin/python3 -m pytest -v
+        env:
+          PHOSH_TOOLKIT_TEST_KEYRING: memory
+        run: dbus-run-session -- xvfb-run -a /usr/bin/python3 -m pytest -v
 
   lint:
     runs-on: ubuntu-24.04
