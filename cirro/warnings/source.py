@@ -87,6 +87,7 @@ class WarningSource(GObject.Object):
         self._fetch = fetcher
         self._etag = None
         self._active = False
+        self._holders = set()      # who wants polling: window, notify
         self._timer = 0
         self._loading = False
         self._metered = False
@@ -111,8 +112,15 @@ class WarningSource(GObject.Object):
         if self._active and self._timer and not metered:
             self._schedule(POLL)
 
-    def set_active(self, active):
-        """Poll only while the window can be seen."""
+    def hold(self, holder, wanted):
+        """Poll while anyone wants it: the visible window, notifications."""
+        if wanted:
+            self._holders.add(holder)
+        else:
+            self._holders.discard(holder)
+        self._set_active(bool(self._holders))
+
+    def _set_active(self, active):
         if active == self._active or not self._live:
             return
         self._active = active

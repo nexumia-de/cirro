@@ -10,7 +10,8 @@ from cirro.timebar import SPEEDS  # noqa: E402
 
 
 class PreferencesDialog(Adw.PreferencesDialog):
-    def __init__(self, store, speed_action, saver_action=None):
+    def __init__(self, store, speed_action, saver_action=None,
+                 notify_action=None):
         super().__init__(search_enabled=False)
         self._store = store
         self._places = [store.own] + store.places()
@@ -41,12 +42,28 @@ class PreferencesDialog(Adw.PreferencesDialog):
             saver.connect("notify::active", lambda row, _: saver_action.change_state(
                 GLib.Variant("b", row.get_active())))
 
+        notify = Adw.SwitchRow(
+            title="Notifications",
+            subtitle="Warnings and rain starting soon at the default place, "
+                     "also when Weather Radar is closed")
+        if notify_action is not None:
+            notify.set_active(notify_action.get_state().unpack())
+            # The portal may refuse: follow the action's state, and stop
+            # following when the dialog closes.
+            handler = notify_action.connect("notify::state", lambda a, _: notify.set_active(
+                a.get_state().unpack()))
+            self.connect("closed", lambda *_: notify_action.disconnect(handler))
+            notify.connect("notify::active", lambda row, _: row.get_active() !=
+                           notify_action.get_state().unpack() and
+                           notify_action.change_state(GLib.Variant("b", row.get_active())))
+
         places = Adw.PreferencesGroup(title="Places")
         places.add(place)
         radar = Adw.PreferencesGroup(title="Radar")
         radar.add(speed)
         radar.add(saver)
         page = Adw.PreferencesPage()
+        places.add(notify)
         page.add(places)
         page.add(radar)
         self.add(page)

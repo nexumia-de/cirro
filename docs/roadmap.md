@@ -116,7 +116,9 @@ place.
 
 Implemented: all layer groups of [map layers](map-layers.md), wind
 arrows and station values drawn from WFS, sunrise, sunset and wind
-for the selected place. Still open: notifications.
+for the selected place, and opt-in [notifications](notifications.md)
+for warnings and rain at the default place. Still open: the battery
+measurement on the phone ([owner checks](owner-checks.md)).
 
 # Risks
 

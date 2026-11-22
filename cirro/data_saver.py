@@ -5,34 +5,20 @@ preferences. Reload always fetches at once (docs/radar-architecture.md,
 bandwidth)."""
 import logging
 
-from gi.repository import Gio, GLib, GObject
+from gi.repository import Gio, GObject
 
+from cirro.settings_file import load_bool, save_bool
 from cirro.timebar import SETTINGS
 
 log = logging.getLogger(__name__)
 
 
 def load_enabled(path=SETTINGS):
-    keyfile = GLib.KeyFile()
-    try:
-        keyfile.load_from_file(str(path), GLib.KeyFileFlags.NONE)
-        return keyfile.get_boolean("network", "save-mobile-data")
-    except GLib.Error:
-        return True
+    return load_bool("network", "save-mobile-data", True, path)
 
 
 def save_enabled(enabled, path=SETTINGS):
-    keyfile = GLib.KeyFile()
-    try:
-        keyfile.load_from_file(str(path), GLib.KeyFileFlags.KEEP_COMMENTS)
-    except GLib.Error:
-        pass
-    keyfile.set_boolean("network", "save-mobile-data", enabled)
-    try:
-        path.parent.mkdir(parents=True, exist_ok=True)
-        keyfile.save_to_file(str(path))
-    except (OSError, GLib.Error) as error:
-        log.warning("cannot save %s: %s", path, error)
+    save_bool("network", "save-mobile-data", enabled, path)
 
 
 class DataSaver(GObject.Object):

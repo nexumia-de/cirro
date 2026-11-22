@@ -54,3 +54,13 @@ measured by an agent: the dev container has no Vulkan renderer.
 
 - [ ] On the phone, play at Normal for 60 s with `CIRRO_DEBUG=1 flatpak run --env=CIRRO_FPS=30 de.nexumia.Cirro` and again with `CIRRO_FPS=20`; note the main thread's CPU (per-thread `/proc/<pid>/task/*/stat`, as on 2026-10-26) and whether 20 looks as smooth.
 - [ ] Record both in the "Phone" table of [radar architecture](radar-architecture.md); if 20 is as smooth and clearly cheaper, ask an agent to set `timebar.FPS = 20`.
+
+# #25 Notifications (on device)
+
+Built and checked in the dev container with a stubbed background
+portal and notification call ([notifications](notifications.md)).
+
+- [ ] On the phone, turn on Preferences → Notifications: the portal asks; allow it. Close the app: it keeps running (`flatpak ps`).
+- [ ] Log out and in: `cirro --background` runs without a window.
+- [ ] Wait for a level-2 warning or rain at the default place: a notification shows; tapping it opens the app.
+- [ ] Battery: with notifications on and the app closed, compare the battery drain over a few hours with notifications off; record it in [notifications](notifications.md).

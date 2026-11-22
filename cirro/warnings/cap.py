@@ -50,6 +50,7 @@ class Warning:
     colour: tuple | None              # DWD's AREA_COLOR (r, g, b)
     areas: tuple = ()
     names: tuple = field(default=(), compare=False)   # warn cell names
+    references: tuple = field(default=(), compare=False)  # identifiers it updates
 
     @property
     def level(self):
@@ -147,7 +148,9 @@ def parse_alert(data):
         expires=_time(_text(info, "cap:expires")),
         colour=colour,
         areas=tuple(areas),
-        names=tuple(names))
+        names=tuple(names),
+        references=tuple(ref.split(",")[1] for ref in
+                         _text(root, "cap:references").split() if ref.count(",") >= 2))
 
 
 def parse_zip(data):

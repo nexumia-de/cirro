@@ -188,6 +188,16 @@ over Germany, analysis plus forecast up to +2 h, refreshed every
   reprojection of the same frame; its yellow class starts at about
   3 mm/h (M1 alignment check in [radar architecture](radar-architecture.md)).
 
+- `GetFeatureInfo` (`info_format=application/json`) at one point with
+  `time=<analysis>/<analysis + 120 min>` and `dim_reference_time`
+  returns all 25 steps in one answer (≈ 5 KB), property `RV_ANALYSIS`
+  in mm per 5 min (×12 = mm/h), about `-0.001` where dry. Checked live
+  on 2026-11-22 04:50 UTC against the RV tar of the same analysis at
+  five rainy cells and over a whole series: equal to the decoded values
+  (one step differed by one cell at a grid edge). Recorded in
+  `tests/data/wms/info-rv-series.json`; used for notifications
+  ([notifications](notifications.md)).
+
 This is the fallback radar source and the source for extra map layers
 (warnings, lightning) in M6.
 

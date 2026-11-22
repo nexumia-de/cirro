@@ -20,6 +20,7 @@ Change history is in [log.md](log.md).
 * [Radar architecture](radar-architecture.md) - How radar frames are fetched, cached, projected and animated on the map.
 * [Point nowcast](nowcast.md) - Rain rate at the selected place over 3 hours, the bar chart and the "Rain starts in N min" sentence.
 * [Warnings per place](warnings.md) - Official DWD warnings from the CAP status zip for the selected and every saved place: a line under the nowcast, the places list and a dialog with list and detail page.
+* [Notifications](notifications.md) - Opt-in notifications for new warnings and rain starting soon at the default place, also with the window closed (background portal, cheap point queries).
 * [Places](places.md) - Saved places and the own location as pins and in a sidebar, names and search from Nominatim, add (search, current location, on the map)/rename/delete, default place.
 * [Data sources](data-sources.md) - DWD open data products and other services the app uses, with open questions.
 
@@ -32,4 +33,4 @@ Change history is in [log.md](log.md).
 
 # Decision records
 
-* [Decisions](decisions/index.md) - Name, language, map widget, radar data source, colour scale, no own backend, smooth playback, movable own-location pin, radar focus without a forecast view, CAP warnings, metered polling; proposed: DMI radar; rejected: forecast source.
+* [Decisions](decisions/index.md) - Name, language, map widget, radar data source, colour scale, no own backend, smooth playback, movable own-location pin, radar focus without a forecast view, CAP warnings, metered polling, notifications; proposed: DMI radar; rejected: forecast source.

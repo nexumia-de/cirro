@@ -11,7 +11,11 @@ from gi.repository import Adw, Gdk, Gio, GLib, Gtk, Shumate  # noqa: E402
 
 from cirro import (APP_ID, NAME, NIGHTLY, REPO_URL, SUPPORT_URL,  # noqa: E402
                    USER_AGENT, VERSION_LABEL, metainfo)
-from cirro.data_saver import load_enabled, save_enabled  # noqa: E402
+from cirro.data_saver import DataSaver, load_enabled, save_enabled  # noqa: E402
+from cirro.notify import background  # noqa: E402
+from cirro.notify.watcher import Watcher  # noqa: E402
+from cirro.settings_file import load_bool, save_bool  # noqa: E402
+from cirro.warnings.source import WarningSource  # noqa: E402
 from cirro.preferences import PreferencesDialog  # noqa: E402
 from cirro.timebar import load_speed, save_speed  # noqa: E402
 from cirro.window import Window  # noqa: E402
@@ -21,6 +25,16 @@ class Application(Adw.Application):
     def __init__(self):
         super().__init__(application_id=APP_ID,
                          flags=Gio.ApplicationFlags.DEFAULT_FLAGS)
+        # --background: started at login for notifications, no window
+        # until the user opens the app (issue #25).
+        self.add_main_option("background", 0, GLib.OptionFlags.NONE,
+                             GLib.OptionArg.NONE,
+                             "Start without a window, for notifications", None)
+        self._background_start = False
+        self._held = False
+        self.warnings = None
+        self.data_saver = None
+        self.watcher = None
         about = Gio.SimpleAction.new("about", None)
         about.connect("activate", self._on_about)
         self.add_action(about)
@@ -45,6 +59,13 @@ class Application(Adw.Application):
             "save-mobile-data", None, GLib.Variant("b", load_enabled()))
         saver.connect("change-state", self._on_save_mobile_data)
         self.add_action(saver)
+        # app.notifications(b): warnings and rain at the default place,
+        # also with the window closed.
+        notify = Gio.SimpleAction.new_stateful(
+            "notifications", None,
+            GLib.Variant("b", load_bool("notifications", "enabled", False)))
+        notify.connect("change-state", self._on_notifications)
+        self.add_action(notify)
         preferences = Gio.SimpleAction.new("preferences", None)
         preferences.connect("activate", self._on_preferences)
         self.add_action(preferences)
@@ -84,7 +105,58 @@ class Application(Adw.Application):
             Gtk.IconTheme.get_for_display(Gdk.Display.get_default()) \
                 .add_search_path(str(icons))
 
+    def do_handle_local_options(self, options):
+        self._background_start = options.contains("background")
+        return -1
+
+    def _shared(self):
+        """Warnings and the data saver, shared by the window and the
+        notifications."""
+        if self.warnings is None:
+            self.data_saver = DataSaver(load_enabled())
+            self.warnings = WarningSource(live=not os.environ.get("CIRRO_DEMO_DATA"))
+            self.watcher = Watcher(self, self.warnings, self.data_saver)
+            if self.lookup_action("notifications").get_state().unpack():
+                self._set_watching(True)
+
+    def _set_watching(self, on):
+        if on:
+            self.watcher.start()
+            if not self._held:
+                self.hold()     # keep running after the window closes
+                self._held = True
+        else:
+            self.watcher.stop()
+            if self._held:
+                self.release()
+                self._held = False
+
+    def _on_notifications(self, action, value):
+        on = value.unpack()
+        if not on:
+            action.set_state(value)
+            save_bool("notifications", "enabled", False)
+            self._set_watching(False)
+            background.request(self.props.active_window, False, lambda _: None)
+            return
+
+        def answered(allowed):
+            action.set_state(GLib.Variant("b", allowed))
+            save_bool("notifications", "enabled", allowed)
+            self._set_watching(allowed)
+            if not allowed and self.props.active_window:
+                self.props.active_window.show_toast(
+                    "Notifications need permission to run in the background")
+        background.request(self.props.active_window, True, answered)
+
     def do_activate(self):
+        self._shared()
+        if self._background_start:
+            # Login start: wait in the background (the watcher holds the
+            # app) until a notification or the launcher opens the window.
+            self._background_start = False
+            if self._held:
+                return
         window = self.props.active_window
         if window is None:
             window = Window(self)
@@ -108,7 +180,8 @@ class Application(Adw.Application):
         if window:
             PreferencesDialog(window.places,
                               self.lookup_action("playback-speed"),
-                              self.lookup_action("save-mobile-data")).present(window)
+                              self.lookup_action("save-mobile-data"),
+                              self.lookup_action("notifications")).present(window)
 
     def _on_show_places(self, *_):
         if self.props.active_window:

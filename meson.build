@@ -39,6 +39,7 @@ python.install_sources(
   'cirro/radar_source.py',
   'cirro/renderer.py',
   'cirro/search.py',
+  'cirro/settings_file.py',
   'cirro/source.py',
   'cirro/sun.py',
   'cirro/timebar.py',
@@ -66,6 +67,14 @@ python.install_sources(
   'cirro/layers/wfs.py',
   'cirro/layers/wms.py',
   subdir: 'cirro/layers',
+)
+python.install_sources(
+  'cirro/notify/__init__.py',
+  'cirro/notify/alerts.py',
+  'cirro/notify/background.py',
+  'cirro/notify/rain.py',
+  'cirro/notify/watcher.py',
+  subdir: 'cirro/notify',
 )
 python.install_sources(
   'cirro/warnings/__init__.py',

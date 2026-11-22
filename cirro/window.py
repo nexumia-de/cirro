@@ -7,7 +7,6 @@ import gi
 gi.require_version("Shumate", "1.0")
 from gi.repository import Adw, Gio, GLib, GObject, Gtk, Shumate  # noqa: E402
 
-from cirro.data_saver import DataSaver, load_enabled  # noqa: E402
 from cirro.forward_swipe import ForwardSwipe  # noqa: E402
 from cirro.frames import FrameStore  # noqa: E402
 from cirro.layers.control import LayerControl  # noqa: E402
@@ -16,9 +15,9 @@ from cirro.location import Location  # noqa: E402
 from cirro.namer import Namer  # noqa: E402
 from cirro.nowcast_view import NowcastView  # noqa: E402
 from cirro.pins import PLACE_ICON, PinLayer, status  # noqa: E402
-from cirro.places import PlaceStore  # noqa: E402
 from cirro.place_details import PlaceDetails  # noqa: E402
 from cirro.places_rain import PlacesRain  # noqa: E402
+from cirro.places import PlaceStore  # noqa: E402
 from cirro.places_view import PlacesView  # noqa: E402
 from cirro.radar_layer import RadarLayer  # noqa: E402
 from cirro import radar_source  # noqa: E402
@@ -27,7 +26,6 @@ from cirro.renderer import CAPACITY, FrameRenderer  # noqa: E402
 from cirro.search import SearchDialog  # noqa: E402
 from cirro.timebar import TimeBar, clock  # noqa: E402
 from cirro.warnings import cap  # noqa: E402
-from cirro.warnings.source import WarningSource  # noqa: E402
 from cirro.warnings.text import now as local_now  # noqa: E402
 from cirro.warnings.view import WarningsButton  # noqa: E402
 
@@ -70,6 +68,7 @@ class Window(Adw.ApplicationWindow):
             self.places = PlaceStore()
         self.namer = Namer(self.places, enabled=not demo_places)
         self.places.connect("changed", self._on_places_changed)
+        self.connect("destroy", self._on_destroy)
         self._install_actions()
 
         menu = Gio.Menu()
@@ -235,11 +234,13 @@ class Window(Adw.ApplicationWindow):
         # Official warnings at the place (issue #21, docs/warnings.md).
         self.warning_line = WarningsButton()
         self.nowcast.append(self.warning_line)
-        self.warnings = WarningSource(live=not os.environ.get("CIRRO_DEMO_DATA"))
-        self.warnings.connect("changed", lambda *_: self._update_warnings())
+        self.warnings = app.warnings
+        self._warnings_handler = self.warnings.connect(
+            "changed", lambda *_: self._update_warnings())
         # Poll less often on a metered connection (issue #34).
-        self.data_saver = DataSaver(load_enabled())
-        self.data_saver.connect("notify::saving", self._on_data_saver)
+        self.data_saver = app.data_saver
+        self._saver_handler = self.data_saver.connect(
+            "notify::saving", self._on_data_saver)
         self._on_data_saver()
 
         # Breakpoints: only the last matching one applies.
@@ -277,6 +278,15 @@ class Window(Adw.ApplicationWindow):
         self.connect("unmap", self._update_active)
         self.source.start()
 
+    def _on_destroy(self, *_):
+        # The warnings and the data saver belong to the application and
+        # outlive the window (notifications, issue #25).
+        self.warnings.disconnect(self._warnings_handler)
+        self.data_saver.disconnect(self._saver_handler)
+        self.warnings.hold("window", False)
+        self.source.set_active(False)
+        self.location.stop()
+
     def _on_data_saver(self, *_):
         saving = self.data_saver.saving
         self.source.set_metered(saving)
@@ -285,7 +295,7 @@ class Window(Adw.ApplicationWindow):
     def _update_active(self, *_):
         active = self.get_mapped() and not self.get_property("suspended")
         self.source.set_active(active)
-        self.warnings.set_active(active)
+        self.warnings.hold("window", active)
         if not active:
             self.timebar.set_playing(False)
             self.location.stop()
@@ -351,6 +361,9 @@ class Window(Adw.ApplicationWindow):
         self._banner.set_revealed(self.source.stale and t0 is not None)
         if t0:
             self._banner.set_title(f"Radar data from {clock(t0)} is out of date")
+
+    def show_toast(self, title):
+        self._toasts.add_toast(Adw.Toast(title=title))
 
     def _on_failed(self, source, message, show):
         if not show:

@@ -59,5 +59,7 @@ texts and the disk cache.
 
 # Limits
 
+- Notifications for new warnings use the same source
+  ([notifications](notifications.md)).
 - Bandwidth: 0.2–0.8 MB per change of the status; not yet measured on
   the phone ([owner checks](owner-checks.md)).
