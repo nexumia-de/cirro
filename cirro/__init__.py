@@ -5,7 +5,7 @@ try:
 except ImportError:  # run from the source tree, config.py is not built
     APP_ID = "de.nexumia.Cirro"
     BUILD_LABEL = ""
-VERSION = "0.5.0"
+VERSION = "0.6.0"
 # The nightly app is built from every push to main
 # (docs/release-channels.md).
 NIGHTLY = APP_ID.endswith(".Devel")
