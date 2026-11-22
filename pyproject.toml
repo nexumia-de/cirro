@@ -1,7 +1,7 @@
 # Only tool configuration; the app is built and installed with meson.
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["."]
+pythonpath = [".", "toolkit/lib"]
 
 # Lint, format and type check (docs/dev-environment.md, code quality);
 # pinned in requirements-dev.txt, run by the "lint" job in tests.yml.
@@ -9,6 +9,8 @@ pythonpath = ["."]
 line-length = 100
 # The GNOME runtime has a newer Python; CI's tests run on Ubuntu's 3.12.
 target-version = "py312"
+# The toolkit submodule is linted in its own repository.
+extend-exclude = ["toolkit"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "B", "UP", "SIM"]

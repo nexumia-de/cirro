@@ -79,16 +79,6 @@ DMI host was unreachable from the cloud environment (2026-10-26,
 
 - [ ] Re-import `.github/rulesets/main.json` in the repository's rulesets, so the new `lint` job is a required check.
 
-# #49 Shared location and libshumate modules (upstream tag)
-
-Waits for nexumia-de/phosh-toolkit#59 and the tag **v0.7.0**
-([dependencies](dependencies.md)). Compared on 2026-11-22: the PR's
-`flatpak/libshumate.yml` has the same versions as Cirro's manifest and
-`phosh_toolkit.location` the same code as `cirro/location.py`.
-
-- [ ] Merge nexumia-de/phosh-toolkit#59 and run the toolkit's *Tag release* workflow with version `0.7.0`.
-- [ ] Ask an agent to: add the toolkit as submodule `toolkit` at `v0.7.0`; replace the `protobuf-c` and `libshumate` modules of `de.nexumia.Cirro.yml` with `toolkit/flatpak/libshumate.yml`; add the `phosh-toolkit` module (tag `v0.7.0` and its commit); use `Location(DISTANCE_M)` from `phosh_toolkit.location` and delete `cirro/location.py`; set `PYTHONPATH=../phosh-toolkit/lib` for the tests; update `docs/dependencies.md` and the toolkit's "used by" list.
-
 # #51 Long press on the map (on device)
 
 Checked with the right click's code path under Broadway and a driver

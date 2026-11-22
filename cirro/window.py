@@ -6,13 +6,13 @@ import gi
 
 gi.require_version("Shumate", "1.0")
 from gi.repository import Adw, Gio, GLib, GObject, Gtk, Shumate  # noqa: E402
+from phosh_toolkit.location import Location  # noqa: E402
 
 from cirro import radar_source  # noqa: E402
 from cirro.forward_swipe import ForwardSwipe  # noqa: E402
 from cirro.frames import FrameStore  # noqa: E402
 from cirro.layers.control import LayerControl  # noqa: E402
 from cirro.legend import Legend  # noqa: E402
-from cirro.location import Location  # noqa: E402
 from cirro.map_press import MapPress  # noqa: E402
 from cirro.namer import Namer  # noqa: E402
 from cirro.nowcast_view import NowcastView  # noqa: E402
@@ -32,6 +32,9 @@ from cirro.warnings.view import WarningsButton  # noqa: E402
 
 log = logging.getLogger(__name__)
 
+# The own location is reported from moves of 200 m on; finer steps do
+# not matter on the radar's 1 km grid.
+LOCATION_DISTANCE_M = 200
 # Initial view: all of Germany on a 360 px wide phone screen.
 GERMANY = (51.2, 10.4, 5.8)
 # Zoom for "Show My Location" and a selected place: the region around it.
@@ -244,7 +247,7 @@ class Window(Adw.ApplicationWindow):
         )
         self.renderer = FrameRenderer(self._on_rendered)
 
-        self.location = Location()
+        self.location = Location(LOCATION_DISTANCE_M)
         self.location.connect("changed", self._on_location)
         self.location.connect("failed", self._on_location_failed)
         # Once the portal gave a fix, follow the own location from the

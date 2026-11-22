@@ -73,11 +73,14 @@ sudo apt-get install --no-install-recommends \
 
 # Run, test, screenshot
 
+Clone with `--recurse-submodules` (or run `git submodule update --init`):
+`toolkit/` holds phosh-toolkit at the pinned tag ([dependencies](dependencies.md)).
+
 ```sh
-python3.12 -m cirro                 # from the source tree
+PYTHONPATH=toolkit/lib python3.12 -m cirro   # from the source tree
 python3.12 -m pytest                      # tests/ (pyproject.toml)
-../phosh-toolkit/scripts/screenshot.sh -o shot.png -- python3.12 -m cirro
-../phosh-toolkit/scripts/screenshot.sh -W 1000 -H 700 -o wide.png -- python3.12 -m cirro
+../phosh-toolkit/scripts/screenshot.sh -o shot.png -e PYTHONPATH=$PWD/toolkit/lib -- python3.12 -m cirro
+../phosh-toolkit/scripts/screenshot.sh -W 1000 -H 700 -o wide.png -e PYTHONPATH=$PWD/toolkit/lib -- python3.12 -m cirro
 ```
 
 Run from the source tree, the app adds `data/icons` to the icon theme
@@ -124,7 +127,7 @@ PATH=/tmp/lint/bin:$PATH python3 build-aux/mypy_ratchet.py
 
 The ratchet runs mypy (`check_untyped_defs`, settings in
 `pyproject.toml`) and compares its errors, without line numbers, with
-`build-aux/mypy-baseline.txt` (27 on 2026-11-22): a new error fails;
+`build-aux/mypy-baseline.txt` (26 on 2026-11-22): a new error fails;
 a fixed one also fails until `--update` shrinks the baseline, which is
 committed with the fix. `--update` never adds errors. PyGObject has no
 usable stubs here (`pygobject-stubs` builds PyGObject from source and

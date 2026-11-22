@@ -11,7 +11,6 @@ cirro/layers/station_layer.py: Need type annotation for "placed" (hint: "placed:
 cirro/layers/view.py: Item "None" of "Any | None" has no attribute "axis"  [union-attr]
 cirro/layers/view.py: Item "None" of "Any | None" has no attribute "reference_time"  [union-attr]
 cirro/layers/view.py: Item "None" of "Any | None" has no attribute "reference_time"  [union-attr]
-cirro/location.py: Item "None" of "Any | None" has no attribute "location_monitor_stop"  [union-attr]
 cirro/main.py: Item "None" of "Any | None" has no attribute "start"  [union-attr]
 cirro/main.py: Item "None" of "Any | None" has no attribute "stop"  [union-attr]
 cirro/namer.py: Need type annotation for "_queue"  [var-annotated]

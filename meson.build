@@ -21,7 +21,6 @@ python.install_sources(
   'cirro/frames.py',
   'cirro/geocode.py',
   'cirro/legend.py',
-  'cirro/location.py',
   'cirro/main.py',
   'cirro/map_press.py',
   'cirro/metainfo.py',
