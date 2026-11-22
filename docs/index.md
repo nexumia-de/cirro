@@ -26,6 +26,7 @@ Change history is in [log.md](log.md).
 
 * [Bundled dependencies](dependencies.md) - Every module in the Flatpak with version, licence, bundled libraries and update check.
 * [Release channels](release-channels.md) - Cirro from tags, Cirro (Nightly) from every push to main; the nightly build options, automated releases with changelog fragments, and the store screenshots.
+* [Owner checks](owner-checks.md) - What only the owner can check (phone, accounts, secrets, blocked hosts, upstream releases), one checklist per closed issue.
 * [Development environment](dev-environment.md) - Required hosts and host packages; how to run, test, screenshot and Flatpak-build the app.
 
 # Decision records

@@ -1,5 +1,8 @@
 # Directory Update Log
 
+## 2026-11-22
+* **Creation**: [Owner checks](owner-checks.md): checklists for what only the owner can do; first entry the touch check of the places list's way back to the map (issue #50, built in 47da5f1).
+
 ## 2026-11-08
 * **Update**: `AGENTS.md` imports `agents/core.md` and `agents/gtk-app.md` from phosh-toolkit instead of its whole `AGENTS.md`; repeated shared rules removed (toolkit decision "lean agent rules", to use fewer tokens per session).
 
