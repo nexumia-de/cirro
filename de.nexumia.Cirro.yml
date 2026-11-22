@@ -24,41 +24,10 @@ cleanup:
 modules:
   # Runtime check (docs/data-sources.md): org.gnome.Platform//51 ships
   # libsoup 3 and json-glib, but not libshumate, protobuf-c, numpy or h5py.
-  - name: protobuf-c
-    buildsystem: autotools
-    config-opts:
-      - --disable-protoc
-    post-install:
-      - install -Dm644 LICENSE -t ${FLATPAK_DEST}/share/licenses/${FLATPAK_ID}/protobuf-c
-    sources:
-      - type: archive
-        url: https://github.com/protobuf-c/protobuf-c/releases/download/v1.5.2/protobuf-c-1.5.2.tar.gz
-        sha256: e2c86271873a79c92b58fef7ebf8de1aa0df4738347a8bd5d4e65a80a16d0d24
-        x-checker-data:
-          type: json
-          url: https://api.github.com/repos/protobuf-c/protobuf-c/releases/latest
-          version-query: .tag_name | sub("^v"; "")
-          url-query: .assets[] | select(.name == "protobuf-c-" + $version + ".tar.gz") | .browser_download_url
-
-  - name: libshumate
-    buildsystem: meson
-    config-opts:
-      - --libdir=lib
-      - -Dgtk_doc=false
-      - -Dvapi=false
-      - -Ddemos=false
-      - -Dsysprof=disabled
-    post-install:
-      # meson builds in _flatpak_build/, the licence is in the source root.
-      - install -Dm644 ../COPYING -t ${FLATPAK_DEST}/share/licenses/${FLATPAK_ID}/libshumate
-    sources:
-      - type: archive
-        url: https://download.gnome.org/sources/libshumate/1.7/libshumate-1.7.0.tar.xz
-        sha256: 3896cc4b6a7bf83141c27df23ce48cdd68467603bc6b764960307cdcbbef80e5
-        x-checker-data:
-          type: gnome
-          name: libshumate
-          stable-only: true
+  # libshumate with protobuf-c, shared with the other map apps and kept
+  # current in phosh-toolkit (toolkit/ is a git submodule at the same tag
+  # as the phosh-toolkit module below; docs/dependencies.md).
+  - toolkit/flatpak/libshumate.yml
 
   # numpy and h5py are built from their source archives, as Flathub
   # requires for every bundled dependency (phosh-toolkit docs/flathub.md).
@@ -170,6 +139,21 @@ modules:
         x-checker-data:
           type: pypi
           name: h5py
+
+  # Shared runtime code (phosh_toolkit.location), pinned to a toolkit tag.
+  - name: phosh-toolkit
+    buildsystem: simple
+    build-commands:
+      - install -Dm644 -t "$(python3 -c 'import sysconfig; print(sysconfig.get_path("purelib", vars={"base":"/app"}))')/phosh_toolkit" lib/phosh_toolkit/*.py
+      - install -Dm644 -t /app/share/licenses/$FLATPAK_ID/phosh-toolkit LICENSE
+    sources:
+      - type: git
+        url: https://github.com/nexumia-de/phosh-toolkit.git
+        tag: v0.7.0
+        commit: 13275a742f62d7e7d2b80265b4bcabe0dfbbebf1
+        x-checker-data:
+          type: git
+          tag-pattern: ^v([\d.]+)$
 
   - name: cirro
     buildsystem: meson
