@@ -18,7 +18,7 @@ The app and its development need outbound HTTPS to:
 | `api.brightsky.dev`, `brightsky.dev` | Bright Sky API and docs |
 | `tile.openstreetmap.org` | Base map tiles |
 | `nominatim.openstreetmap.org` | Place names and place search (M3); answered on 2026-10-26 |
-| `operations.osmfoundation.org` | Nominatim usage policy (docs only); proxy `403` on 2026-10-26 |
+| `operations.osmfoundation.org`, `osmfoundation.org` | Nominatim usage policy and OSM attribution guidelines (docs only); proxy `403` on 2026-10-26, no connection on 2026-11-22 |
 | `nominatim.org` | Nominatim API documentation (docs only); proxy `403` on 2026-10-26 |
 | `wiki.osmfoundation.org`, `www.openstreetmap.org` | OSM attribution guidelines and copyright page (docs only); proxy `403` on 2026-10-26 |
 | `opendataapi.dmi.dk` | DMI radar API and downloads ([DMI decision](decisions/dmi-radar.md)); proxy `403` on 2026-10-26 |

@@ -456,6 +456,16 @@ in the place store, search results cached per session, search only on
 Enter, attribution in the search dialog and the About dialog). Check
 the page from a network that can reach it and update this section.
 
+Tried again on 2026-11-22: `operations.osmfoundation.org`,
+`osmfoundation.org` and `wiki.openstreetmap.org` still did not answer
+from the cloud container (no connection through the proxy), and a web
+fetch outside the container failed with a DNS error for both OSMF
+hosts. The code still matches the list above (`geocode.MIN_INTERVAL`
+1 s with a lock, `USER_AGENT`, `_search_cache`, search on Enter,
+`geocode.ATTRIBUTION` in the search dialog, the ODbL credit with the
+copyright link in the About dialog). The comparison with the live page
+is an [owner check](owner-checks.md).
+
 
 # 10. Wind *(live, 2026-11-07 11:20 UTC)*
 

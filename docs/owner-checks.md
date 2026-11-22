@@ -22,3 +22,13 @@ Xvfb only.
 
 - [ ] On the phone, open the places list and swipe right to left: the map shows again, nothing else changes.
 - [ ] Tap the "Back to Map" button (›) in the list's header: same result.
+
+# #45 Nominatim usage policy (blocked host)
+
+The OSMF pages could not be reached from the cloud container or a web
+fetch (2026-10-26, 2026-11-22); [data sources](data-sources.md)
+section 9 lists what the code does.
+
+- [ ] Read https://operations.osmfoundation.org/policies/nominatim/ and compare it with section 9 (1 request/s, identifying User-Agent, caching, no autocomplete, no bulk queries, ODbL attribution).
+- [ ] Read https://osmfoundation.org/wiki/Licence/Attribution_Guidelines and check the search dialog note ("Place names © OpenStreetMap contributors (ODbL)") and the About dialog credit.
+- [ ] Mark section 9 *(live)* with the date, or open an issue for what differs.
