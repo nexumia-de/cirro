@@ -53,6 +53,7 @@ class RadarSource(GObject.Object):
         self._timer = 0
         self._due = None           # monotonic time of the next poll
         self._unavailable = set()  # past analyses the server does not have
+        self._metered = False      # poll less often (issue #34)
 
     def start(self):
         """Load the disk cache, then poll."""
@@ -67,6 +68,16 @@ class RadarSource(GObject.Object):
             self._cancel_timer()
         elif self._due is not None and not self.loading:
             self._schedule_at(self._due)
+
+    def set_metered(self, metered):
+        """Poll less often on a metered connection; back to every 5 min
+        at once when it is not metered any more."""
+        if metered == self._metered:
+            return
+        self._metered = metered
+        if not self.loading and self._due is not None:
+            delay = source.next_poll(self.store.analysis_time, self._now(), metered)
+            self._schedule_at(GLib.get_monotonic_time() / 1e6 + delay.total_seconds())
 
     def refresh(self):
         """Poll now (the reload button)."""
@@ -157,7 +168,7 @@ class RadarSource(GObject.Object):
                       _rss_mb(), time.process_time())
         now = self._now()
         self.stale = source.is_stale(self.store.analysis_time, now)
-        delay = source.next_poll(self.store.analysis_time, now)
+        delay = source.next_poll(self.store.analysis_time, now, self._metered)
         self._schedule_at(GLib.get_monotonic_time() / 1e6 + delay.total_seconds())
         if error:
             # Background failures only show up through the stale guard.

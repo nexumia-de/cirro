@@ -1,6 +1,7 @@
 # Directory Update Log
 
 ## 2026-11-22
+* **Creation**: Decision [poll less often on metered connections](decisions/metered-polling.md) (issue #34): `cirro/data_saver.py` follows `Gio.NetworkMonitor:network-metered`; the radar polls every 15 min and the warnings every 30 min while metered, unless "Save Mobile Data" (new switch in the preferences, on by default) is off. [Radar architecture](radar-architecture.md) updated.
 * **Update**: [Map layers](map-layers.md) demo mode (issue #74): `cirro/layers/demo.py` answers WMS requests from recorded files in `tests/data/demo/layers/` (temperature, recorded 2026-11-22), and `release.toml` has a new store screenshot "Temperature forecast and other weather maps". Checked at 360×720.
 * **Creation**: [Warnings per place](warnings.md) (issue #21): new package `cirro/warnings/` (CAP status zip with `ETag` and disk cache, point-in-polygon with holes, texts, a line under the nowcast, the places list and a dialog with list and detail page). Tested with DWD's recorded status in `tests/data/cap/`; checked at 360×720 (light and dark) and 1000×700 with live warnings. `legend.swatch_class` is now public for the warning chips.
 * **Update**: Decision [CAP open data as warning source](decisions/warning-product.md) accepted (issue #20). CAP rechecked live: polygons sit in "polygonal event area" areas with `EXCLUDE_POLYGON` holes, warn cell areas carry names only, sea warnings have no polygon ([data sources](data-sources.md) section 4).

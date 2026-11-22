@@ -1,5 +1,5 @@
-"""Preferences: the place selected at startup and the playback speed
-(docs/places.md, default place)."""
+"""Preferences: the place selected at startup, the playback speed and
+saving mobile data (docs/places.md, default place; cirro/data_saver.py)."""
 import gi
 
 gi.require_version("Adw", "1")
@@ -10,7 +10,7 @@ from cirro.timebar import SPEEDS  # noqa: E402
 
 
 class PreferencesDialog(Adw.PreferencesDialog):
-    def __init__(self, store, speed_action):
+    def __init__(self, store, speed_action, saver_action=None):
         super().__init__(search_enabled=False)
         self._store = store
         self._places = [store.own] + store.places()
@@ -33,10 +33,19 @@ class PreferencesDialog(Adw.PreferencesDialog):
         speed.set_selected(factors.index(current) if current in factors else 1)
         speed.connect("notify::selected", self._on_speed)
 
+        saver = Adw.SwitchRow(
+            title="Save Mobile Data",
+            subtitle="On metered connections, update the radar every 15 minutes")
+        if saver_action is not None:
+            saver.set_active(saver_action.get_state().unpack())
+            saver.connect("notify::active", lambda row, _: saver_action.change_state(
+                GLib.Variant("b", row.get_active())))
+
         places = Adw.PreferencesGroup(title="Places")
         places.add(place)
         radar = Adw.PreferencesGroup(title="Radar")
         radar.add(speed)
+        radar.add(saver)
         page = Adw.PreferencesPage()
         page.add(places)
         page.add(radar)

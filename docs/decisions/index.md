@@ -9,6 +9,7 @@
 * [AGPL-3.0 license](license.md) - Strong copyleft keeps every copy open; contributor terms keep the author's rights.
 * [Smooth radar playback](smooth-playback.md) - Crossfade between frames at up to 30 updates per second on the frame clock; Slow/Normal/Fast in the menu.
 * [Movable own-location pin](own-location-pin.md) - Superseded: pins can't be moved any more; it allowed moving the own-location pin by hand.
+* [Poll less often on metered connections](metered-polling.md) - Radar every 15 min and warnings every 30 min on metered connections; "Save Mobile Data" switch, on by default.
 * [CAP open data as warning source](warning-product.md) - Warnings per place from DWD's CAP status files; WMS layer only for the optional overlay.
 * [MOSMIX directly as forecast source](forecast-source.md) - Rejected: the forecast view is dropped; it proposed MOSMIX_L single-station KMZ files.
 * [DMI as second radar source for Denmark](dmi-radar.md) - Proposed: DMI composite behind a radar provider interface after M3, past frames only; not verified live.

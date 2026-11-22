@@ -135,12 +135,22 @@ RETRY = timedelta(minutes=1)
 # How long to retry every minute when a new analysis is late.
 RETRY_FOR = timedelta(minutes=10)
 POLL = timedelta(minutes=5)
+# On a metered connection with "Save Mobile Data" on (issue #34): one
+# analysis in three, a third of the bandwidth (docs/radar-architecture.md).
+METERED_STEP = timedelta(minutes=15)
 # Older data is not shown as current (stale guard).
 STALE_AFTER = timedelta(minutes=30)
 
 
-def next_poll(analysis_time, now):
-    """Delay until the next poll, given the newest analysis we have."""
+def next_poll(analysis_time, now, metered=False):
+    """Delay until the next poll, given the newest analysis we have.
+    `metered`: wait for the analysis 15 min later and retry every 5 min
+    instead of every minute."""
+    if metered:
+        if analysis_time is None:
+            return POLL
+        due = analysis_time + METERED_STEP + PUBLISH_DELAY
+        return due - now if due - now >= RETRY else POLL
     if analysis_time is None:
         return POLL
     due = analysis_time + STEP + PUBLISH_DELAY

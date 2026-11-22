@@ -32,4 +32,4 @@ Change history is in [log.md](log.md).
 
 # Decision records
 
-* [Decisions](decisions/index.md) - Name, language, map widget, radar data source, colour scale, no own backend, smooth playback, movable own-location pin, radar focus without a forecast view, CAP warnings; proposed: DMI radar; rejected: forecast source.
+* [Decisions](decisions/index.md) - Name, language, map widget, radar data source, colour scale, no own backend, smooth playback, movable own-location pin, radar focus without a forecast view, CAP warnings, metered polling; proposed: DMI radar; rejected: forecast source.

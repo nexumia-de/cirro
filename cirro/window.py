@@ -7,6 +7,7 @@ import gi
 gi.require_version("Shumate", "1.0")
 from gi.repository import Adw, Gio, GLib, GObject, Gtk, Shumate  # noqa: E402
 
+from cirro.data_saver import DataSaver, load_enabled  # noqa: E402
 from cirro.forward_swipe import ForwardSwipe  # noqa: E402
 from cirro.frames import FrameStore  # noqa: E402
 from cirro.layers.control import LayerControl  # noqa: E402
@@ -236,6 +237,10 @@ class Window(Adw.ApplicationWindow):
         self.nowcast.append(self.warning_line)
         self.warnings = WarningSource(live=not os.environ.get("CIRRO_DEMO_DATA"))
         self.warnings.connect("changed", lambda *_: self._update_warnings())
+        # Poll less often on a metered connection (issue #34).
+        self.data_saver = DataSaver(load_enabled())
+        self.data_saver.connect("notify::saving", self._on_data_saver)
+        self._on_data_saver()
 
         # Breakpoints: only the last matching one applies.
         def breakpoint(condition, *setters):
@@ -271,6 +276,11 @@ class Window(Adw.ApplicationWindow):
         self.connect("map", self._update_active)
         self.connect("unmap", self._update_active)
         self.source.start()
+
+    def _on_data_saver(self, *_):
+        saving = self.data_saver.saving
+        self.source.set_metered(saving)
+        self.warnings.set_metered(saving)
 
     def _update_active(self, *_):
         active = self.get_mapped() and not self.get_property("suspended")

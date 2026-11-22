@@ -39,3 +39,9 @@ Built and checked under Broadway with live warnings ([warnings](warnings.md)).
 
 - [ ] On the phone, select a place with a warning: the line under the nowcast shows it; tap it, open a warning, swipe back.
 - [ ] With `CIRRO_DEBUG=1` on a stormy day, note how much the warnings download per hour and record it in [warnings](warnings.md).
+
+# #34 Poll less often on a metered connection (on device)
+
+Built with tests on a fake network monitor ([decision](decisions/metered-polling.md)).
+
+- [ ] On the phone on mobile data, run `CIRRO_DEBUG=1 flatpak run de.nexumia.Cirro` for 30 min: the log shows a radar download about every 15 min; note the MB/h in [radar architecture](radar-architecture.md).

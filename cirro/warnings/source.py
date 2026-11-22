@@ -22,6 +22,8 @@ URL = ("https://opendata.dwd.de/weather/alerts/cap/COMMUNEUNION_DWD_STAT/"
 # current at 0.2–0.8 MB per change, a 304 costs almost nothing.
 POLL = timedelta(minutes=10)
 RETRY = timedelta(minutes=2)
+# On a metered connection with "Save Mobile Data" on (issue #34).
+METERED_POLL = timedelta(minutes=30)
 DIRECTORY = Path(GLib.get_user_cache_dir()) / "cirro" / "warnings"
 
 
@@ -87,6 +89,7 @@ class WarningSource(GObject.Object):
         self._active = False
         self._timer = 0
         self._loading = False
+        self._metered = False
         if live:
             data, etag = self._cache.load()
             if data:
@@ -100,6 +103,13 @@ class WarningSource(GObject.Object):
             return False
         self._etag = etag
         return True
+
+    def set_metered(self, metered):
+        if metered == self._metered:
+            return
+        self._metered = metered
+        if self._active and self._timer and not metered:
+            self._schedule(POLL)
 
     def set_active(self, active):
         """Poll only while the window can be seen."""
@@ -146,5 +156,6 @@ class WarningSource(GObject.Object):
                 self._cache.save(data, etag)
                 self.emit("changed")
         if self._active:
-            self._schedule(POLL if state == "ok" else RETRY)
+            poll = METERED_POLL if self._metered else POLL
+            self._schedule(poll if state == "ok" else RETRY)
         return GLib.SOURCE_REMOVE

@@ -11,6 +11,7 @@ from gi.repository import Adw, Gdk, Gio, GLib, Gtk, Shumate  # noqa: E402
 
 from cirro import (APP_ID, NAME, NIGHTLY, REPO_URL, SUPPORT_URL,  # noqa: E402
                    USER_AGENT, VERSION_LABEL, metainfo)
+from cirro.data_saver import load_enabled, save_enabled  # noqa: E402
 from cirro.preferences import PreferencesDialog  # noqa: E402
 from cirro.timebar import load_speed, save_speed  # noqa: E402
 from cirro.window import Window  # noqa: E402
@@ -39,6 +40,11 @@ class Application(Adw.Application):
             GLib.Variant("d", load_speed()))
         speed.connect("change-state", self._on_playback_speed)
         self.add_action(speed)
+        # app.save-mobile-data(b): poll less often on metered connections.
+        saver = Gio.SimpleAction.new_stateful(
+            "save-mobile-data", None, GLib.Variant("b", load_enabled()))
+        saver.connect("change-state", self._on_save_mobile_data)
+        self.add_action(saver)
         preferences = Gio.SimpleAction.new("preferences", None)
         preferences.connect("activate", self._on_preferences)
         self.add_action(preferences)
@@ -101,11 +107,19 @@ class Application(Adw.Application):
         window = self.props.active_window
         if window:
             PreferencesDialog(window.places,
-                              self.lookup_action("playback-speed")).present(window)
+                              self.lookup_action("playback-speed"),
+                              self.lookup_action("save-mobile-data")).present(window)
 
     def _on_show_places(self, *_):
         if self.props.active_window:
             self.props.active_window.split.set_show_content(False)
+
+    def _on_save_mobile_data(self, action, value):
+        action.set_state(value)
+        save_enabled(value.unpack())
+        for window in self.get_windows():
+            if hasattr(window, "data_saver"):
+                window.data_saver.set_enabled(value.unpack())
 
     def _on_playback_speed(self, action, value):
         action.set_state(value)

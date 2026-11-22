@@ -133,3 +133,19 @@ def test_stale_guard():
     assert not source.is_stale(T0, T0 + timedelta(minutes=30))
     assert source.is_stale(T0, T0 + timedelta(minutes=31))
     assert source.is_stale(None, T0)
+
+
+@pytest.mark.parametrize("minutes_after_t0, expected", [
+    (0, 19),      # the analysis 15 min later, published 4 min after it
+    (10, 9),
+    (18.5, 5),    # due in less than a minute: try again in 5 min
+    (25, 5),      # late: every 5 min, not every minute
+])
+def test_next_poll_metered(minutes_after_t0, expected):
+    now = T0 + timedelta(minutes=minutes_after_t0)
+    delay = source.next_poll(T0, now, metered=True)
+    assert delay == pytest.approx(timedelta(minutes=expected), abs=timedelta(seconds=31))
+
+
+def test_next_poll_metered_without_data():
+    assert source.next_poll(None, T0, metered=True) == source.POLL
