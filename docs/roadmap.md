@@ -96,8 +96,8 @@ layer picker, time bar for layer time steps, legends and tap values;
 [map layers](map-layers.md)).
 
 Implemented: the map-layer foundation, the warning overlay
-(WMS) and the [warning product decision](decisions/warning-product.md)
-(CAP). Still open: the warnings per place.
+(WMS), the [warning product decision](decisions/warning-product.md)
+(CAP) and the [warnings per place](warnings.md) with a detail page.
 
 # M6 – Extras
 

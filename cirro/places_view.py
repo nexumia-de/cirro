@@ -22,12 +22,20 @@ class PlacesView(Gtk.ScrolledWindow):
         self._store = store
         self._selected = None
         self._rain = {}            # place id → short rain status (#56)
+        self._warnings = {}        # place id → short warning line (#21)
         self._list = Gtk.ListBox(css_classes=["navigation-sidebar"])
         self._list.update_property([Gtk.AccessibleProperty.LABEL], ["Places"])
         self._list.connect("row-activated", self._on_row_activated)
         self.set_child(self._list)
         store.connect("changed", lambda *_: self._rebuild())
         self._rebuild()
+
+    def set_warnings(self, texts):
+        """Short warning line per place id, shown first in each row."""
+        if texts == self._warnings:
+            return
+        self._warnings = dict(texts)
+        self._update_subtitles()
 
     def set_rain(self, texts):
         """Short rain status per place id, shown first in each row. Only
@@ -37,6 +45,9 @@ class PlacesView(Gtk.ScrolledWindow):
         if texts == self._rain:
             return
         self._rain = dict(texts)
+        self._update_subtitles()
+
+    def _update_subtitles(self):
         for row in self._rows():
             place = self._store.get(row.place_id)
             if place is not None:
@@ -65,6 +76,8 @@ class PlacesView(Gtk.ScrolledWindow):
 
     def _notes(self, place):
         notes = []
+        if self._warnings.get(place.id) and place.has_position:
+            notes.append(self._warnings[place.id])
         if place.id in self._rain and place.has_position:
             notes.append(self._rain[place.id])
         state = status(place)

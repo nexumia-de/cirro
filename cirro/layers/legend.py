@@ -16,7 +16,7 @@ _provider = None
 _known = set()
 
 
-def _swatch_class(color):
+def swatch_class(color):
     """CSS class with this background colour, defined once per colour."""
     global _provider
     name = "cirro-swatch-%02x%02x%02x" % color
@@ -66,7 +66,7 @@ class LayerLegend(Gtk.Box):
         longest = max(len(e.label) for e in legend.entries)
         labels = thin(legend.entries, max(2, min(LABELS, 40 // (longest + 1))))
         for column, entry in enumerate(legend.entries):
-            grid.attach(Gtk.Box(css_classes=[_swatch_class(entry.color)]),
+            grid.attach(Gtk.Box(css_classes=[swatch_class(entry.color)]),
                         column, 0, 1, 1)
         starts = [i for i, label in enumerate(labels) if label] + [len(labels)]
         share = len(labels) / max(1, len(starts) - 1)
@@ -91,7 +91,7 @@ class LayerLegend(Gtk.Box):
                            homogeneous=False)
         for entry in legend.entries:
             chip = Gtk.Box(spacing=4)
-            chip.append(Gtk.Box(css_classes=[_swatch_class(entry.color),
+            chip.append(Gtk.Box(css_classes=[swatch_class(entry.color),
                                              "cirro-legend-chip"],
                                 valign=Gtk.Align.CENTER))
             chip.append(Gtk.Label(label=entry.label, xalign=0,

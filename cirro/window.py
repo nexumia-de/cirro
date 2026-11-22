@@ -25,6 +25,10 @@ from cirro.radar_source import RadarSource  # noqa: E402
 from cirro.renderer import CAPACITY, FrameRenderer  # noqa: E402
 from cirro.search import SearchDialog  # noqa: E402
 from cirro.timebar import TimeBar, clock  # noqa: E402
+from cirro.warnings import cap  # noqa: E402
+from cirro.warnings.source import WarningSource  # noqa: E402
+from cirro.warnings.text import now as local_now  # noqa: E402
+from cirro.warnings.view import WarningsButton  # noqa: E402
 
 log = logging.getLogger(__name__)
 
@@ -54,6 +58,7 @@ class Window(Adw.ApplicationWindow):
         self._picking = False      # choosing a new place on the map
         self._add_on_fix = False   # "Current Location" waits for a fix
         self._live = False         # own location has a fix from this session
+        self._position = None      # (latitude, longitude) of the selection
 
         # Places (docs/places.md). Recorded places for screenshots are
         # read only and never looked up.
@@ -226,6 +231,11 @@ class Window(Adw.ApplicationWindow):
         # Sunrise, sunset and wind at the place (issues #54, #59).
         self.details = PlaceDetails(live=not os.environ.get("CIRRO_DEMO_DATA"))
         self.nowcast.append(self.details)
+        # Official warnings at the place (issue #21, docs/warnings.md).
+        self.warning_line = WarningsButton()
+        self.nowcast.append(self.warning_line)
+        self.warnings = WarningSource(live=not os.environ.get("CIRRO_DEMO_DATA"))
+        self.warnings.connect("changed", lambda *_: self._update_warnings())
 
         # Breakpoints: only the last matching one applies.
         def breakpoint(condition, *setters):
@@ -265,6 +275,7 @@ class Window(Adw.ApplicationWindow):
     def _update_active(self, *_):
         active = self.get_mapped() and not self.get_property("suspended")
         self.source.set_active(active)
+        self.warnings.set_active(active)
         if not active:
             self.timebar.set_playing(False)
             self.location.stop()
@@ -443,6 +454,19 @@ class Window(Adw.ApplicationWindow):
         self._content.set_title(title)
         self.nowcast.set_place(position, label)
         self.details.set_place(position)
+        self._position = position
+        self._update_warnings()
+
+    def _update_warnings(self):
+        """Warnings at the selected position and in the places list."""
+        if not hasattr(self, "warnings"):
+            return
+        now = local_now()
+        found = cap.at_point(self.warnings.warnings, *self._position, now) \
+            if self._position else []
+        self.warning_line.set_warnings(found, self._position)
+        self.sidebar.set_warnings(cap.per_place(
+            self.warnings.warnings, self.places, now))
 
     # Place actions
 

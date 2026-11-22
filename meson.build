@@ -65,6 +65,14 @@ python.install_sources(
   'cirro/layers/wms.py',
   subdir: 'cirro/layers',
 )
+python.install_sources(
+  'cirro/warnings/__init__.py',
+  'cirro/warnings/cap.py',
+  'cirro/warnings/source.py',
+  'cirro/warnings/text.py',
+  'cirro/warnings/view.py',
+  subdir: 'cirro/warnings',
+)
 # Loaded next to the Python files, also from the source tree.
 install_data('cirro/style.css', install_dir: pythondir / 'cirro')
 

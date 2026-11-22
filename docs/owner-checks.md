@@ -32,3 +32,10 @@ section 9 lists what the code does.
 - [ ] Read https://operations.osmfoundation.org/policies/nominatim/ and compare it with section 9 (1 request/s, identifying User-Agent, caching, no autocomplete, no bulk queries, ODbL attribution).
 - [ ] Read https://osmfoundation.org/wiki/Licence/Attribution_Guidelines and check the search dialog note ("Place names © OpenStreetMap contributors (ODbL)") and the About dialog credit.
 - [ ] Mark section 9 *(live)* with the date, or open an issue for what differs.
+
+# #21 Warnings per place (on device)
+
+Built and checked under Broadway with live warnings ([warnings](warnings.md)).
+
+- [ ] On the phone, select a place with a warning: the line under the nowcast shows it; tap it, open a warning, swipe back.
+- [ ] With `CIRRO_DEBUG=1` on a stormy day, note how much the warnings download per hour and record it in [warnings](warnings.md).
