@@ -78,7 +78,7 @@ Clone with `--recurse-submodules` (or run `git submodule update --init`):
 
 ```sh
 PYTHONPATH=toolkit/lib python3.12 -m cirro   # from the source tree
-python3.12 -m pytest                      # tests/ (pyproject.toml)
+PHOSH_TOOLKIT_TEST_KEYRING=memory dbus-run-session -- xvfb-run -a python3.12 -m pytest   # tests/ (pyproject.toml)
 ../phosh-toolkit/scripts/screenshot.sh -o shot.png -e PYTHONPATH=$PWD/toolkit/lib -- python3.12 -m cirro
 ../phosh-toolkit/scripts/screenshot.sh -W 1000 -H 700 -o wide.png -e PYTHONPATH=$PWD/toolkit/lib -- python3.12 -m cirro
 ```

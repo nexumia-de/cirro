@@ -8,8 +8,19 @@ gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
 gi.require_version("Shumate", "1.0")
 from gi.repository import Adw, Gdk, Gio, GLib, Gtk, Shumate  # noqa: E402
+from phosh_toolkit import feedback, http  # noqa: E402
 
-from cirro import APP_ID, NAME, NIGHTLY, REPO_URL, SUPPORT_URL, USER_AGENT, VERSION_LABEL, metainfo  # noqa: E402
+from cirro import (  # noqa: E402
+    APP_ID,
+    NAME,
+    NIGHTLY,
+    REPO,
+    REPO_URL,
+    SUPPORT_URL,
+    USER_AGENT,
+    VERSION_LABEL,
+    metainfo,
+)
 from cirro.data_saver import DataSaver, load_enabled, save_enabled  # noqa: E402
 from cirro.notify import background  # noqa: E402
 from cirro.notify.watcher import Watcher  # noqa: E402
@@ -91,6 +102,15 @@ class Application(Adw.Application):
             lambda _, value: self._window_call(lambda w: w.layers.show_layer(value.unpack())),
         )
         self.add_action(show_layer)
+        # app.report-problem: issue through the user's token or GitHub's form
+        # (phosh-toolkit docs/feedback.md); the token is kept in the keyring.
+        feedback.install(
+            self,
+            repo=REPO,
+            app_name=NAME,
+            version=VERSION_LABEL,
+            client=http.Client(USER_AGENT),
+        )
         self.set_accels_for_action("app.quit", ["<Control>q"])
         self.set_accels_for_action("app.preferences", ["<Control>comma"])
         self.set_accels_for_action("app.step-time(1)", ["<Control>Right"])
@@ -216,7 +236,7 @@ class Application(Adw.Application):
             version=VERSION_LABEL,
             developer_name="suitably",
             website=REPO_URL,
-            issue_url=f"{REPO_URL}/issues",
+            issue_url=feedback.issue_url(REPO, VERSION_LABEL),
             license_type=Gtk.License.AGPL_3_0,
             comments="Rain radar with a 2-hour forecast. Not affiliated "
             "with the Deutscher Wetterdienst.",

@@ -10,7 +10,7 @@ jobs:
   flatpak:
     permissions:
       contents: write
-    uses: nexumia-de/phosh-toolkit/.github/workflows/flatpak.yml@2b2d1ad327cb73d462c09bf1cceadb8e4e1220aa # v0.7.1
+    uses: nexumia-de/phosh-toolkit/.github/workflows/flatpak.yml@3ec15b8fb1ec01e9db75bb0952b89b101ea42d69 # v0.8.0
     with:
       manifest: de.nexumia.Cirro.yml
       # Tags publish Cirro, every push to main publishes Cirro (Nightly);

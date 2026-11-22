@@ -81,6 +81,7 @@ class Window(Adw.ApplicationWindow):
         menu.append("_Map Layers", "win.layers")
         menu.append("_Reload Radar", "win.reload")
         menu.append("_Preferences", "app.preferences")
+        menu.append("_Report a Problem…", "app.report-problem")
         menu.append("_About Weather Radar", "app.about")
         self._title = Adw.WindowTitle(title="Weather Radar")
         header = Adw.HeaderBar(title_widget=self._title)
