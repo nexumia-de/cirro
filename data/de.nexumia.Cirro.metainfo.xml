@@ -50,30 +50,37 @@
   <screenshots>
     <screenshot type="default">
       <caption>Rain radar for Germany with the past hour</caption>
-      <image>https://github.com/nexumia-de/cirro/releases/download/v0.6.0/radar-phone-light.png</image>
+      <image>https://github.com/nexumia-de/cirro/releases/download/v0.7.0/radar-phone-light.png</image>
     </screenshot>
     <screenshot>
       <caption>Rain radar for Germany with the past hour</caption>
-      <image>https://github.com/nexumia-de/cirro/releases/download/v0.6.0/radar-desktop-light.png</image>
+      <image>https://github.com/nexumia-de/cirro/releases/download/v0.7.0/radar-desktop-light.png</image>
     </screenshot>
     <screenshot>
       <caption>Rain forecast one hour ahead</caption>
-      <image>https://github.com/nexumia-de/cirro/releases/download/v0.6.0/forecast-phone-light.png</image>
+      <image>https://github.com/nexumia-de/cirro/releases/download/v0.7.0/forecast-phone-light.png</image>
     </screenshot>
     <screenshot>
       <caption>Rain forecast one hour ahead</caption>
-      <image>https://github.com/nexumia-de/cirro/releases/download/v0.6.0/forecast-desktop-light.png</image>
+      <image>https://github.com/nexumia-de/cirro/releases/download/v0.7.0/forecast-desktop-light.png</image>
     </screenshot>
     <screenshot>
       <caption>Temperature forecast and other weather maps</caption>
-      <image>https://github.com/nexumia-de/cirro/releases/download/v0.6.0/temperature-phone-light.png</image>
+      <image>https://github.com/nexumia-de/cirro/releases/download/v0.7.0/temperature-phone-light.png</image>
     </screenshot>
     <screenshot>
       <caption>Temperature forecast and other weather maps</caption>
-      <image>https://github.com/nexumia-de/cirro/releases/download/v0.6.0/temperature-desktop-light.png</image>
+      <image>https://github.com/nexumia-de/cirro/releases/download/v0.7.0/temperature-desktop-light.png</image>
     </screenshot>
   </screenshots>
   <releases>
+    <release version="0.7.0" date="2026-11-23">
+      <description>
+        <ul>
+          <li>The main menu has a new "Report a Problem…" entry that sends your problem or idea to the developers as a GitHub issue.</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.6.0" date="2026-11-22">
       <description>
         <ul>
